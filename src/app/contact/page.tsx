@@ -132,7 +132,7 @@ export default function ContactPage() {
               </p>
 
               <a
-                href="https://wa.me/919999999999?text=Hello%2C%20I%27m%20interested%20in%20your%20interior%20design%20services.%20I%27d%20like%20to%20discuss%20my%20project."
+                href="https://wa.me/918168051355?text=Hello%2C%20I%27m%20interested%20in%20your%20interior%20design%20services.%20I%27d%20like%20to%20discuss%20my%20project."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-action"
@@ -143,17 +143,17 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="contact-action__label">WhatsApp</div>
-                  <div className="contact-action__value">+91 99999 99999</div>
+                  <div className="contact-action__value">+91 81680 51355</div>
                 </div>
               </a>
 
-              <a href="tel:+919999999999" className="contact-action" id="contact-phone-link">
+              <a href="tel:+918168051355" className="contact-action" id="contact-phone-link">
                 <div className="contact-action__icon">
                   <Phone size={20} />
                 </div>
                 <div>
                   <div className="contact-action__label">Call Us</div>
-                  <div className="contact-action__value">+91 99999 99999</div>
+                  <div className="contact-action__value">+91 81680 51355</div>
                 </div>
               </a>
 
@@ -210,7 +210,7 @@ export default function ContactPage() {
                     For immediate response, WhatsApp us.
                   </p>
                   <a
-                    href="https://wa.me/919999999999?text=Hi%2C%20I%20just%20submitted%20an%20enquiry%20on%20your%20website"
+                    href="https://wa.me/918168051355?text=Hi%2C%20I%20just%20submitted%20an%20enquiry%20on%20your%20website"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn btn--primary"

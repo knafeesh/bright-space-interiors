@@ -2,8 +2,8 @@
 // SITE DATA — projects, services, team, testimonials, process
 // ═══════════════════════════════════════════
 
-export const WHATSAPP_NUMBER = "919999999999";
-export const PHONE_NUMBER = "+91 99999 99999";
+export const WHATSAPP_NUMBER = "918168051355";
+export const PHONE_NUMBER = "+91 81680 51355";
 export const EMAIL = "hello@brightspaceinteriors.com";
 export const ADDRESS = "123, Design Avenue, Sector 18, Mumbai, Maharashtra — 400001";
 

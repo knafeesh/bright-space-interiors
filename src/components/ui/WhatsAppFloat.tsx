@@ -7,7 +7,7 @@ export default function WhatsAppFloat() {
     <div className="whatsapp-float" aria-label="WhatsApp chat">
       <span className="whatsapp-float__tooltip">Chat with us</span>
       <a
-        href={`https://wa.me/919999999999?text=${message}`}
+        href={`https://wa.me/918168051355?text=${message}`}
         target="_blank"
         rel="noopener noreferrer"
         className="whatsapp-float__btn"

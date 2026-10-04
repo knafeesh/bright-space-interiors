@@ -213,7 +213,7 @@ export default function ProjectDetailPage({
         </p>
         <div className="cta-band__actions">
           <a
-            href="https://wa.me/919999999999?text=Hi%2C%20I%20saw%20your%20portfolio%20and%20would%20like%20to%20discuss%20my%20project"
+            href="https://wa.me/918168051355?text=Hello%2C%20I%27m%20interested%20in%20your%20interior%20design%20services.%20I%27d%20like%20to%20discuss%20my%20project."
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn--primary btn--large"
