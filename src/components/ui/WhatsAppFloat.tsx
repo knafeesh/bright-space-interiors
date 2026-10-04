@@ -1,17 +1,21 @@
 export default function WhatsAppFloat() {
+  const message = encodeURIComponent(
+    "Hello, I'm interested in your interior design services. I'd like to discuss my project."
+  );
+
   return (
     <div className="whatsapp-float" aria-label="WhatsApp chat">
       <span className="whatsapp-float__tooltip">Chat with us</span>
       <a
-        href="https://wa.me/919999999999?text=Hi%2C%20I%27m%20interested%20in%20your%20interior%20design%20services"
+        href={`https://wa.me/919999999999?text=${message}`}
         target="_blank"
         rel="noopener noreferrer"
         className="whatsapp-float__btn"
         aria-label="Open WhatsApp chat"
         id="whatsapp-float-btn"
         style={{
-          background: "linear-gradient(135deg, #C5A880 0%, #A68250 100%)",
-          boxShadow: "0 8px 24px rgba(166, 130, 80, 0.4)",
+          background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
+          boxShadow: "0 8px 24px rgba(37, 211, 102, 0.35)",
         }}
       >
         <svg
