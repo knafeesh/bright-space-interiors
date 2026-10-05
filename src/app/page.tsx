@@ -120,12 +120,13 @@ const PROCESS_HOME = [
   { n: "06", title: "Handover" },
 ];
 
-// Service image map (local paths)
+// Service image map (verified real project photos)
 const SERVICE_IMAGES: Record<string, string> = {
-  residential: "/images/service-residential.jpg",
-  commercial:  "/images/service-commercial.jpg",
-  turnkey:     "/images/service-turnkey.jpg",
-  design:      "/images/service-design.jpg",
+  residential: "/images/real-bedroom-headboard.jpg",
+  commercial: "/images/office-gurugram-open-floor.jpg",
+  turnkey: "/images/real-kitchen-saket.jpg",
+  "design-execution": "/images/salon-rawls-styling-suites.jpg",
+  design: "/images/salon-rawls-styling-suites.jpg",
 };
 
 export default function HomePage() {
@@ -476,67 +477,134 @@ export default function HomePage() {
               All Services <ChevronRight size={14} />
             </Link>
           </div>
-        </div>
-
-        <div className="services-tiles">
-          {cmsServices.map((service) => {
-            const imgSrc = service.image || SERVICE_IMAGES[service.slug] || "/images/service-residential.jpg";
-            return (
-              <Link
-                key={service.slug}
-                href={`/services/${service.slug}`}
-                className="service-tile"
-                id={`service-tile-${service.slug}`}
-              >
-                {/* Real photo background */}
-                <img
-                  src={imgSrc}
-                  alt={service.title}
-                  className="service-tile__photo"
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gap: "24px",
+            }}
+          >
+            {cmsServices.map((service) => {
+              const imgSrc = service.image || SERVICE_IMAGES[service.slug] || "/images/real-bedroom-headboard.jpg";
+              return (
+                <Link
+                  key={service.slug}
+                  href={`/services/${service.slug}`}
+                  id={`service-card-${service.slug}`}
                   style={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center",
-                    transition: "transform 0.7s cubic-bezier(0.25,1,0.5,1)",
-                    zIndex: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    background: "#161311",
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    borderRadius: "6px",
+                    overflow: "hidden",
+                    textDecoration: "none",
+                    color: "inherit",
+                    transition: "transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease",
                   }}
-                />
-                {/* Dark gradient overlay */}
-                <div
-                  className="service-tile__overlay"
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    background: "linear-gradient(to top, rgba(20,15,12,0.88) 0%, rgba(20,15,12,0.45) 55%, rgba(20,15,12,0.15) 100%)",
-                    zIndex: 1,
-                    transition: "background 0.4s ease",
-                  }}
-                />
-                {/* Gold accent line at bottom */}
-                <div style={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: "2px",
-                  background: "linear-gradient(90deg, transparent, var(--gold), transparent)",
-                  zIndex: 2,
-                  opacity: 0,
-                  transition: "opacity 0.3s ease",
-                }} className="service-tile__gold-line" />
-                <div className="service-tile__content" style={{ zIndex: 2 }}>
-                  <div className="service-tile__label">{service.subtitle}</div>
-                  <div className="service-tile__title">{service.title}</div>
-                  <div className="service-tile__cta">
-                    Explore <ArrowRight size={12} />
+                  className="service-framed-card"
+                >
+                  {/* Real Image Window in the Frame */}
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "230px",
+                      position: "relative",
+                      overflow: "hidden",
+                      background: "#0D0B0A",
+                    }}
+                  >
+                    <img
+                      src={imgSrc}
+                      alt={service.title}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        objectPosition: "center",
+                        display: "block",
+                        transition: "transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
+                      }}
+                      className="service-framed-card__img"
+                    />
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "12px",
+                        left: "12px",
+                        background: "rgba(0, 0, 0, 0.65)",
+                        backdropFilter: "blur(6px)",
+                        border: "1px solid rgba(212, 184, 122, 0.4)",
+                        color: "#D4B87A",
+                        padding: "4px 10px",
+                        borderRadius: "50px",
+                        fontSize: "10px",
+                        fontWeight: 700,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {service.subtitle}
+                    </div>
                   </div>
-                </div>
-              </Link>
-            );
-          })}
+
+                  {/* Given Text Below Image in the Frame */}
+                  <div
+                    style={{
+                      padding: "24px 22px 20px",
+                      display: "flex",
+                      flexDirection: "column",
+                      flexGrow: 1,
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-serif)",
+                          fontSize: "22px",
+                          fontWeight: 500,
+                          color: "#FFFFFF",
+                          margin: "0 0 10px",
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {service.title}
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: "13px",
+                          lineHeight: 1.65,
+                          color: "rgba(250, 247, 242, 0.72)",
+                          margin: "0 0 20px",
+                        }}
+                      >
+                        {service.description}
+                      </p>
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingTop: "14px",
+                        borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+                        color: "#D4B87A",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      <span>Explore Service</span>
+                      <ArrowRight size={14} />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </section>
 

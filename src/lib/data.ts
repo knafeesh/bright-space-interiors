@@ -18,7 +18,7 @@ export const SERVICES = [
     slug: "residential",
     title: "Residential Interior",
     subtitle: "Your Home, Elevated",
-    image: "/images/real-bedroom-fluted.jpg",
+    image: "/images/real-bedroom-headboard.jpg",
     description:
       "We transform apartments, flats, and villas into bespoke living spaces that reflect your personality and lifestyle. Every element is considered, every corner crafted.",
     subServices: [
@@ -49,7 +49,7 @@ export const SERVICES = [
     slug: "commercial",
     title: "Commercial Interior",
     subtitle: "Spaces That Work",
-    image: "/images/real-salon-facade.jpg",
+    image: "/images/office-gurugram-open-floor.jpg",
     description:
       "We design commercial spaces that balance brand identity, employee productivity, and client impression — offices, showrooms, restaurants, cafés, hotels.",
     subServices: [
@@ -76,7 +76,7 @@ export const SERVICES = [
     slug: "turnkey",
     title: "Turnkey Projects",
     subtitle: "One Point of Responsibility",
-    image: "/images/real-salon-mainhall.jpg",
+    image: "/images/real-kitchen-saket.jpg",
     description:
       "From the first brick to the final furnishing — we manage everything, so you don't have to coordinate with multiple vendors. One contract, one team, zero hassle.",
     subServices: [
@@ -105,7 +105,7 @@ export const SERVICES = [
     slug: "design-execution",
     title: "Design & Execution",
     subtitle: "Concept to Completion",
-    image: "/images/real-salon-styling.jpg",
+    image: "/images/salon-rawls-styling-suites.jpg",
     description:
       "A full-service design journey: concept development, 3D visualization, material selection, precision execution, and quality finishing — under one roof.",
     subServices: [

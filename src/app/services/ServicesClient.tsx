@@ -52,42 +52,153 @@ export default function ServicesClient() {
           </div>
         </div>
 
-        <div className="services-hub__grid" style={{ maxWidth: 1280, margin: "56px auto 0", padding: "0 40px" }}>
+        <div
+          style={{
+            maxWidth: 1280,
+            margin: "48px auto 0",
+            padding: "0 24px",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "28px",
+          }}
+        >
           {services.map((service) => (
             <Link
               key={service.slug}
               href={`/services/${service.slug}`}
-              className="service-hub-card"
+              className="service-framed-card"
               id={`service-hub-${service.slug}`}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                background: "#161311",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                borderRadius: "6px",
+                overflow: "hidden",
+                textDecoration: "none",
+                color: "inherit",
+                transition: "transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease",
+              }}
             >
+              {/* Real Image Window */}
               <div
-                className="service-hub-card__bg"
                 style={{
-                  backgroundImage: `url(${service.image || "/images/real-bedroom-fluted.jpg"})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
+                  width: "100%",
+                  height: "240px",
+                  position: "relative",
+                  overflow: "hidden",
+                  background: "#0D0B0A",
                 }}
-              />
-              <div className="service-hub-card__overlay" />
-              <div className="service-hub-card__content">
-                <span className="eyebrow" style={{ color: "var(--gold-light)" }}>
+              >
+                <img
+                  src={service.image || "/images/real-bedroom-headboard.jpg"}
+                  alt={service.title}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                    display: "block",
+                    transition: "transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
+                  }}
+                  className="service-framed-card__img"
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "12px",
+                    left: "12px",
+                    background: "rgba(0, 0, 0, 0.65)",
+                    backdropFilter: "blur(6px)",
+                    border: "1px solid rgba(212, 184, 122, 0.4)",
+                    color: "#D4B87A",
+                    padding: "4px 10px",
+                    borderRadius: "50px",
+                    fontSize: "10px",
+                    fontWeight: 700,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                  }}
+                >
                   {service.subtitle}
-                </span>
-                <h3 style={{ color: "var(--white)", marginTop: "12px" }}>
-                  {service.title}
-                </h3>
-                <p style={{ color: "rgba(248,244,236,0.65)", fontSize: "14px", marginTop: "12px", lineHeight: 1.7 }}>
-                  {service.description.substring(0, 120)}…
-                </p>
-                <div className="service-hub-card__subs">
-                  {service.subServices.map((sub) => (
-                    <span key={sub} className="service-hub-card__sub">
-                      {sub}
-                    </span>
-                  ))}
                 </div>
-                <div style={{ marginTop: "24px", display: "flex", alignItems: "center", gap: "8px", fontSize: "11px", fontWeight: 600, letterSpacing: "0.15em", color: "var(--gold-light)" }}>
-                  Explore Service <ArrowRight size={13} />
+              </div>
+
+              {/* Given Text Below Image in Frame */}
+              <div
+                style={{
+                  padding: "26px 24px 22px",
+                  display: "flex",
+                  flexDirection: "column",
+                  flexGrow: 1,
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-serif)",
+                      fontSize: "24px",
+                      fontWeight: 500,
+                      color: "#FFFFFF",
+                      margin: "0 0 10px",
+                      lineHeight: 1.25,
+                    }}
+                  >
+                    {service.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: "13px",
+                      lineHeight: 1.65,
+                      color: "rgba(250, 247, 242, 0.72)",
+                      margin: "0 0 16px",
+                    }}
+                  >
+                    {service.description}
+                  </p>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "6px",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    {service.subServices.slice(0, 4).map((sub) => (
+                      <span
+                        key={sub}
+                        style={{
+                          fontSize: "11px",
+                          background: "rgba(255, 255, 255, 0.06)",
+                          border: "1px solid rgba(255, 255, 255, 0.1)",
+                          padding: "3px 8px",
+                          borderRadius: "2px",
+                          color: "rgba(250, 247, 242, 0.8)",
+                        }}
+                      >
+                        {sub}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingTop: "14px",
+                    borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+                    color: "#D4B87A",
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  <span>Explore Service</span>
+                  <ArrowRight size={14} />
                 </div>
               </div>
             </Link>

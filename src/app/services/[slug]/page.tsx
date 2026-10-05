@@ -39,12 +39,12 @@ const SERVICE_GALLERIES: Record<string, { src: string; caption: string }[]> = {
   ],
 };
 
-// Fallback hero images per service (already downloaded)
+// Real hero images per service
 const HERO_IMAGES: Record<string, string> = {
-  residential:      "/images/service-residential.jpg",
-  commercial:       "/images/service-commercial.jpg",
-  turnkey:          "/images/service-turnkey.jpg",
-  "design-execution": "/images/service-design.jpg",
+  residential: "/images/real-bedroom-headboard.jpg",
+  commercial: "/images/office-gurugram-open-floor.jpg",
+  turnkey: "/images/real-kitchen-saket.jpg",
+  "design-execution": "/images/salon-rawls-styling-suites.jpg",
 };
 
 export default function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
