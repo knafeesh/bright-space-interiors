@@ -7,72 +7,46 @@ import {
   ChevronRight,
   Pause,
   Play,
-  Briefcase,
   ArrowRight,
-  CheckCircle2,
 } from "lucide-react";
-import { WHATSAPP_NUMBER } from "@/lib/data";
 
 export interface OfficeSlide {
   id: string;
   image: string;
   title: string;
   subtitle: string;
-  stage: string;
-  description: string;
-  details: string[];
 }
 
 export const OFFICE_SLIDES: OfficeSlide[] = [
   {
     id: "slide-1",
     image: "/images/office-gurugram-open-floor.jpg",
-    title: "Gurugram Corporate Office — Open Floor & Collaborative Workstations",
-    subtitle: "High-Density Linear Desking, Acoustic Glazing & Exposed Industrial Ceiling",
-    stage: "Open Workspace Floor",
-    description:
-      "Expansive open-plan corporate floorplate in Gurugram featuring suspended acoustic dome pendant lights, central spinal circulation corridor, frameless glass executive cabins, and ergonomic modular desking systems.",
-    details: ["Acoustic Red Pendants", "Frameless Glass Cabins", "Spinal Walkway Corridor", "Exposed HVAC Ducting"],
+    title: "Open Workspace & Collaborative Desking",
+    subtitle: "Gurugram Corporate Office",
   },
   {
     id: "slide-2",
     image: "/images/office-gurugram-workstations-lighting.jpg",
-    title: "Geometric Suspended LED Profile Lighting & Team Pods",
-    subtitle: "Vibrant Ochre Acoustic Partition Screens & Ribbon Glazing",
-    stage: "Team Collaboration Pods",
-    description:
-      "Custom modular team pods highlighted by architecturally suspended square LED frame fixtures, dual-tone acoustic privacy baffles, perimeter ribbon windows, and concealed power raceways.",
-    details: ["Suspended Square LED Fixtures", "Acoustic Partition Screens", "Exposed Dark Ceiling", "Integrated Power Modules"],
+    title: "Suspended Geometric LED Profiles & Team Pods",
+    subtitle: "Gurugram Corporate Office",
   },
   {
     id: "slide-3",
     image: "/images/office-gurugram-executive-cabin.jpg",
-    title: "Director's Executive Suite & Panoramic Window Cabin",
-    subtitle: "L-Shaped Oak Veneer Executive Desk & Integrated Storage Credenza",
-    stage: "Executive Director Cabin",
-    description:
-      "Corner managerial cabin with floor-to-ceiling panoramic skyline views, bespoke L-shaped executive desk with cable grommets, full-height architectural panelled storage credenza, and sound-insulated double glazing.",
-    details: ["Corner Skyline View", "L-Shaped Executive Desk", "Full-Height Storage Wall", "Acoustic Double Glazing"],
+    title: "Executive Director Cabin & Skyline View",
+    subtitle: "Gurugram Corporate Office",
   },
   {
     id: "slide-4",
     image: "/images/office-gurugram-conference-room.jpg",
-    title: "Boardroom & Video-Conferencing Suite Fitout",
-    subtitle: "Custom Heavy-Duty Steel Leg Conference Table & Glass Enclosure",
-    stage: "Boardroom & Conference",
-    description:
-      "State-of-the-art conference room engineered with a custom 12-seater timber and powder-coated steel meeting table with integrated audio-visual floor raceways and acoustic perimeter glass partition.",
-    details: ["12-Seater Board Table", "Integrated Floor Raceways", "Acoustic Glass Envelope", "Cable-Managed Steel Base"],
+    title: "Boardroom & Video-Conferencing Suite",
+    subtitle: "Gurugram Corporate Office",
   },
   {
     id: "slide-5",
     image: "/images/office-gurugram-modular-desks.jpg",
-    title: "Turnkey Desk Assembly & Precision Cable Management",
-    subtitle: "Heavy-Gauge Steel Frame Understructure & Dual-Sided Wire Trays",
-    stage: "Fitout & Modular Joinery",
-    description:
-      "Precision on-site assembly of commercial workstation clusters with dual cable distribution trays, modular power distribution junction boxes, upholstered acoustic dividers, and floor protection.",
-    details: ["Heavy-Gauge Steel Frames", "Dual Wire Trays", "Acoustic Fabric Dividers", "Turnkey Site Delivery"],
+    title: "Turnkey Desk Assembly & Cable Management",
+    subtitle: "Gurugram Corporate Office",
   },
 ];
 
@@ -120,29 +94,29 @@ export default function OfficeCategorySlideshow() {
   return (
     <div
       style={{
-        marginBottom: "50px",
-        borderRadius: "4px",
+        marginBottom: "45px",
+        borderRadius: "6px",
         overflow: "hidden",
-        border: "1px solid rgba(184, 151, 98, 0.3)",
-        background: "#181513",
-        boxShadow: "0 16px 45px rgba(24, 21, 19, 0.18)",
+        border: "1px solid rgba(255, 255, 255, 0.12)",
+        background: "#0D0B0A",
+        boxShadow: "0 18px 45px rgba(0, 0, 0, 0.35)",
         color: "#FFFFFF",
       }}
       onMouseEnter={() => setIsPlaying(false)}
       onMouseLeave={() => setIsPlaying(true)}
       id="office-showcase-slideshow"
     >
-      {/* ── Slide Viewport ── */}
+      {/* ── Slide Viewport: Clean, real-photo presentation ── */}
       <div
         style={{
           position: "relative",
-          minHeight: "480px",
+          height: "520px",
           display: "flex",
           alignItems: "flex-end",
           overflow: "hidden",
         }}
       >
-        {/* Background Images with Slow Cross-Fade */}
+        {/* Background Images with Slow Cross-Fade & Natural Clarity */}
         {OFFICE_SLIDES.map((slide, idx) => (
           <div
             key={slide.id}
@@ -151,7 +125,7 @@ export default function OfficeCategorySlideshow() {
               inset: 0,
               opacity: idx === currentIdx ? 1 : 0,
               visibility: idx === currentIdx ? "visible" : "hidden",
-              transition: "opacity 1.2s ease-in-out, visibility 1.2s ease-in-out",
+              transition: "opacity 1.1s ease-in-out, visibility 1.1s ease-in-out",
               zIndex: 1,
             }}
           >
@@ -163,218 +137,127 @@ export default function OfficeCategorySlideshow() {
                 height: "100%",
                 objectFit: "cover",
                 objectPosition: "center",
-                transform: idx === currentIdx ? "scale(1.03)" : "scale(1)",
+                transform: idx === currentIdx ? "scale(1.025)" : "scale(1)",
                 transition: "transform 6s ease-out",
-                filter: "brightness(0.82)",
               }}
             />
           </div>
         ))}
 
-        {/* Gradient Overlay for Readable Typography */}
+        {/* Minimal Bottom Fade — keeps 80% of photo completely clear */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(to top, rgba(16, 13, 11, 0.95) 0%, rgba(16, 13, 11, 0.6) 45%, rgba(16, 13, 11, 0.25) 100%), linear-gradient(to right, rgba(16, 13, 11, 0.75) 0%, transparent 60%)",
+              "linear-gradient(to top, rgba(12, 10, 9, 0.88) 0%, rgba(12, 10, 9, 0.4) 22%, transparent 48%)",
             zIndex: 2,
+            pointerEvents: "none",
           }}
         />
 
-        {/* Top Control Bar: Stage Badge + Counter + Play/Pause */}
+        {/* Top Floating Counter & Play/Pause */}
         <div
           style={{
             position: "absolute",
-            top: "20px",
-            left: "24px",
-            right: "24px",
+            top: "18px",
+            right: "20px",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
+            gap: "10px",
+            background: "rgba(0, 0, 0, 0.6)",
+            backdropFilter: "blur(10px)",
+            border: "1px solid rgba(255, 255, 255, 0.16)",
+            padding: "5px 14px",
+            borderRadius: "50px",
             zIndex: 3,
           }}
         >
-          <div
+          <span style={{ fontSize: "12px", fontWeight: 600, color: "#D4B87A", letterSpacing: "0.08em" }}>
+            0{currentIdx + 1} / 0{OFFICE_SLIDES.length}
+          </span>
+          <div style={{ width: "1px", height: "13px", background: "rgba(255, 255, 255, 0.2)" }} />
+          <button
+            onClick={() => setIsPlaying(!isPlaying)}
+            title={isPlaying ? "Pause slide" : "Play slide"}
             style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              background: "rgba(0, 0, 0, 0.65)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(184, 151, 98, 0.4)",
-              color: "#D4B87A",
-              padding: "6px 14px",
-              borderRadius: "50px",
-              fontSize: "11px",
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-            }}
-          >
-            <Briefcase size={13} />
-            {current.stage}
-          </div>
-
-          <div
-            style={{
+              background: "transparent",
+              border: "none",
+              color: "#FAF7F2",
+              cursor: "pointer",
               display: "flex",
               alignItems: "center",
-              gap: "10px",
-              background: "rgba(0, 0, 0, 0.65)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(255, 255, 255, 0.15)",
-              padding: "4px 12px",
-              borderRadius: "50px",
+              padding: "2px",
             }}
           >
-            <span style={{ fontSize: "12px", fontWeight: 600, color: "#D4B87A", letterSpacing: "0.08em" }}>
-              0{currentIdx + 1} / 0{OFFICE_SLIDES.length}
-            </span>
-            <div style={{ width: "1px", height: "14px", background: "rgba(255, 255, 255, 0.2)" }} />
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              title={isPlaying ? "Pause slow slide" : "Play slow slide"}
-              style={{
-                background: "transparent",
-                border: "none",
-                color: "#FAF7F2",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                padding: "2px",
-              }}
-            >
-              {isPlaying ? <Pause size={13} /> : <Play size={13} />}
-            </button>
-          </div>
+            {isPlaying ? <Pause size={13} /> : <Play size={13} />}
+          </button>
         </div>
 
-        {/* Content on Slide */}
+        {/* Clean Caption Overlay */}
         <div
           style={{
             position: "relative",
             zIndex: 3,
-            padding: "36px 32px 28px",
-            maxWidth: "850px",
+            padding: "28px 30px",
+            width: "100%",
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "14px",
           }}
         >
-          <div
-            style={{
-              color: "#D4B87A",
-              fontSize: "12px",
-              fontWeight: 700,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              marginBottom: "6px",
-            }}
-          >
-            {current.subtitle}
-          </div>
-
-          <h3
-            style={{
-              fontFamily: "var(--font-serif)",
-              fontSize: "clamp(24px, 3.2vw, 38px)",
-              color: "#FFFFFF",
-              fontWeight: 500,
-              letterSpacing: "0.03em",
-              margin: "0 0 12px",
-              lineHeight: 1.25,
-            }}
-          >
-            {current.title}
-          </h3>
-
-          <p
-            style={{
-              fontSize: "clamp(13px, 1.3vw, 15px)",
-              lineHeight: 1.65,
-              color: "rgba(250, 247, 242, 0.85)",
-              maxWidth: "680px",
-              margin: "0 0 18px",
-            }}
-          >
-            {current.description}
-          </p>
-
-          {/* Key Specifications Chips */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              flexWrap: "wrap",
-              marginBottom: "20px",
-            }}
-          >
-            {current.details.map((detail) => (
-              <span
-                key={detail}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "5px",
-                  background: "rgba(255, 255, 255, 0.1)",
-                  backdropFilter: "blur(4px)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
-                  color: "#FAF7F2",
-                  fontSize: "11px",
-                  padding: "4px 10px",
-                  borderRadius: "2px",
-                }}
-              >
-                <CheckCircle2 size={11} color="#D4B87A" />
-                {detail}
-              </span>
-            ))}
-          </div>
-
-          {/* Action CTAs */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-            <Link
-              href="/portfolio/gurugram-corporate-office"
-              className="btn"
+          <div>
+            <div
               style={{
-                background: "#B89762",
-                color: "#FFFFFF",
-                padding: "10px 22px",
+                color: "#D4B87A",
                 fontSize: "11px",
                 fontWeight: 700,
-                letterSpacing: "0.12em",
+                letterSpacing: "0.14em",
                 textTransform: "uppercase",
-                borderRadius: "2px",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
+                marginBottom: "4px",
               }}
             >
-              Explore Office Project
-              <ArrowRight size={13} />
-            </Link>
+              {current.subtitle}
+            </div>
 
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                "Hello The Bright Space Interiors, I saw the Gurugram Corporate Office slideshow on your website and would like to discuss interior fitout for my office space."
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn"
+            <h3
               style={{
-                background: "rgba(255, 255, 255, 0.12)",
-                border: "1px solid rgba(255, 255, 255, 0.3)",
-                color: "#FAF7F2",
-                padding: "10px 20px",
-                fontSize: "11px",
-                fontWeight: 600,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                borderRadius: "2px",
+                fontFamily: "var(--font-serif)",
+                fontSize: "clamp(20px, 2.4vw, 30px)",
+                color: "#FFFFFF",
+                fontWeight: 500,
+                letterSpacing: "0.02em",
+                margin: 0,
+                lineHeight: 1.25,
               }}
             >
-              Consult On WhatsApp
-            </a>
+              {current.title}
+            </h3>
           </div>
+
+          <Link
+            href="/portfolio/gurugram-corporate-office"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "7px",
+              background: "rgba(184, 151, 98, 0.9)",
+              color: "#FFFFFF",
+              padding: "9px 20px",
+              fontSize: "11px",
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              borderRadius: "2px",
+              textDecoration: "none",
+              transition: "background 0.2s ease",
+            }}
+          >
+            View Project Details
+            <ArrowRight size={13} />
+          </Link>
         </div>
 
         {/* Previous / Next Arrow Controls */}
@@ -383,11 +266,11 @@ export default function OfficeCategorySlideshow() {
           aria-label="Previous slide"
           style={{
             position: "absolute",
-            left: "16px",
+            left: "14px",
             top: "50%",
             transform: "translateY(-50%)",
-            width: "42px",
-            height: "42px",
+            width: "40px",
+            height: "40px",
             borderRadius: "50%",
             background: "rgba(0, 0, 0, 0.55)",
             backdropFilter: "blur(6px)",
@@ -401,7 +284,7 @@ export default function OfficeCategorySlideshow() {
             transition: "all 0.2s ease",
           }}
         >
-          <ChevronLeft size={22} />
+          <ChevronLeft size={20} />
         </button>
 
         <button
@@ -409,11 +292,11 @@ export default function OfficeCategorySlideshow() {
           aria-label="Next slide"
           style={{
             position: "absolute",
-            right: "16px",
+            right: "14px",
             top: "50%",
             transform: "translateY(-50%)",
-            width: "42px",
-            height: "42px",
+            width: "40px",
+            height: "40px",
             borderRadius: "50%",
             background: "rgba(0, 0, 0, 0.55)",
             backdropFilter: "blur(6px)",
@@ -427,7 +310,7 @@ export default function OfficeCategorySlideshow() {
             transition: "all 0.2s ease",
           }}
         >
-          <ChevronRight size={22} />
+          <ChevronRight size={20} />
         </button>
       </div>
 
@@ -451,13 +334,14 @@ export default function OfficeCategorySlideshow() {
         />
       </div>
 
-      {/* ── 5 Thumbnail Strip for Quick Navigation ── */}
+      {/* ── 5 Pure Photo Thumbnails Navigation Strip ── */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(5, 1fr)",
-          background: "#120F0D",
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+          background: "#0E0C0B",
+          padding: "10px 12px",
+          gap: "8px",
         }}
       >
         {OFFICE_SLIDES.map((slide, idx) => {
@@ -467,63 +351,24 @@ export default function OfficeCategorySlideshow() {
               key={slide.id}
               onClick={() => goToSlide(idx)}
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                padding: "14px 16px",
-                background: isActive ? "rgba(184, 151, 98, 0.12)" : "transparent",
-                border: "none",
-                borderRight: idx < OFFICE_SLIDES.length - 1 ? "1px solid rgba(255, 255, 255, 0.06)" : "none",
-                borderBottom: isActive ? "2px solid #D4B87A" : "2px solid transparent",
+                position: "relative",
+                height: "64px",
+                borderRadius: "3px",
+                overflow: "hidden",
+                border: isActive ? "2px solid #D4B87A" : "1px solid rgba(255, 255, 255, 0.12)",
+                opacity: isActive ? 1 : 0.6,
                 cursor: "pointer",
-                textAlign: "left",
+                padding: 0,
+                background: "transparent",
                 transition: "all 0.25s ease",
               }}
+              title={slide.title}
             >
-              <div
-                style={{
-                  width: "48px",
-                  height: "36px",
-                  borderRadius: "2px",
-                  overflow: "hidden",
-                  flexShrink: 0,
-                  border: isActive ? "1px solid #D4B87A" : "1px solid rgba(255, 255, 255, 0.2)",
-                  opacity: isActive ? 1 : 0.65,
-                }}
-              >
-                <img
-                  src={slide.image}
-                  alt={slide.stage}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              </div>
-
-              <div style={{ overflow: "hidden", minWidth: 0 }}>
-                <div
-                  style={{
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: isActive ? "#D4B87A" : "rgba(255, 255, 255, 0.5)",
-                    marginBottom: "2px",
-                  }}
-                >
-                  {slide.stage}
-                </div>
-                <div
-                  style={{
-                    fontSize: "12px",
-                    color: isActive ? "#FAF7F2" : "rgba(255, 255, 255, 0.75)",
-                    fontWeight: isActive ? 600 : 400,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {slide.title.split("—")[0]}
-                </div>
-              </div>
+              <img
+                src={slide.image}
+                alt={slide.title}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
             </button>
           );
         })}
