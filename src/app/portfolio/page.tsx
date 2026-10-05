@@ -3,8 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects } from "@/lib/cms";
-import SalonCategorySlideshow from "@/components/ui/SalonCategorySlideshow";
-import OfficeCategorySlideshow from "@/components/ui/OfficeCategorySlideshow";
+import CategoryCarousel from "@/components/ui/CategoryCarousel";
 
 const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
 
@@ -71,14 +70,9 @@ export default function PortfolioPage() {
             ))}
           </div>
 
-          {/* Salon Slow Slideshow */}
-          {activeFilter.toLowerCase() === "salon" && (
-            <SalonCategorySlideshow />
-          )}
-
-          {/* Office Slow Slideshow */}
-          {activeFilter.toLowerCase() === "office" && (
-            <OfficeCategorySlideshow />
+          {/* Automatic Image Carousel for Office, Salon, Hotel */}
+          {["office", "salon", "hotel"].includes(activeFilter.toLowerCase()) && (
+            <CategoryCarousel category={activeFilter} />
           )}
 
           {/* Grid */}

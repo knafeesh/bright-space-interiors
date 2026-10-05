@@ -19,8 +19,7 @@ import {
 import { TESTIMONIALS, WHY_US_PILLARS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects, useCmsServices } from "@/lib/cms";
 import ProjectVideosSection from "@/components/ui/ProjectVideosSection";
-import SalonCategorySlideshow from "@/components/ui/SalonCategorySlideshow";
-import OfficeCategorySlideshow from "@/components/ui/OfficeCategorySlideshow";
+import CategoryCarousel from "@/components/ui/CategoryCarousel";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
 function AnimatedCounter({
@@ -572,14 +571,9 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Salon Slow Slideshow */}
-          {activeFilter.toLowerCase() === "salon" && (
-            <SalonCategorySlideshow />
-          )}
-
-          {/* Office Slow Slideshow */}
-          {activeFilter.toLowerCase() === "office" && (
-            <OfficeCategorySlideshow />
+          {/* Automatic Image Carousel for Office, Salon, Hotel */}
+          {["office", "salon", "hotel"].includes(activeFilter.toLowerCase()) && (
+            <CategoryCarousel category={activeFilter} />
           )}
 
           <div className="projects-grid">
