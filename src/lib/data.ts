@@ -47,7 +47,7 @@ export const SERVICES = [
     slug: "commercial",
     title: "Commercial Interior",
     subtitle: "Spaces That Work",
-    image: "/images/service-commercial.jpg",
+    image: "/images/real-salon-facade.jpg",
     description:
       "We design commercial spaces that balance brand identity, employee productivity, and client impression — offices, showrooms, restaurants, cafés, hotels.",
     subServices: [
@@ -74,7 +74,7 @@ export const SERVICES = [
     slug: "turnkey",
     title: "Turnkey Projects",
     subtitle: "One Point of Responsibility",
-    image: "/images/service-turnkey.jpg",
+    image: "/images/real-salon-reception.jpg",
     description:
       "From the first brick to the final furnishing — we manage everything, so you don't have to coordinate with multiple vendors. One contract, one team, zero hassle.",
     subServices: [
@@ -132,7 +132,7 @@ export const SPECIALTY_SERVICES = [
   {
     name: "Modular Kitchens",
     tagline: "Ergonomic & High-End",
-    image: "/images/modular-kitchen.jpg",
+    image: "/images/real-kitchen-saket.jpg",
     description: "Tailor-made acrylic, PU, and veneer finishes with blum soft-close hardware, pull-out larders, and quartz countertops.",
   },
   {
@@ -182,19 +182,134 @@ export const SPECIALTY_SERVICES = [
 export const PROJECTS = [
   {
     id: 1,
+    slug: "the-hair-palace-london",
+    title: "The Hair Palace London — Salon & Academy",
+    category: "Commercial",
+    location: "Delhi NCR",
+    area: "4,500 sq ft",
+    year: "2024",
+    duration: "14 weeks",
+    featured: true,
+    image: "/images/real-salon-facade.jpg",
+    gallery: [
+      "/images/real-salon-facade.jpg",
+      "/images/real-salon-reception.jpg",
+      "/images/real-salon-chesterfield.jpg",
+      "/images/real-salon-pedispa.jpg",
+    ],
+    description:
+      "Turnkey architectural facade design and luxury interior execution for The Hair Palace London. Features a grand two-story glass facade, celebratory floral entrance archways, illuminated brand signage, and multi-tier salon academy stations.",
+    challenge:
+      "Transforming an expansive commercial space into a distinguished European-style luxury academy while ensuring flawless MEP and sound isolation between academy and salon floors.",
+    solution:
+      "Engineered structural facade reinforcement, custom architectural signage, high-efficiency central air handling, and zone-specific dimmable lighting throughout.",
+    clientQuote:
+      "Bright Space Interiors delivered our flagship luxury salon and academy with international standards. The finished execution is stunning.",
+    clientName: "The Hair Palace London Management",
+    materials: ["Double-Glazed Facade", "Illuminated 3D Signage", "Travertine Marble", "Acoustic Drywall"],
+    bgGradient: "linear-gradient(135deg, #1C1C1C 0%, #2A2521 100%)",
+  },
+  {
+    id: 2,
+    slug: "hair-palace-salon-lounge",
+    title: "L'Oréal & Kérastase Retail Lounge",
+    category: "Commercial",
+    location: "Delhi NCR",
+    area: "2,200 sq ft",
+    year: "2024",
+    duration: "10 weeks",
+    featured: true,
+    image: "/images/real-salon-reception.jpg",
+    gallery: [
+      "/images/real-salon-reception.jpg",
+      "/images/real-salon-chesterfield.jpg",
+      "/images/real-salon-facade.jpg",
+      "/images/real-salon-pedispa.jpg",
+    ],
+    description:
+      "Luxury retail and client reception lounge featuring custom L'Oréal Professionnel Paris and Kérastase Paris branded display shelving, back-lit translucent marble reception desk, statement yellow velvet armchairs, and acoustic ceiling.",
+    challenge:
+      "Balancing high-density retail merchandise display with welcoming, uncluttered five-star hospitality aesthetics.",
+    solution:
+      "Concealed LED strip illumination behind frosted glass shelves, custom marble counter with inset halo lighting, and rich oak acoustic wall cladding.",
+    clientQuote:
+      "Product sales and client dwell time doubled immediately. The lighting and marble craftsmanship are world-class.",
+    clientName: "Salon Director",
+    materials: ["Italian Statuario Marble", "Black Powder-Coated Steel", "Back-Lit Acrylic", "High-CRI LED"],
+    bgGradient: "linear-gradient(135deg, #2E2418 0%, #3D3025 100%)",
+  },
+  {
+    id: 3,
+    slug: "hair-palace-vip-pedispa",
+    title: "Executive Waiting Suite & Pedispa",
+    category: "Commercial",
+    location: "Delhi NCR",
+    area: "1,800 sq ft",
+    year: "2024",
+    duration: "8 weeks",
+    featured: true,
+    image: "/images/real-salon-chesterfield.jpg",
+    gallery: [
+      "/images/real-salon-chesterfield.jpg",
+      "/images/real-salon-pedispa.jpg",
+      "/images/real-salon-reception.jpg",
+      "/images/real-salon-facade.jpg",
+    ],
+    description:
+      "Distinguished client waiting lounge and dedicated pedicure wellness zone featuring a deep-buttoned burgundy leather Chesterfield sofa, Persian rug, classical gold-leaf mirror, and custom brick-and-timber pedicure stations.",
+    challenge:
+      "Harmonizing heritage warmth with modern clinical hygiene for premium spa treatments.",
+    solution:
+      "Exposed rustic brickwork, sealed solid timber planking, individual plumbed hydrotherapy foot basins, and custom leather seating.",
+    clientQuote:
+      "Our clients love taking photos in this lounge. It feels like an exclusive private club.",
+    clientName: "VIP Clients",
+    materials: ["Tufted Genuine Leather", "Natural Exposed Brick", "Bleached Pine Planks", "Hand-Knotted Carpet"],
+    bgGradient: "linear-gradient(135deg, #24201A 0%, #2E261E 100%)",
+  },
+  {
+    id: 4,
+    slug: "bespoke-turnkey-modular-kitchen",
+    title: "Bespoke Modern Modular Kitchen",
+    category: "Turnkey",
+    location: "Saket, South Delhi",
+    area: "1,200 sq ft",
+    year: "2024",
+    duration: "6 weeks",
+    featured: true,
+    image: "/images/real-kitchen-saket.jpg",
+    gallery: [
+      "/images/real-kitchen-saket.jpg",
+      "/images/real-salon-reception.jpg",
+      "/images/real-salon-chesterfield.jpg",
+    ],
+    description:
+      "Modern turnkey modular kitchen delivered with dual-tone anthracite and ivory acrylic cabinets, seamless quartz countertop, marble splashback, high-efficiency chimney, and architectural timber partition screen.",
+    challenge:
+      "Creating maximum storage and prep counter surface in an open-concept flat while providing visual privacy from the living foyer.",
+    solution:
+      "Full-height vertical cabinetry with soft-close Blum hardware, seamless quartz counter with integrated under-mount sink, and vertical wood baffle divider.",
+    clientQuote:
+      "From 3D design to site handover, Bright Space managed every detail cleanly. The kitchen finish is immaculate.",
+    clientName: "South Delhi Resident",
+    materials: ["Scratch-Resistant Acrylic", "Solid Wood Battens", "Calacatta Quartz", "Tandem Soft-Close"],
+    bgGradient: "linear-gradient(135deg, #1C2226 0%, #26221C 100%)",
+  },
+  {
+    id: 5,
     slug: "park-view-city-residence",
-    title: "Park View City Residence",
+    title: "Park View City Luxury Residence",
     category: "Residential",
     location: "Sector 48, Gurugram",
     area: "1,300 sq ft",
     year: "2024",
     duration: "10 weeks",
     featured: true,
-    image: "/images/project-serene-villa.jpg",
+    image: "/images/real-salon-chesterfield.jpg",
     gallery: [
-      "/images/project-serene-villa.jpg",
-      "/images/gallery-detail-1.jpg",
-      "/images/gallery-detail-2.jpg",
+      "/images/real-salon-chesterfield.jpg",
+      "/images/real-kitchen-saket.jpg",
+      "/images/real-salon-reception.jpg",
     ],
     description:
       "A complete bespoke home interior featuring subtle fluted panels, warm ambient lighting, handcrafted cabinetry, and curated marble textures.",
@@ -209,48 +324,20 @@ export const PROJECTS = [
     bgGradient: "linear-gradient(135deg, #2C2420 0%, #3D3025 100%)",
   },
   {
-    id: 2,
-    slug: "look-salon-gurugram",
-    title: "Look Salon & Wellness",
-    category: "Commercial",
-    location: "New Colony, Old Gurugram",
-    area: "4,000 sq ft",
-    year: "2024",
-    duration: "14 weeks",
-    featured: true,
-    image: "/images/project-salon.jpg",
-    gallery: [
-      "/images/project-salon.jpg",
-      "/images/gallery-detail-1.jpg",
-      "/images/gallery-detail-3.jpg",
-    ],
-    description:
-      "A flagship luxury salon handed over in August 2024, featuring champagne brass vanity arches, travertine counters, and acoustic treatment.",
-    challenge:
-      "Creating seamless client flow between high-activity hair styling stations and tranquil private spa therapy suites within a 4,000 sq ft floor plate.",
-    solution:
-      "Custom recessed styling mirrors, zone-controlled mood lighting, and concealed MEP engineering for effortless salon operations.",
-    clientQuote:
-      "Handed over right on schedule in August 2024. Our salon footfall and client compliments have exceeded all expectations.",
-    clientName: "Look Salon Management",
-    materials: ["Travertine Stone", "Champagne Brass", "Custom Curved Glass", "Bouclé Upholstery"],
-    bgGradient: "linear-gradient(135deg, #2E2418 0%, #3D3025 100%)",
-  },
-  {
-    id: 3,
+    id: 6,
     slug: "dwarka-luxury-home",
-    title: "Dwarka Modern Residence",
+    title: "Dwarka Modern Living & Modular",
     category: "Residential",
     location: "Sector 23, Dwarka, Delhi",
     area: "900 sq ft",
     year: "2024",
     duration: "8 weeks",
     featured: true,
-    image: "/images/project-city-penthouse.jpg",
+    image: "/images/real-kitchen-saket.jpg",
     gallery: [
-      "/images/project-city-penthouse.jpg",
-      "/images/gallery-detail-2.jpg",
-      "/images/gallery-detail-3.jpg",
+      "/images/real-kitchen-saket.jpg",
+      "/images/real-salon-reception.jpg",
+      "/images/real-salon-facade.jpg",
     ],
     description:
       "Optimized compact luxury apartment featuring custom space-saving joinery, recessed coves, and premium textured wall coatings.",
@@ -265,20 +352,20 @@ export const PROJECTS = [
     bgGradient: "linear-gradient(135deg, #1C2620 0%, #253020 100%)",
   },
   {
-    id: 4,
+    id: 7,
     slug: "v-deliver-commercial-kitchen",
-    title: "V-Deliver Commercial Kitchen",
+    title: "V-Deliver Commercial Culinary Facility",
     category: "Commercial",
     location: "Sushant Lok Phase 1, Gurugram",
     area: "2,500 sq ft",
     year: "2023",
     duration: "9 weeks",
     featured: true,
-    image: "/images/project-atelier-office.jpg",
+    image: "/images/real-kitchen-saket.jpg",
     gallery: [
-      "/images/project-atelier-office.jpg",
-      "/images/gallery-detail-1.jpg",
-      "/images/service-commercial.jpg",
+      "/images/real-kitchen-saket.jpg",
+      "/images/real-salon-facade.jpg",
+      "/images/real-salon-pedispa.jpg",
     ],
     description:
       "State-of-the-art commercial culinary facility at Shri Ram Complex, designed for high-efficiency workflow, hygiene, and durability.",
@@ -293,48 +380,20 @@ export const PROJECTS = [
     bgGradient: "linear-gradient(135deg, #1C2030 0%, #202535 100%)",
   },
   {
-    id: 5,
-    slug: "palam-vihar-residence",
-    title: "Palam Vihar Residence",
-    category: "Residential",
-    location: "Palam Vihar, Delhi",
-    area: "900 sq ft",
-    year: "2023",
-    duration: "7 weeks",
-    featured: true,
-    image: "/images/project-waterfront-home.jpg",
-    gallery: [
-      "/images/project-waterfront-home.jpg",
-      "/images/gallery-detail-3.jpg",
-      "/images/service-residential.jpg",
-    ],
-    description:
-      "A warm contemporary sanctuary with light oak joinery, concealed warm lighting, and a serene minimalist palette.",
-    challenge:
-      "Creating seamless flow and cozy intimate zones within a compact urban layout.",
-    solution:
-      "Concealed architectural lighting, earth-toned textured plaster, and low-slung custom seating.",
-    clientQuote:
-      "A peaceful oasis where every detail was executed with total honesty and care.",
-    clientName: "Mr. Das",
-    materials: ["Bleached Ash", "Belgian Linen", "Weathered Brass", "Micro-cement"],
-    bgGradient: "linear-gradient(135deg, #2C1E24 0%, #35242C 100%)",
-  },
-  {
-    id: 6,
+    id: 8,
     slug: "agarwal-residence-ranchi",
-    title: "Agarwal Family Residence",
+    title: "Agarwal Family Turnkey Residence",
     category: "Residential",
     location: "Ranchi",
     area: "1,350 sq ft",
     year: "2024",
     duration: "11 weeks",
     featured: true,
-    image: "/images/project-showroom.jpg",
+    image: "/images/real-salon-chesterfield.jpg",
     gallery: [
-      "/images/project-showroom.jpg",
-      "/images/gallery-detail-1.jpg",
-      "/images/gallery-detail-2.jpg",
+      "/images/real-salon-chesterfield.jpg",
+      "/images/real-kitchen-saket.jpg",
+      "/images/real-salon-reception.jpg",
     ],
     description:
       "Turnkey home interior blending classical warmth with modern European minimalism for an expansive family flat.",
@@ -347,62 +406,6 @@ export const PROJECTS = [
     clientName: "Mr. Agarwal",
     materials: ["Teak Wood", "Hand-troweled Plaster", "Vintage Brass", "Italian Marble"],
     bgGradient: "linear-gradient(135deg, #24201A 0%, #2E261E 100%)",
-  },
-  {
-    id: 7,
-    slug: "geetanjli-studio",
-    title: "Geetanjli Studio",
-    category: "Commercial",
-    location: "Gurugram & Delhi",
-    area: "1,800 sq ft",
-    year: "2024",
-    duration: "8 weeks",
-    featured: true,
-    image: "/images/project-hotel.jpg",
-    gallery: [
-      "/images/project-hotel.jpg",
-      "/images/gallery-detail-3.jpg",
-      "/images/gallery-detail-2.jpg",
-    ],
-    description:
-      "Bespoke commercial salon and studio interior with custom back-lit mirrors, styling stations, and welcoming hospitality lounge.",
-    challenge:
-      "High-traffic commercial specifications with premium luxury visual impact.",
-    solution:
-      "Commercial-grade durable vinyl finishes, bespoke curved brass partitions, and shadow-free high CRI lighting.",
-    clientQuote:
-      "Bright Space elevated our studio brand into a true luxury experience.",
-    clientName: "Studio Management",
-    materials: ["Champagne Brass", "High-CRI Lighting", "Curved Glass", "Terrazzo"],
-    bgGradient: "linear-gradient(135deg, #1A2030 0%, #202B40 100%)",
-  },
-  {
-    id: 8,
-    slug: "saket-modular-kitchen-turnkey",
-    title: "Saket Turnkey & Modular Residence",
-    category: "Turnkey",
-    location: "Saket, South Delhi",
-    area: "2,200 sq ft",
-    year: "2024",
-    duration: "12 weeks",
-    featured: true,
-    image: "/images/project-turnkey.jpg",
-    gallery: [
-      "/images/project-turnkey.jpg",
-      "/images/gallery-detail-2.jpg",
-      "/images/gallery-detail-1.jpg",
-    ],
-    description:
-      "Complete turnkey execution featuring German-hardware modular kitchen, custom quartz counters, and smart automated illumination.",
-    challenge:
-      "Civil restructuring and rewiring for modern appliances and air-handling.",
-    solution:
-      "Single-point turnkey accountability with turnkey civil, MEP, and modular carpentry.",
-    clientQuote:
-      "Walking into a completed, immaculate home with zero coordination headaches was worth every rupee.",
-    clientName: "South Delhi Resident",
-    materials: ["Quartz Countertops", "Soft-Close German Hardware", "Acoustic Ceilings", "PU Cabinetry"],
-    bgGradient: "linear-gradient(135deg, #1C2226 0%, #26221C 100%)",
   },
 ];
 
