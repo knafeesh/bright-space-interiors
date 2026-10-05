@@ -241,9 +241,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <div className="admin-topbar__notification-dot" />
             </div>
             <div className="admin-topbar__user">
-              <div className="admin-topbar__avatar">MM</div>
+              <div className="admin-topbar__avatar">AK</div>
               <div>
-                <div className="admin-topbar__user-name">Mohd Mushir</div>
+                <div className="admin-topbar__user-name">Azam Khan</div>
                 <div className="admin-topbar__user-role">Super Admin</div>
               </div>
               <ChevronDown size={14} style={{ color: "var(--text-muted)" }} />

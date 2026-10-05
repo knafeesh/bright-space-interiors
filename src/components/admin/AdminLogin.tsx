@@ -50,7 +50,7 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
         localStorage.setItem("bs_admin_authenticated", "true");
         localStorage.setItem(
           "bs_admin_user",
-          JSON.stringify({ username: "mohdmushir12", name: "Mohd Mushir", role: "Super Admin" })
+          JSON.stringify({ username: "mohdmushir12", name: "Azam Khan", role: "Super Admin" })
         );
         sessionStorage.setItem("bs_admin_authenticated", "true");
         onLoginSuccess();

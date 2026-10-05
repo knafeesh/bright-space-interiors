@@ -150,7 +150,7 @@ export default function AdminDashboard() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "28px", flexWrap: "wrap", gap: "16px" }}>
         <div>
           <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "32px", fontWeight: 400, color: "var(--charcoal)" }}>
-            Good Morning, MOHD MUSHIR 👋
+            WELCOME AZAM KHAN 👋
           </h1>
           <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
             Here&apos;s what&apos;s happening with Bright Space today.

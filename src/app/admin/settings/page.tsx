@@ -23,7 +23,7 @@ export default function SettingsAdminPage() {
   const [whatsapp, setWhatsapp] = useState(WHATSAPP_NUMBER);
   const [email, setEmail] = useState(EMAIL);
   const [address, setAddress] = useState(ADDRESS);
-  const [adminName, setAdminName] = useState("Mohd Mushir");
+  const [adminName, setAdminName] = useState("Azam Khan");
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [whatsappAlerts, setWhatsappAlerts] = useState(true);
   const [saved, setSaved] = useState(false);

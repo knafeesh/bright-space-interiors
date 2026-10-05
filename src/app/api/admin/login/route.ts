@@ -12,7 +12,7 @@ export async function POST(request: Request) {
         success: true,
         user: {
           username: "mohdmushir12",
-          name: "Mohd Mushir",
+          name: "Azam Khan",
           role: "Super Admin",
         },
       });
