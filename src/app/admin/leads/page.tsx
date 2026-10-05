@@ -119,7 +119,7 @@ export default function LeadsPage() {
       phone: formPhone.trim(),
       email: formEmail.trim(),
       project: formProject,
-      location: formLocation.trim() || "Mumbai",
+      location: formLocation.trim() || "Delhi NCR",
       budget: formBudget,
       source: formSource,
       status: formStatus,
@@ -426,7 +426,7 @@ export default function LeadsPage() {
                   <label style={{ display: "block", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>Location / Area</label>
                   <input
                     type="text"
-                    placeholder="e.g. Bandra West, Mumbai"
+                    placeholder="e.g. Gurugram, Delhi NCR"
                     value={formLocation}
                     onChange={(e) => setFormLocation(e.target.value)}
                     style={{ width: "100%", padding: "10px 14px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "14px" }}
@@ -617,7 +617,7 @@ export default function LeadsPage() {
               </div>
               <div style={{ background: "#F9FAFB", padding: "12px", borderRadius: "6px" }}>
                 <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase" }}>Location</div>
-                <div style={{ fontSize: "13px", fontWeight: 600, marginTop: "2px" }}>{selectedLead.location || "Mumbai"}</div>
+                <div style={{ fontSize: "13px", fontWeight: 600, marginTop: "2px" }}>{selectedLead.location || "Delhi NCR"}</div>
               </div>
               <div style={{ background: "#F9FAFB", padding: "12px", borderRadius: "6px" }}>
                 <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase" }}>Budget</div>

@@ -18,6 +18,9 @@ import {
   Menu,
   X,
   ExternalLink,
+  FolderKanban,
+  Receipt,
+  Images,
 } from "lucide-react";
 
 interface NavLinkItem {
@@ -38,12 +41,15 @@ const NAV_GROUPS: NavGroupItem[] = [
     links: [
       { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
       { href: "/admin/leads", label: "Lead Management", icon: Users },
+      { href: "/admin/quotations", label: "Quotations & BOQ", icon: Receipt },
+      { href: "/admin/projects", label: "Project Management", icon: FolderKanban },
     ],
   },
   {
     label: "Content",
     links: [
       { href: "/admin/portfolio", label: "Portfolio Manager", icon: Image },
+      { href: "/admin/media", label: "Media Library", icon: Images },
       { href: "/admin/services", label: "Services Manager", icon: FileText },
       { href: "/admin/testimonials", label: "Testimonials", icon: Star },
     ],
@@ -60,7 +66,10 @@ const NAV_GROUPS: NavGroupItem[] = [
 const PAGE_TITLES: Record<string, string> = {
   "/admin": "Dashboard Overview",
   "/admin/leads": "Lead Management",
+  "/admin/quotations": "Quotation & BOQ Builder",
+  "/admin/projects": "Project Management",
   "/admin/portfolio": "Portfolio Manager",
+  "/admin/media": "Media Library",
   "/admin/services": "Services Manager",
   "/admin/testimonials": "Client Testimonials",
   "/admin/reports": "Analytics & Reports",

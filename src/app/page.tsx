@@ -424,7 +424,7 @@ export default function HomePage() {
                 <p>
                   Founded on the belief that great design transforms lives,
                   Bright Space Interiors has delivered over 200 projects across
-                  Mumbai, Pune, Bangalore, and beyond. Our approach blends
+                  Delhi NCR, Gurugram, Delhi, and beyond. Our approach blends
                   aesthetic vision with practical precision.
                 </p>
               </div>

@@ -3,9 +3,13 @@
 // ═══════════════════════════════════════════
 
 export const WHATSAPP_NUMBER = "918168051355";
-export const PHONE_NUMBER = "+91 81680 51355";
-export const EMAIL = "hello@brightspaceinteriors.com";
-export const ADDRESS = "123, Design Avenue, Sector 18, Mumbai, Maharashtra — 400001";
+export const PHONE_NUMBER = "+91 79823 64617";
+export const ALT_PHONE_NUMBER = "+91 81680 51355";
+export const EMAIL = "brightspaceinterior@gmail.com";
+export const ADDRESS = "J4/56J, Khirki Extension, Malviya Nagar, New Delhi — 110017";
+export const TAGLINE = "Spaces designed to feel like you.";
+export const WHATSAPP_MESSAGE =
+  "Hello The Bright Space Interiors, I saw your work and I’m interested in your interior design services. I would like to discuss my project and get a consultation.";
 
 export const SERVICES = [
   {
@@ -18,24 +22,24 @@ export const SERVICES = [
     subServices: [
       "Apartments & Flats",
       "Villas & Bungalows",
-      "Bedrooms",
-      "Living Rooms",
-      "Kitchens",
-      "Wardrobes & Storage",
+      "Bedrooms & Suites",
+      "Living & Dining Rooms",
+      "Modular Kitchens",
+      "Wardrobes & Walk-in Closets",
     ],
     bgColor: "#2E2826",
     faqs: [
       {
         q: "How long does a residential interior project take?",
-        a: "Timeline depends on scope. A single room takes 3–4 weeks; a full apartment typically takes 8–12 weeks from design approval to handover.",
+        a: "Timeline depends on scope. A single room takes 3–4 weeks; a full apartment typically takes 8–12 weeks from design approval to final handover.",
       },
       {
-        q: "Do you work in my city?",
-        a: "We operate across Mumbai, Pune, and nearby metros. Contact us to confirm availability in your location.",
+        q: "Do you work across Delhi NCR and other cities?",
+        a: "Yes, we are headquartered in New Delhi and actively execute turnkey projects across Delhi, Gurugram, Noida, Faridabad, and Pan-India locations.",
       },
       {
         q: "Can I choose my own materials?",
-        a: "Absolutely. We guide you through curated material options and also accommodate client-supplied materials.",
+        a: "Absolutely. We guide you through curated material options and also accommodate client-supplied materials and custom finishes.",
       },
     ],
   },
@@ -178,181 +182,41 @@ export const SPECIALTY_SERVICES = [
 export const PROJECTS = [
   {
     id: 1,
-    slug: "the-oak-hills-villa",
-    title: "The Oak Hills Villa",
+    slug: "park-view-city-residence",
+    title: "Park View City Residence",
     category: "Residential",
-    location: "Khandala",
-    area: "4,500 sq ft",
+    location: "Sector 48, Gurugram",
+    area: "1,300 sq ft",
     year: "2024",
-    duration: "14 weeks",
+    duration: "10 weeks",
     featured: true,
-    image: "/images/project-oak-hills.jpg",
+    image: "/images/project-serene-villa.jpg",
     gallery: [
-      "/images/project-oak-hills.jpg",
+      "/images/project-serene-villa.jpg",
       "/images/gallery-detail-1.jpg",
       "/images/gallery-detail-2.jpg",
     ],
     description:
-      "A palatial villa reimagined with a warm minimalist palette — ivory stone floors, bespoke joinery, and a curated art collection that frames each room.",
+      "A complete bespoke home interior featuring subtle fluted panels, warm ambient lighting, handcrafted cabinetry, and curated marble textures.",
     challenge:
-      "The client wanted a home that felt both luxurious and deeply personal — a retreat from the city without sacrificing modern amenities.",
+      "Balancing high functionality for everyday family living with the quiet luxury aesthetic requested by the homeowner.",
     solution:
       "We layered warm stone, aged brass fixtures, and handcrafted furniture against generous light-filled spaces. The result is a home that breathes.",
     clientQuote:
-      "Bright Space didn't just design our home — they understood our life and created a space we never want to leave.",
-    clientName: "Arjun & Priya Mehra",
+      "Bright Space didn't just design our home — they understood our lifestyle and delivered on-time perfection.",
+    clientName: "Manish Singh",
     materials: ["Italian Marble", "Teak Wood", "Aged Brass", "Handwoven Textiles"],
     bgGradient: "linear-gradient(135deg, #2C2420 0%, #3D3025 100%)",
   },
   {
     id: 2,
-    slug: "modern-city-penthouse",
-    title: "Modern City Penthouse",
-    category: "Residential",
-    location: "Worli, Mumbai",
-    area: "3,800 sq ft",
-    year: "2024",
-    duration: "12 weeks",
-    featured: true,
-    image: "/images/project-city-penthouse.jpg",
-    gallery: [
-      "/images/project-city-penthouse.jpg",
-      "/images/gallery-detail-2.jpg",
-      "/images/gallery-detail-3.jpg",
-    ],
-    description:
-      "High-rise penthouse lounge boasting panoramic city vistas, architectural recessed coves, and bespoke curved velvet seating.",
-    challenge:
-      "To design an ultra-luxury urban sanctuary that maintains seamless sightlines to the skyline while providing cozy intimate zones.",
-    solution:
-      "Custom low-slung Italian furniture, smoked mirror columns, and zoned acoustic ceiling treatments that maximize light and openness.",
-    clientQuote:
-      "The finish quality and lighting choreography are beyond what we imagined.",
-    clientName: "Vikram & Sunita Singhal",
-    materials: ["Smoked Glass", "Statuario Marble", "Walnut Veneer", "Brushed Gold"],
-    bgGradient: "linear-gradient(135deg, #1C2620 0%, #253020 100%)",
-  },
-  {
-    id: 3,
-    slug: "the-atelier-office",
-    title: "The Atelier Office",
+    slug: "look-salon-gurugram",
+    title: "Look Salon & Wellness",
     category: "Commercial",
-    location: "BKC, Mumbai",
-    area: "5,200 sq ft",
+    location: "New Colony, Old Gurugram",
+    area: "4,000 sq ft",
     year: "2024",
-    duration: "10 weeks",
-    featured: true,
-    image: "/images/project-atelier-office.jpg",
-    gallery: [
-      "/images/project-atelier-office.jpg",
-      "/images/gallery-detail-1.jpg",
-      "/images/service-commercial.jpg",
-    ],
-    description:
-      "An executive headquarters crafted with fluted oak acoustics, minimalist bronze lighting, and private client presentation suites.",
-    challenge:
-      "Balancing corporate professionalism with warm hospitality aesthetics for international executive visitors.",
-    solution:
-      "Rich natural oak timbering, custom travertine boardroom table, and concealed smart automation panels.",
-    clientQuote:
-      "Our clients and partners are consistently wowed by the warmth and prestige of our studio.",
-    clientName: "Kabir Malhotra, MD",
-    materials: ["Fluted Oak", "Travertine Stone", "Architectural Bronze", "Acoustic Wool"],
-    bgGradient: "linear-gradient(135deg, #1C2030 0%, #202535 100%)",
-  },
-  {
-    id: 4,
-    slug: "tranquil-waterfront-home",
-    title: "Tranquil Waterfront Home",
-    category: "Residential",
-    location: "Alibaug",
-    area: "3,600 sq ft",
-    year: "2023",
-    duration: "9 weeks",
-    featured: true,
-    image: "/images/project-waterfront-home.jpg",
-    gallery: [
-      "/images/project-waterfront-home.jpg",
-      "/images/gallery-detail-3.jpg",
-      "/images/service-residential.jpg",
-    ],
-    description:
-      "A serene coastal sanctuary featuring limestone terraces, bleached ash joinery, and an indoor-outdoor transitional layout.",
-    challenge:
-      "Creating an environment resilient to maritime air while retaining soft, understated luxury aesthetics.",
-    solution:
-      "Marine-grade architectural finishes, micro-cement flooring, linen draping, and earth-toned textured walls.",
-    clientQuote:
-      "A peaceful oasis where every sunrise feels like a luxury resort stay.",
-    clientName: "Nisha & Rajesh Patel",
-    materials: ["Micro-cement", "Bleached Ash", "Belgian Linen", "Weathered Brass"],
-    bgGradient: "linear-gradient(135deg, #2C1E24 0%, #35242C 100%)",
-  },
-  {
-    id: 5,
-    slug: "woodcraft-showroom",
-    title: "Woodcraft Showroom",
-    category: "Commercial",
-    location: "Ahmedabad",
-    area: "2,200 sq ft",
-    year: "2023",
-    duration: "7 weeks",
-    featured: true,
-    image: "/images/project-showroom.jpg",
-    gallery: [
-      "/images/project-showroom.jpg",
-      "/images/gallery-detail-1.jpg",
-      "/images/gallery-detail-2.jpg",
-    ],
-    description:
-      "A furniture showroom designed to showcase craftsmanship — warm lighting, natural textures, and vignette displays that tell each product's story.",
-    challenge:
-      "The showroom needed to feel like a home, not a warehouse — every display needed to be shoppable and emotionally engaging.",
-    solution:
-      "Room-within-room vignettes, warm incandescent lighting, and hand-selected artwork create a showroom that invites discovery.",
-    clientQuote:
-      "Sales increased by 40% after the redesign. The space sells itself.",
-    clientName: "Raj Furniture",
-    materials: ["Teak Wood", "Hand-troweled Plaster", "Vintage Brass", "Wool Rugs"],
-    bgGradient: "linear-gradient(135deg, #24201A 0%, #2E261E 100%)",
-  },
-  {
-    id: 6,
-    slug: "azure-hotel-suite",
-    title: "Azure Hotel Suite",
-    category: "Hotel",
-    location: "Goa",
-    area: "680 sq ft",
-    year: "2023",
-    duration: "4 weeks",
-    featured: true,
-    image: "/images/project-hotel.jpg",
-    gallery: [
-      "/images/project-hotel.jpg",
-      "/images/gallery-detail-3.jpg",
-      "/images/gallery-detail-2.jpg",
-    ],
-    description:
-      "A boutique hotel suite where coastal calm meets refined luxury — natural linens, handcrafted pottery, and ocean-blue accents.",
-    challenge:
-      "To bring the feeling of Goa's coast inside without clichés — avoiding nautical kitsch while embracing genuine coastal serenity.",
-    solution:
-      "Bleached woods, handmade indigo textiles, and raw plaster walls create a suite that feels like a curated hideaway, not a tourist trap.",
-    clientQuote:
-      "Guests request this suite specifically. It's our most reviewed room online.",
-    clientName: "Coastal Retreats Hospitality",
-    materials: ["Bleached Teak", "Indigo Linen", "Raw Plaster", "Sea Glass"],
-    bgGradient: "linear-gradient(135deg, #1A2030 0%, #202B40 100%)",
-  },
-  {
-    id: 7,
-    slug: "lumina-luxury-salon",
-    title: "Lumina Luxury Salon",
-    category: "Salon",
-    location: "Mumbai",
-    area: "1,200 sq ft",
-    year: "2024",
-    duration: "6 weeks",
+    duration: "14 weeks",
     featured: true,
     image: "/images/project-salon.jpg",
     gallery: [
@@ -361,26 +225,166 @@ export const PROJECTS = [
       "/images/gallery-detail-3.jpg",
     ],
     description:
-      "An ethereal beauty sanctuary bathed in champagne brass, fluted travertine, and custom back-lit vanity arches.",
+      "A flagship luxury salon handed over in August 2024, featuring champagne brass vanity arches, travertine counters, and acoustic treatment.",
     challenge:
-      "Creating seamless client flow and sound isolation between styling stations and tranquil treatment suites.",
+      "Creating seamless client flow between high-activity hair styling stations and tranquil private spa therapy suites within a 4,000 sq ft floor plate.",
     solution:
-      "Acoustic velvet drapery, zoned ambient dimmer channels, and custom recessed styling stations.",
+      "Custom recessed styling mirrors, zone-controlled mood lighting, and concealed MEP engineering for effortless salon operations.",
     clientQuote:
-      "Clients constantly photograph our salon. It has elevated our brand recognition tremendously.",
-    clientName: "Pooja Singhania",
-    materials: ["Travertine", "Champagne Brass", "Custom Mirrors", "Bouclé"],
+      "Handed over right on schedule in August 2024. Our salon footfall and client compliments have exceeded all expectations.",
+    clientName: "Look Salon Management",
+    materials: ["Travertine Stone", "Champagne Brass", "Custom Curved Glass", "Bouclé Upholstery"],
     bgGradient: "linear-gradient(135deg, #2E2418 0%, #3D3025 100%)",
   },
   {
-    id: 8,
-    slug: "zenith-turnkey-residence",
-    title: "Zenith Turnkey Residence",
-    category: "Turnkey",
-    location: "Pune",
-    area: "4,100 sq ft",
+    id: 3,
+    slug: "dwarka-luxury-home",
+    title: "Dwarka Modern Residence",
+    category: "Residential",
+    location: "Sector 23, Dwarka, Delhi",
+    area: "900 sq ft",
     year: "2024",
-    duration: "16 weeks",
+    duration: "8 weeks",
+    featured: true,
+    image: "/images/project-city-penthouse.jpg",
+    gallery: [
+      "/images/project-city-penthouse.jpg",
+      "/images/gallery-detail-2.jpg",
+      "/images/gallery-detail-3.jpg",
+    ],
+    description:
+      "Optimized compact luxury apartment featuring custom space-saving joinery, recessed coves, and premium textured wall coatings.",
+    challenge:
+      "Maximizing usable living area and natural light within a 900 sq ft footprint without clutter.",
+    solution:
+      "Integrated floor-to-ceiling concealed storage, neutral reflective tones, and an open layout uniting the lounge and dining areas.",
+    clientQuote:
+      "They transformed our 900 sq ft space into feeling like an open luxury suite.",
+    clientName: "Ashok Kumar",
+    materials: ["Statuario Marble", "Smoked Glass", "Walnut Veneer", "Brushed Gold"],
+    bgGradient: "linear-gradient(135deg, #1C2620 0%, #253020 100%)",
+  },
+  {
+    id: 4,
+    slug: "v-deliver-commercial-kitchen",
+    title: "V-Deliver Commercial Kitchen",
+    category: "Commercial",
+    location: "Sushant Lok Phase 1, Gurugram",
+    area: "2,500 sq ft",
+    year: "2023",
+    duration: "9 weeks",
+    featured: true,
+    image: "/images/project-atelier-office.jpg",
+    gallery: [
+      "/images/project-atelier-office.jpg",
+      "/images/gallery-detail-1.jpg",
+      "/images/service-commercial.jpg",
+    ],
+    description:
+      "State-of-the-art commercial culinary facility at Shri Ram Complex, designed for high-efficiency workflow, hygiene, and durability.",
+    challenge:
+      "Demanding heavy MEP, exhaust ventilation, commercial gas pipelines, and anti-skid epoxy civil finishes under tight compliance.",
+    solution:
+      "Industrial grade SS-304 fabrication, seamless epoxy flooring, and zoning between prep, cooking, and dispatch stations.",
+    clientQuote:
+      "The engineering and turnkey execution were flawless. Bright Space delivered an industrial kitchen that runs like clockwork.",
+    clientName: "Shri Ram Complex / V-Deliver",
+    materials: ["SS-304 Stainless Steel", "Industrial Epoxy", "Acoustic Insulation", "Fire-Rated Partitions"],
+    bgGradient: "linear-gradient(135deg, #1C2030 0%, #202535 100%)",
+  },
+  {
+    id: 5,
+    slug: "palam-vihar-residence",
+    title: "Palam Vihar Residence",
+    category: "Residential",
+    location: "Palam Vihar, Delhi",
+    area: "900 sq ft",
+    year: "2023",
+    duration: "7 weeks",
+    featured: true,
+    image: "/images/project-waterfront-home.jpg",
+    gallery: [
+      "/images/project-waterfront-home.jpg",
+      "/images/gallery-detail-3.jpg",
+      "/images/service-residential.jpg",
+    ],
+    description:
+      "A warm contemporary sanctuary with light oak joinery, concealed warm lighting, and a serene minimalist palette.",
+    challenge:
+      "Creating seamless flow and cozy intimate zones within a compact urban layout.",
+    solution:
+      "Concealed architectural lighting, earth-toned textured plaster, and low-slung custom seating.",
+    clientQuote:
+      "A peaceful oasis where every detail was executed with total honesty and care.",
+    clientName: "Mr. Das",
+    materials: ["Bleached Ash", "Belgian Linen", "Weathered Brass", "Micro-cement"],
+    bgGradient: "linear-gradient(135deg, #2C1E24 0%, #35242C 100%)",
+  },
+  {
+    id: 6,
+    slug: "agarwal-residence-ranchi",
+    title: "Agarwal Family Residence",
+    category: "Residential",
+    location: "Ranchi",
+    area: "1,350 sq ft",
+    year: "2024",
+    duration: "11 weeks",
+    featured: true,
+    image: "/images/project-showroom.jpg",
+    gallery: [
+      "/images/project-showroom.jpg",
+      "/images/gallery-detail-1.jpg",
+      "/images/gallery-detail-2.jpg",
+    ],
+    description:
+      "Turnkey home interior blending classical warmth with modern European minimalism for an expansive family flat.",
+    challenge:
+      "Remote project management and procurement with strict timeline constraints.",
+    solution:
+      "End-to-end off-site fabrication, scheduled site installations, and daily supervisory video updates.",
+    clientQuote:
+      "Managing our home from start to finish with such professionalism was truly remarkable.",
+    clientName: "Mr. Agarwal",
+    materials: ["Teak Wood", "Hand-troweled Plaster", "Vintage Brass", "Italian Marble"],
+    bgGradient: "linear-gradient(135deg, #24201A 0%, #2E261E 100%)",
+  },
+  {
+    id: 7,
+    slug: "geetanjli-studio",
+    title: "Geetanjli Studio",
+    category: "Commercial",
+    location: "Gurugram & Delhi",
+    area: "1,800 sq ft",
+    year: "2024",
+    duration: "8 weeks",
+    featured: true,
+    image: "/images/project-hotel.jpg",
+    gallery: [
+      "/images/project-hotel.jpg",
+      "/images/gallery-detail-3.jpg",
+      "/images/gallery-detail-2.jpg",
+    ],
+    description:
+      "Bespoke commercial salon and studio interior with custom back-lit mirrors, styling stations, and welcoming hospitality lounge.",
+    challenge:
+      "High-traffic commercial specifications with premium luxury visual impact.",
+    solution:
+      "Commercial-grade durable vinyl finishes, bespoke curved brass partitions, and shadow-free high CRI lighting.",
+    clientQuote:
+      "Bright Space elevated our studio brand into a true luxury experience.",
+    clientName: "Studio Management",
+    materials: ["Champagne Brass", "High-CRI Lighting", "Curved Glass", "Terrazzo"],
+    bgGradient: "linear-gradient(135deg, #1A2030 0%, #202B40 100%)",
+  },
+  {
+    id: 8,
+    slug: "saket-modular-kitchen-turnkey",
+    title: "Saket Turnkey & Modular Residence",
+    category: "Turnkey",
+    location: "Saket, South Delhi",
+    area: "2,200 sq ft",
+    year: "2024",
+    duration: "12 weeks",
     featured: true,
     image: "/images/project-turnkey.jpg",
     gallery: [
@@ -389,15 +393,15 @@ export const PROJECTS = [
       "/images/gallery-detail-1.jpg",
     ],
     description:
-      "Full turnkey conversion of a raw duplex penthouse into a fully furnished, smart-automated luxury residence.",
+      "Complete turnkey execution featuring German-hardware modular kitchen, custom quartz counters, and smart automated illumination.",
     challenge:
-      "Complete civil demolition, restructuring MEP services, and executing custom imported finishes in 16 weeks.",
+      "Civil restructuring and rewiring for modern appliances and air-handling.",
     solution:
-      "Single-contract coordination with dedicated civil, electrical, carpentry, and styling crews working in parallel phases.",
+      "Single-point turnkey accountability with turnkey civil, MEP, and modular carpentry.",
     clientQuote:
       "Walking into a completed, immaculate home with zero coordination headaches was worth every rupee.",
-    clientName: "Deepak & Sunita Kothari",
-    materials: ["Italian Marble", "Smart Lighting Panels", "Acoustic Ceilings", "PU Cabinetry"],
+    clientName: "South Delhi Resident",
+    materials: ["Quartz Countertops", "Soft-Close German Hardware", "Acoustic Ceilings", "PU Cabinetry"],
     bgGradient: "linear-gradient(135deg, #1C2226 0%, #26221C 100%)",
   },
 ];
@@ -405,27 +409,27 @@ export const PROJECTS = [
 export const TESTIMONIALS = [
   {
     id: 1,
-    name: "Arjun & Priya Mehra",
-    project: "Residential Villa, Mumbai",
+    name: "Manish Singh",
+    project: "Park View City, Gurugram",
     rating: 5,
     quote:
-      "Bright Space didn't just design our home — they understood our life and created a space we never want to leave. The team's attention to detail was extraordinary.",
+      "Bright Space didn't just design our home — they understood our family's needs and created a space we cherish every day. The finish quality and on-time handover were extraordinary.",
   },
   {
     id: 2,
-    name: "Chef Rohan Kapoor",
-    project: "The Leaf Restaurant, Pune",
+    name: "Look Salon Team",
+    project: "4,000 Sq. Ft. Salon, Old Gurugram",
     rating: 5,
     quote:
-      "Our guests always comment on the ambiance first. Bright Space created something truly special — a restaurant that feels like an experience, not just a meal.",
+      "Handed over in August 2024 exactly as promised. Our clients constantly compliment the lighting and ambiance. Bright Space gave our flagship location an unmatched luxury feel.",
   },
   {
     id: 3,
-    name: "Vikram Shah",
-    project: "Horizon Office, Bangalore",
+    name: "Ashok Kumar",
+    project: "Sector 23, Dwarka, Delhi",
     rating: 5,
     quote:
-      "Employee satisfaction went up from the first day. The design communicates our brand values perfectly. Highly recommend Bright Space for any commercial project.",
+      "Their space planning and 3D visualization were incredible. What they showed us in renders was what was delivered on site. Highly recommend Mohd Mushir and his team.",
   },
 ];
 

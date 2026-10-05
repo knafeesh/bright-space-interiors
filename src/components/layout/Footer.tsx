@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MapPin, Phone, Mail } from "lucide-react";
+import { ADDRESS, PHONE_NUMBER, ALT_PHONE_NUMBER, EMAIL } from "@/lib/data";
 
 function InstagramIcon({ size = 15 }: { size?: number }) {
   return (
@@ -121,21 +122,21 @@ export default function Footer() {
           <div className="footer__contact-item">
             <MapPin size={15} className="footer__contact-icon" />
             <div className="footer__contact-text">
-              123, Design Avenue, Sector 18,<br />
-              Mumbai, Maharashtra — 400001
+              {ADDRESS}
             </div>
           </div>
           <div className="footer__contact-item">
             <Phone size={15} className="footer__contact-icon" />
-            <div className="footer__contact-text">
-              <a href="tel:+918168051355">+91 81680 51355</a>
+            <div className="footer__contact-text" style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+              <a href="tel:+917982364617">{PHONE_NUMBER}</a>
+              <a href="tel:+918168051355" style={{ fontSize: "12px", opacity: 0.85 }}>{ALT_PHONE_NUMBER}</a>
             </div>
           </div>
           <div className="footer__contact-item">
             <Mail size={15} className="footer__contact-icon" />
             <div className="footer__contact-text">
-              <a href="mailto:hello@brightspaceinteriors.com">
-                hello@brightspaceinteriors.com
+              <a href={`mailto:${EMAIL}`}>
+                {EMAIL}
               </a>
             </div>
           </div>
@@ -152,8 +153,8 @@ export default function Footer() {
           © {new Date().getFullYear()} Bright Space Interiors. All rights reserved.
         </span>
         <div className="footer__bottom-links">
-          <Link href="/privacy">Privacy Policy</Link>
-          <Link href="/terms">Terms of Service</Link>
+          <Link href="/privacy-policy">Privacy Policy</Link>
+          <Link href="/terms-conditions">Terms of Service</Link>
         </div>
       </div>
     </footer>

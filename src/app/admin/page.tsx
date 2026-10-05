@@ -81,7 +81,7 @@ export default function AdminDashboard() {
       phone: phone.trim(),
       email: email.trim(),
       project,
-      location: location.trim() || "Mumbai",
+      location: location.trim() || "Delhi NCR",
       budget,
       source,
       status: "New",
@@ -374,7 +374,7 @@ export default function AdminDashboard() {
                   <label style={{ display: "block", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>Location</label>
                   <input
                     type="text"
-                    placeholder="e.g. Andheri West, Mumbai"
+                    placeholder="e.g. Gurugram, Delhi NCR"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     style={{ width: "100%", padding: "10px 14px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "14px" }}

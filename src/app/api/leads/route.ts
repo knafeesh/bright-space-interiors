@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       phone: body.phone || "",
       email: body.email || "",
       project: body.project || "General Inquiry",
-      location: body.location || "Mumbai",
+      location: body.location || "Delhi NCR",
       budget: body.budget || "₹10–25 Lakhs",
       source: body.source || "Form",
       status: body.status || "New",

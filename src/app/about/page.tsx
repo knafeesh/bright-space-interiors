@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 
 const MILESTONES = [
   { year: "2012", event: "Studio Founded", desc: "Mohd Mushir founded Bright Space Interiors with a vision for quiet luxury.", side: "left" },
-  { year: "2015", event: "50 Projects Milestone", desc: "Completed 50 residential projects across Mumbai.", side: "right" },
-  { year: "2018", event: "Commercial Launch", desc: "Expanded into commercial design — offices, restaurants, and hospitality.", side: "left" },
-  { year: "2020", event: "Turnkey Division", desc: "Launched our end-to-end turnkey execution service.", side: "right" },
-  { year: "2022", event: "200+ Projects", desc: "Crossed 200 completed projects and expanded to Pune and Bangalore.", side: "left" },
-  { year: "2024", event: "Award & Recognition", desc: "Recognized as one of India's top boutique interior studios.", side: "right" },
+  { year: "2015", event: "50 Projects Milestone", desc: "Completed 50 residential and modular projects across Delhi NCR.", side: "right" },
+  { year: "2018", event: "Commercial Launch", desc: "Expanded into commercial spaces, salons, and culinary facilities.", side: "left" },
+  { year: "2020", event: "Turnkey Division", desc: "Launched our end-to-end turnkey execution and civil works service.", side: "right" },
+  { year: "2022", event: "200+ Projects", desc: "Crossed 200 completed projects delivered across Delhi, Gurugram, and pan-India.", side: "left" },
+  { year: "2024", event: "Award & Recognition", desc: "Recognized as a premier turnkey design-build studio in North India.", side: "right" },
 ];
 
 const ICON_COLORS = ["shield", "users", "gem", "clock", "message"];
@@ -81,7 +81,7 @@ export default function AboutPage() {
                   background: "linear-gradient(to top, rgba(28,20,14,0.85) 0%, transparent 100%)",
                 }}>
                   <div style={{ fontSize: "10px", letterSpacing: "0.35em", color: "rgba(184,151,90,0.9)", textTransform: "uppercase" }}>
-                    Est. 2012 · Mumbai, India
+                    Est. 2012 · New Delhi, India
                   </div>
                 </div>
               </div>

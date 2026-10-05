@@ -1,8 +1,17 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Phone, Mail, MessageCircle, MapPin, Clock, Send, CheckCircle } from "lucide-react";
 import { saveNewLead } from "@/lib/leads";
+import {
+  WHATSAPP_NUMBER,
+  PHONE_NUMBER,
+  ALT_PHONE_NUMBER,
+  EMAIL,
+  ADDRESS,
+  WHATSAPP_MESSAGE,
+} from "@/lib/data";
 
 const PROJECT_TYPES = [
   "Residential — Apartment/Flat",
@@ -28,6 +37,7 @@ const BUDGET_RANGES = [
 ];
 
 export default function ContactPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -72,7 +82,7 @@ export default function ContactPage() {
         phone: form.phone.trim(),
         email: form.email.trim(),
         project: form.projectType,
-        location: form.location.trim() || "Mumbai",
+        location: form.location.trim() || "Delhi NCR",
         budget: form.budget || "₹10–25 Lakhs",
         source: "Form",
         status: "New",
@@ -80,6 +90,7 @@ export default function ContactPage() {
         tags: ["Website Lead"],
         notes: form.message.trim(),
       });
+      router.push(`/thank-you?name=${encodeURIComponent(form.name.trim())}`);
     } catch (err) {
       console.error("Error saving lead:", err);
     }
@@ -132,7 +143,7 @@ export default function ContactPage() {
               </p>
 
               <a
-                href="https://wa.me/918168051355?text=Hello%2C%20I%27m%20interested%20in%20your%20interior%20design%20services.%20I%27d%20like%20to%20discuss%20my%20project."
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-action"
@@ -143,27 +154,27 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="contact-action__label">WhatsApp</div>
-                  <div className="contact-action__value">+91 81680 51355</div>
+                  <div className="contact-action__value">{ALT_PHONE_NUMBER}</div>
                 </div>
               </a>
 
-              <a href="tel:+918168051355" className="contact-action" id="contact-phone-link">
+              <a href={`tel:${PHONE_NUMBER.replace(/\s+/g, "")}`} className="contact-action" id="contact-phone-link">
                 <div className="contact-action__icon">
                   <Phone size={20} />
                 </div>
                 <div>
-                  <div className="contact-action__label">Call Us</div>
-                  <div className="contact-action__value">+91 81680 51355</div>
+                  <div className="contact-action__label">Call Studio</div>
+                  <div className="contact-action__value">{PHONE_NUMBER}</div>
                 </div>
               </a>
 
-              <a href="mailto:hello@brightspaceinteriors.com" className="contact-action" id="contact-email-link">
+              <a href={`mailto:${EMAIL}`} className="contact-action" id="contact-email-link">
                 <div className="contact-action__icon">
                   <Mail size={20} />
                 </div>
                 <div>
                   <div className="contact-action__label">Email</div>
-                  <div className="contact-action__value">hello@brightspaceinteriors.com</div>
+                  <div className="contact-action__value">{EMAIL}</div>
                 </div>
               </a>
 
@@ -172,11 +183,10 @@ export default function ContactPage() {
                   <MapPin size={16} style={{ color: "var(--gold)", flexShrink: 0, marginTop: "2px" }} />
                   <div>
                     <div style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "6px" }}>
-                      Studio Address
+                      Registered & Corporate Office
                     </div>
                     <div style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                      123, Design Avenue, Sector 18,<br />
-                      Mumbai, Maharashtra — 400001
+                      {ADDRESS}
                     </div>
                   </div>
                 </div>
@@ -295,7 +305,7 @@ export default function ContactPage() {
                         name="location"
                         type="text"
                         className="form-input"
-                        placeholder="Mumbai"
+                        placeholder="e.g. South Delhi, Gurugram, Noida"
                         value={form.location}
                         onChange={handleChange}
                       />
@@ -357,7 +367,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Map Placeholder */}
+      {/* Map Section */}
       <section className="map-section" aria-label="Office location map">
         <div
           style={{
@@ -369,21 +379,23 @@ export default function ContactPage() {
             justifyContent: "center",
             flexDirection: "column",
             gap: "16px",
+            padding: "48px 24px",
+            textAlign: "center",
           }}
         >
           <MapPin size={36} style={{ color: "var(--gold)" }} />
-          <div style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "24px", color: "var(--charcoal)" }}>
+          <div style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "28px", color: "var(--charcoal)" }}>
             Find Us on the Map
           </div>
-          <div style={{ fontSize: "13px", color: "var(--text-muted)" }}>
-            123, Design Avenue, Sector 18, Mumbai — 400001
+          <div style={{ fontSize: "14px", color: "var(--text-muted)", maxWidth: "460px" }}>
+            {ADDRESS}
           </div>
           <a
-            href="https://maps.google.com/?q=Mumbai+Maharashtra"
+            href="https://maps.google.com/?q=J4/56J+Khirki+Extension+Malviya+Nagar+New+Delhi+110017"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn--outline"
-            style={{ marginTop: "8px" }}
+            style={{ marginTop: "12px" }}
             id="contact-map-link"
           >
             Open in Google Maps

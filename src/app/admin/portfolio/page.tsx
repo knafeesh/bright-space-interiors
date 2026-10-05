@@ -65,7 +65,7 @@ export default function PortfolioManagerPage() {
       slug: formTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
       title: formTitle.trim(),
       category: formCategory,
-      location: formLocation.trim() || "Mumbai",
+      location: formLocation.trim() || "Delhi NCR",
       area: formArea.trim() || "2,500 sq ft",
       year: new Date().getFullYear().toString(),
       duration: formDuration.trim() || "8 weeks",
@@ -342,7 +342,7 @@ export default function PortfolioManagerPage() {
                   <label style={{ display: "block", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>Location</label>
                   <input
                     type="text"
-                    placeholder="e.g. Bandra, Mumbai"
+                    placeholder="e.g. Gurugram, Delhi NCR"
                     value={formLocation}
                     onChange={(e) => setFormLocation(e.target.value)}
                     style={{ width: "100%", padding: "10px 14px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "14px" }}
