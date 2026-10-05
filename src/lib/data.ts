@@ -475,6 +475,125 @@ export const PROJECTS = [
   },
 ];
 
+// ═══════════════════════════════════════════
+// PROJECT VIDEOS — Real Walkthroughs & On-Site Tours
+// ═══════════════════════════════════════════
+
+export interface ProjectVideo {
+  id: string;
+  title: string;
+  subtitle: string;
+  category: "Commercial" | "Residential" | "Modular Kitchen" | "Salon" | "Turnkey";
+  duration: string;
+  thumbnail: string;
+  youtubeId?: string;
+  videoUrl?: string;
+  description: string;
+  projectSlug?: string;
+  views?: string;
+  tag?: string;
+}
+
+export const PROJECT_VIDEOS: ProjectVideo[] = [
+  {
+    id: "vid-1",
+    title: "The Hair Palace London — Flagship Walkthrough",
+    subtitle: "Turnkey Grand Facade & European Salon Suites",
+    category: "Salon",
+    duration: "2:45",
+    thumbnail: "/images/real-salon-facade.jpg",
+    youtubeId: "dQw4w9WgXcQ",
+    description: "An exclusive cinematic walkthrough of our 4,500 sq ft luxury commercial salon & academy in Delhi NCR, featuring double-height glass facades, floral grand archways, and royal chandeliers.",
+    projectSlug: "the-hair-palace-london",
+    views: "3.4K views",
+    tag: "Commercial Tour",
+  },
+  {
+    id: "vid-2",
+    title: "Luxury Fluted Bedroom & Walk-in Wardrobe",
+    subtitle: "Acoustic Wood Panels & Smart Ambient Illumination",
+    category: "Residential",
+    duration: "1:55",
+    thumbnail: "/images/real-bedroom-fluted.jpg",
+    description: "Step inside a tranquil master suite designed with acoustic vertical wood fluting, floating bed frame, concealed headboard LED channels, and bespoke glass sliding wardrobes.",
+    projectSlug: "park-view-city-residence",
+    views: "4.8K views",
+    tag: "Master Bedroom",
+  },
+  {
+    id: "vid-3",
+    title: "Saket Dual-Tone Modular Kitchen In Action",
+    subtitle: "Ergonomic Layout, Blum Hardware & Quartz Counters",
+    category: "Modular Kitchen",
+    duration: "2:10",
+    thumbnail: "/images/real-kitchen-saket.jpg",
+    description: "A functional site walkthrough highlighting anti-scratch matte acrylic cabinets, tandem pull-out pantries, soft-close hardware, and high-efficiency concealed ventilation.",
+    projectSlug: "bespoke-turnkey-modular-kitchen",
+    views: "5.2K views",
+    tag: "Modular Kitchen",
+  },
+  {
+    id: "vid-4",
+    title: "L'Oréal & Kérastase VIP Retail & Chesterfield Lounge",
+    subtitle: "Statuario Marble Desk & Tufted Burgundy Leather",
+    category: "Salon",
+    duration: "1:40",
+    thumbnail: "/images/real-salon-reception.jpg",
+    description: "Experience the five-star hospitality atmosphere crafted with backlit Italian marble reception counters, luxury display vitrines, and a classic tufted Chesterfield waiting lounge.",
+    projectSlug: "hair-palace-salon-lounge",
+    views: "2.9K views",
+    tag: "Retail Lounge",
+  },
+  {
+    id: "vid-5",
+    title: "Executive Waiting Suite & Dedicated Pedispa",
+    subtitle: "Rustic Exposed Brick & Plumbed Foot Basins",
+    category: "Commercial",
+    duration: "1:30",
+    thumbnail: "/images/real-salon-chesterfield.jpg",
+    description: "A detailed look at balancing exposed warm brick masonry, bleached timber flooring, and private plumbed hydrotherapy pedicure stations for ultimate client pampering.",
+    projectSlug: "hair-palace-vip-pedispa",
+    views: "2.1K views",
+    tag: "Wellness Spa",
+  },
+  {
+    id: "vid-6",
+    title: "Royal Styling Stations & Artisanal Pine Suites",
+    subtitle: "Gilded Full-Height Mirrors & Private Rooms",
+    category: "Salon",
+    duration: "2:05",
+    thumbnail: "/images/real-salon-styling.jpg",
+    description: "Walk through arched gold-leaf framing, checkerboard marble floors, and private treatment suites featuring artisanal pine sliding barn doors.",
+    projectSlug: "hair-palace-royal-styling",
+    views: "3.7K views",
+    tag: "Styling Stations",
+  },
+  {
+    id: "vid-7",
+    title: "City Penthouse Living Room & Panoramic Terrace",
+    subtitle: "Double-Height Ceilings & Large-Format Slabs",
+    category: "Residential",
+    duration: "3:15",
+    thumbnail: "/images/project-city-penthouse.jpg",
+    description: "Experience modern luxury living with integrated magnetic architectural track lights, custom stone media wall, and panoramic terrace transition.",
+    projectSlug: "park-view-city-residence",
+    views: "6.4K views",
+    tag: "Penthouse Tour",
+  },
+  {
+    id: "vid-8",
+    title: "Contemporary Cherry & Cream Turnkey Kitchen",
+    subtitle: "Turnkey Civil, Plumbing & Cabinetry Handover",
+    category: "Turnkey",
+    duration: "1:45",
+    thumbnail: "/images/real-kitchen-maroon.jpg",
+    description: "Complete before & after transformation of a dated kitchen into a high-gloss cherry and champagne culinary workspace with quartz countertops.",
+    projectSlug: "contemporary-turnkey-kitchen",
+    views: "4.0K views",
+    tag: "Turnkey Kitchen",
+  },
+];
+
 export const TESTIMONIALS = [
   {
     id: 1,
