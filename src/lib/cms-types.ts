@@ -70,6 +70,11 @@ export const INITIAL_MEDIA_ASSETS: MediaAsset[] = [
   { id: "m-16", name: "salon-rawls-mainhall.jpg", url: "/images/salon-rawls-mainhall.jpg", folder: "Projects", size: "204 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Rawls Salon Grand Hall Architectural Mirrors & Stations", dateAdded: "2024-10-06" },
   { id: "m-17", name: "salon-rawls-styling-suites.jpg", url: "/images/salon-rawls-styling-suites.jpg", folder: "Projects", size: "187 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Rawls Salon Ornate Gold Mirrors & Cognac Styling Chairs", dateAdded: "2024-10-06" },
   { id: "m-18", name: "salon-rawls-facade-site.jpg", url: "/images/salon-rawls-facade-site.jpg", folder: "Projects", size: "255 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Rawls Salon Multi-Tier Neoclassical Facade Scaffolding", dateAdded: "2024-10-06" },
+  { id: "m-19", name: "office-gurugram-open-floor.jpg", url: "/images/office-gurugram-open-floor.jpg", folder: "Projects", size: "186 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Gurugram Corporate Office Open Workstation Floor with Red Baffle Lights", dateAdded: "2024-10-06" },
+  { id: "m-20", name: "office-gurugram-workstations-lighting.jpg", url: "/images/office-gurugram-workstations-lighting.jpg", folder: "Projects", size: "122 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Gurugram Office Geometric Suspended LED Profile Lights & Ochre Screens", dateAdded: "2024-10-06" },
+  { id: "m-21", name: "office-gurugram-executive-cabin.jpg", url: "/images/office-gurugram-executive-cabin.jpg", folder: "Projects", size: "113 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Gurugram Office Director's Corner Executive Cabin & Skyline View", dateAdded: "2024-10-06" },
+  { id: "m-22", name: "office-gurugram-conference-room.jpg", url: "/images/office-gurugram-conference-room.jpg", folder: "Projects", size: "167 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Gurugram Corporate Office Boardroom & Video Conferencing Table", dateAdded: "2024-10-06" },
+  { id: "m-23", name: "office-gurugram-modular-desks.jpg", url: "/images/office-gurugram-modular-desks.jpg", folder: "Projects", size: "196 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Gurugram Office Turnkey Modular Desk Assembly & Cable Trays", dateAdded: "2024-10-06" },
 ];
 
 export interface CmsStore {

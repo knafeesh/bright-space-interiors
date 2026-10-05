@@ -183,6 +183,43 @@ export const SPECIALTY_SERVICES = [
 
 export const PROJECTS = [
   {
+    id: 102,
+    slug: "gurugram-corporate-office",
+    title: "Gurugram Corporate Office — Modern Turnkey Workspace",
+    category: "Office",
+    location: "Cyber City, Gurugram",
+    area: "6,500 sq ft",
+    year: "2024",
+    duration: "10 weeks",
+    featured: true,
+    image: "/images/office-gurugram-open-floor.jpg",
+    gallery: [
+      "/images/office-gurugram-open-floor.jpg",
+      "/images/office-gurugram-workstations-lighting.jpg",
+      "/images/office-gurugram-executive-cabin.jpg",
+      "/images/office-gurugram-conference-room.jpg",
+      "/images/office-gurugram-modular-desks.jpg",
+    ],
+    description:
+      "Turnkey commercial workspace fitout and architectural interior execution for a flagship corporate office in Gurugram. Features an expansive open workstation floor with suspended acoustic dome pendants, geometric suspended LED profile lights, frameless glass executive director cabins, 12-seater boardroom, and modular heavy-gauge desk clusters with integrated raceways.",
+    challenge:
+      "Transforming a bare-shell corporate floorplate into a high-performance workspace with acoustic isolation between cabins and workstation bays, comprehensive MEP and server cabling, within a fast-tracked 10-week schedule.",
+    solution:
+      "Constructed sound-dampened acoustic glass partitions, suspended square LED profile luminaires from an exposed dark industrial slab, engineered dual-sided cable trays with modular floor junction boxes, and delivered custom oak veneer executive cabin joinery.",
+    clientQuote:
+      "Bright Space Interiors delivered our Gurugram corporate headquarters with flawless precision. The workstations, lighting design, and boardroom execution exceed our international corporate standards.",
+    clientName: "Gurugram Corporate Management",
+    materials: [
+      "Acoustic Glass Partitions",
+      "Suspended Geometric LED Profiles",
+      "Heavy-Gauge Modular Steel Desks",
+      "Oak Veneer Executive Cabin Joinery",
+      "Acoustic Fabric Screens",
+      "Industrial Baffle Ceilings",
+    ],
+    bgGradient: "linear-gradient(135deg, #161D26 0%, #202A36 100%)",
+  },
+  {
     id: 101,
     slug: "rawls-salon-luxury",
     title: "Rawls Salon — Flagship Turnkey Luxury Salon",
@@ -512,7 +549,7 @@ export interface ProjectVideo {
   id: string;
   title: string;
   subtitle: string;
-  category: "Commercial" | "Residential" | "Modular Kitchen" | "Salon" | "Turnkey";
+  category: "Commercial" | "Residential" | "Modular Kitchen" | "Salon" | "Turnkey" | "Office";
   duration: string;
   thumbnail: string;
   youtubeId?: string;
@@ -524,6 +561,18 @@ export interface ProjectVideo {
 }
 
 export const PROJECT_VIDEOS: ProjectVideo[] = [
+  {
+    id: "vid-0",
+    title: "Gurugram Corporate Office — Workspace Tour",
+    subtitle: "Turnkey Open Desking, Glass Cabins & Acoustic Lighting",
+    category: "Office",
+    duration: "2:30",
+    thumbnail: "/images/office-gurugram-open-floor.jpg",
+    description: "An on-site walkthrough of our 6,500 sq ft turnkey corporate office fitout in Gurugram, showcasing collaborative workstations, executive cabins with skyline views, and suspended geometric LED lighting.",
+    projectSlug: "gurugram-corporate-office",
+    views: "2.1K views",
+    tag: "Corporate Fitout",
+  },
   {
     id: "vid-1",
     title: "The Hair Palace London — Flagship Walkthrough",

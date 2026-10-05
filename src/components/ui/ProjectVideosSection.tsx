@@ -18,7 +18,7 @@ import {
 import { PROJECT_VIDEOS, ProjectVideo, YOUTUBE_URL, WHATSAPP_NUMBER } from "@/lib/data";
 import { useCmsProjects } from "@/lib/cms";
 
-const CATEGORIES = ["All", "Salon", "Residential", "Modular Kitchen", "Commercial", "Turnkey"];
+const CATEGORIES = ["All", "Office", "Salon", "Residential", "Modular Kitchen", "Commercial", "Turnkey"];
 
 function getYouTubeEmbedUrl(input?: string): string | null {
   if (!input) return null;

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects } from "@/lib/cms";
 import SalonCategorySlideshow from "@/components/ui/SalonCategorySlideshow";
+import OfficeCategorySlideshow from "@/components/ui/OfficeCategorySlideshow";
 
 const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
 
@@ -73,6 +74,11 @@ export default function PortfolioPage() {
           {/* Salon Slow Slideshow */}
           {activeFilter.toLowerCase() === "salon" && (
             <SalonCategorySlideshow />
+          )}
+
+          {/* Office Slow Slideshow */}
+          {activeFilter.toLowerCase() === "office" && (
+            <OfficeCategorySlideshow />
           )}
 
           {/* Grid */}
