@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { TESTIMONIALS, WHY_US_PILLARS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects, useCmsServices } from "@/lib/cms";
-import ProjectVideosSection from "@/components/ui/ProjectVideosSection";
 import CategoryCarousel from "@/components/ui/CategoryCarousel";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
@@ -367,9 +366,6 @@ export default function HomePage() {
               </Link>
             ))}
           </div>
-
-          {/* ══════════════ 🎥 OUR PROJECT VIDEOS ══════════════ */}
-          <ProjectVideosSection />
         </div>
       </section>
 
