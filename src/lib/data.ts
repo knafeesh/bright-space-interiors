@@ -4,7 +4,7 @@
 
 export const WHATSAPP_NUMBER = "917982364617";
 export const PHONE_NUMBER = "+91 79823 64617";
-export const ALT_PHONE_NUMBER = "+91 81680 51355";
+export const ALT_PHONE_NUMBER = "+91 95401 84245";
 export const EMAIL = "brightspaceinterior@gmail.com";
 export const ADDRESS = "J4/56J, Khirki Extension, Malviya Nagar, New Delhi — 110017";
 export const TAGLINE = "Spaces designed to feel like you.";

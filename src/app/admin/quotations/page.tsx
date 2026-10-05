@@ -50,7 +50,7 @@ const INITIAL_QUOTES: Quotation[] = [
     id: "q-1",
     quoteNo: "BSI-QT-2024-089",
     clientName: "Look Salon Management",
-    clientPhone: "+91 81680 51355",
+    clientPhone: "+91 95401 84245",
     clientEmail: "ops@looksalon.in",
     projectTitle: "Look Salon Flagship Turnkey Build",
     location: "New Colony, Old Gurugram",

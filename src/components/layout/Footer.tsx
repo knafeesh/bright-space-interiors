@@ -128,8 +128,8 @@ export default function Footer() {
           <div className="footer__contact-item">
             <Phone size={15} className="footer__contact-icon" />
             <div className="footer__contact-text" style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-              <a href="tel:+917982364617">{PHONE_NUMBER}</a>
-              <a href="tel:+918168051355" style={{ fontSize: "12px", opacity: 0.85 }}>{ALT_PHONE_NUMBER}</a>
+              <a href={`tel:${PHONE_NUMBER.replace(/\s+/g, "")}`}>{PHONE_NUMBER}</a>
+              <a href={`tel:${ALT_PHONE_NUMBER.replace(/\s+/g, "")}`} style={{ fontSize: "12px", opacity: 0.85 }}>{ALT_PHONE_NUMBER}</a>
             </div>
           </div>
           <div className="footer__contact-item">
