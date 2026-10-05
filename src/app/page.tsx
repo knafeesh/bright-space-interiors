@@ -16,7 +16,8 @@ import {
   MessageSquare,
   ChevronRight,
 } from "lucide-react";
-import { PROJECTS, TESTIMONIALS, WHY_US_PILLARS, SERVICES, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
+import { TESTIMONIALS, WHY_US_PILLARS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
+import { useCmsProjects, useCmsServices } from "@/lib/cms";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
 function AnimatedCounter({
@@ -129,11 +130,13 @@ const SERVICE_IMAGES: Record<string, string> = {
 export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState("All");
   const sectionRef = useFadeIn();
+  const cmsProjects = useCmsProjects();
+  const cmsServices = useCmsServices();
 
   const filteredProjects =
     activeFilter === "All"
-      ? PROJECTS.filter((p) => p.featured)
-      : PROJECTS.filter((p) => p.category === activeFilter);
+      ? cmsProjects.filter((p) => p.featured)
+      : cmsProjects.filter((p) => p.category.toLowerCase() === activeFilter.toLowerCase());
 
   return (
     <>
@@ -301,7 +304,7 @@ export default function HomePage() {
               gap: "24px",
             }}
           >
-            {PROJECTS.slice(0, 4).map((p) => (
+            {cmsProjects.slice(0, 4).map((p) => (
               <Link
                 key={p.id}
                 href={`/portfolio/${p.slug}`}
@@ -371,7 +374,7 @@ export default function HomePage() {
           {QUICK_SERVICES.map((name, i) => (
             <Link
               key={name}
-              href={i < 4 ? `/services/${SERVICES[i]?.slug || ""}` : "/services"}
+              href={i < 4 ? `/services/${cmsServices[i]?.slug || ""}` : "/services"}
               className="services-quick__item"
               id={`quick-service-${i}`}
             >
@@ -475,7 +478,7 @@ export default function HomePage() {
         </div>
 
         <div className="services-tiles">
-          {SERVICES.map((service) => {
+          {cmsServices.map((service) => {
             const imgSrc = SERVICE_IMAGES[service.slug] || service.image || "/images/service-residential.jpg";
             return (
               <Link

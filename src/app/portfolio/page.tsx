@@ -1,17 +1,19 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { PROJECTS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
+import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
+import { useCmsProjects } from "@/lib/cms";
 
 const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
 
 export default function PortfolioPage() {
+  const projects = useCmsProjects();
   const [activeFilter, setActiveFilter] = useState("All");
 
   const filtered =
     activeFilter === "All"
-      ? PROJECTS
-      : PROJECTS.filter((p) => p.category === activeFilter);
+      ? projects
+      : projects.filter((p) => p.category.toLowerCase() === activeFilter.toLowerCase());
 
   return (
     <>

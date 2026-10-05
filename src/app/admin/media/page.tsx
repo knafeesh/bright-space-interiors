@@ -2,49 +2,46 @@
 import { useState } from "react";
 import {
   Image as ImageIcon,
-  Upload,
   Search,
-  Filter,
   Trash2,
   Copy,
   Check,
   Folder,
   Eye,
-  ExternalLink,
   FileText,
-  Video,
+  Edit2,
+  Plus,
+  X,
 } from "lucide-react";
-
-interface MediaAsset {
-  id: string;
-  name: string;
-  url: string;
-  folder: "Projects" | "Services" | "Team" | "Hero" | "Renders";
-  size: string;
-  dimensions: string;
-  type: "WebP" | "JPEG" | "PNG" | "MP4";
-  altText: string;
-  dateAdded: string;
-}
-
-const INITIAL_MEDIA: MediaAsset[] = [
-  { id: "m-1", name: "project-serene-villa.jpg", url: "/images/project-serene-villa.jpg", folder: "Projects", size: "340 KB", dimensions: "1920 × 1080", type: "JPEG", altText: "Park View City Gurugram Luxury Residence Living Room", dateAdded: "2024-09-10" },
-  { id: "m-2", name: "project-salon.jpg", url: "/images/project-salon.jpg", folder: "Projects", size: "410 KB", dimensions: "1920 × 1280", type: "JPEG", altText: "Look Salon Flagship Turnkey Build Old Gurugram", dateAdded: "2024-08-25" },
-  { id: "m-3", name: "project-city-penthouse.jpg", url: "/images/project-city-penthouse.jpg", folder: "Projects", size: "380 KB", dimensions: "1920 × 1080", type: "JPEG", altText: "Dwarka Sector 23 Delhi Modern Residence", dateAdded: "2024-09-18" },
-  { id: "m-4", name: "project-atelier-office.jpg", url: "/images/project-atelier-office.jpg", folder: "Projects", size: "450 KB", dimensions: "1920 × 1200", type: "JPEG", altText: "V-Deliver Commercial Kitchen Sushant Lok", dateAdded: "2024-07-12" },
-  { id: "m-5", name: "service-residential.jpg", url: "/images/service-residential.jpg", folder: "Services", size: "290 KB", dimensions: "1200 × 800", type: "JPEG", altText: "Residential Interior Design Service Header", dateAdded: "2024-06-01" },
-  { id: "m-6", name: "service-commercial.jpg", url: "/images/service-commercial.jpg", folder: "Services", size: "310 KB", dimensions: "1200 × 800", type: "JPEG", altText: "Commercial & Office Interior Turnkey Service", dateAdded: "2024-06-01" },
-  { id: "m-7", name: "project-turnkey.jpg", url: "/images/project-turnkey.jpg", folder: "Projects", size: "360 KB", dimensions: "1600 × 1000", type: "JPEG", altText: "Turnkey Modular Kitchen Execution Saket South Delhi", dateAdded: "2024-08-14" },
-  { id: "m-8", name: "about-story.jpg", url: "/images/about-story.jpg", folder: "Hero", size: "480 KB", dimensions: "1920 × 1080", type: "JPEG", altText: "The Bright Space Interiors Design Studio", dateAdded: "2024-05-20" },
-  { id: "m-9", name: "hero-luxury-interior.jpg", url: "/images/hero-luxury-interior.jpg", folder: "Hero", size: "520 KB", dimensions: "2560 × 1440", type: "JPEG", altText: "Luxury Living Room Showcase Hero Background", dateAdded: "2024-04-10" },
-];
+import {
+  useCmsMedia,
+  cmsUpdateMedia,
+  cmsDeleteMedia,
+  cmsAddMedia,
+  MediaAsset,
+} from "@/lib/cms";
 
 export default function MediaLibraryPage() {
-  const [media, setMedia] = useState<MediaAsset[]>(INITIAL_MEDIA);
+  const media = useCmsMedia();
   const [selectedFolder, setSelectedFolder] = useState<string>("All");
   const [search, setSearch] = useState("");
   const [activeAsset, setActiveAsset] = useState<MediaAsset | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [toastMsg, setToastMsg] = useState("");
+
+  // Edit Modal State
+  const [editingAsset, setEditingAsset] = useState<MediaAsset | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editAlt, setEditAlt] = useState("");
+  const [editFolder, setEditFolder] = useState<MediaAsset["folder"]>("Projects");
+  const [editUrl, setEditUrl] = useState("");
+
+  // Add Media Modal State
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addName, setAddName] = useState("");
+  const [addUrl, setAddUrl] = useState("");
+  const [addAlt, setAddAlt] = useState("");
+  const [addFolder, setAddFolder] = useState<MediaAsset["folder"]>("Projects");
 
   const filtered = media.filter((m) => {
     const matchesFolder = selectedFolder === "All" || m.folder === selectedFolder;
@@ -54,6 +51,11 @@ export default function MediaLibraryPage() {
     return matchesFolder && matchesSearch;
   });
 
+  const notify = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(""), 3500);
+  };
+
   const handleCopyLink = (url: string, id: string) => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(window.location.origin + url);
@@ -62,34 +64,95 @@ export default function MediaLibraryPage() {
     }
   };
 
-  const handleUploadSimulate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const newAsset: MediaAsset = {
-        id: `m-${Date.now()}`,
-        name: file.name,
-        url: URL.createObjectURL(file),
-        folder: "Projects",
-        size: `${(file.size / 1024).toFixed(0)} KB`,
-        dimensions: "1920 × 1080",
-        type: file.name.endsWith(".png") ? "PNG" : file.name.endsWith(".webp") ? "WebP" : "JPEG",
-        altText: file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
-        dateAdded: new Date().toISOString().split("T")[0],
-      };
-      setMedia([newAsset, ...media]);
-      setActiveAsset(newAsset);
+  const handleOpenEdit = (asset: MediaAsset) => {
+    setEditingAsset(asset);
+    setEditName(asset.name || "");
+    setEditAlt(asset.altText || "");
+    setEditFolder(asset.folder || "Projects");
+    setEditUrl(asset.url || "");
+  };
+
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingAsset) return;
+
+    const updated: MediaAsset = {
+      ...editingAsset,
+      name: editName.trim() || editingAsset.name,
+      altText: editAlt.trim() || editingAsset.altText,
+      folder: editFolder,
+      url: editUrl.trim() || editingAsset.url,
+    };
+
+    cmsUpdateMedia(updated);
+    if (activeAsset?.id === updated.id) setActiveAsset(updated);
+    setEditingAsset(null);
+    notify(`Saved media "${updated.name}" and updated live on website!`);
+  };
+
+  const handleDelete = (asset: MediaAsset) => {
+    if (
+      confirm(
+        `Are you sure you want to delete "${asset.name}"? If this image is used in any portfolio projects or service pages, it will be automatically removed from their galleries on the website.`
+      )
+    ) {
+      cmsDeleteMedia(asset.id);
+      if (activeAsset?.id === asset.id) setActiveAsset(null);
+      notify(`Deleted "${asset.name}" and updated all pages on the website.`);
     }
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm("Delete this media asset?")) {
-      setMedia(media.filter((m) => m.id !== id));
-      if (activeAsset?.id === id) setActiveAsset(null);
-    }
+  const handleAddMedia = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!addUrl.trim()) return;
+
+    const newAsset: MediaAsset = {
+      id: `m-${Date.now()}`,
+      name: addName.trim() || addUrl.split("/").pop() || "image.jpg",
+      url: addUrl.trim(),
+      folder: addFolder,
+      size: "180 KB",
+      dimensions: "1920 × 1080",
+      type: addUrl.endsWith(".png") ? "PNG" : addUrl.endsWith(".webp") ? "WebP" : "JPEG",
+      altText: addAlt.trim() || "The Bright Space Interiors Real Work",
+      dateAdded: new Date().toISOString().split("T")[0],
+    };
+
+    cmsAddMedia(newAsset);
+    setShowAddModal(false);
+    setAddName("");
+    setAddUrl("");
+    setAddAlt("");
+    notify(`Added "${newAsset.name}" to media library and site!`);
   };
 
   return (
     <div style={{ padding: "0", fontFamily: "var(--font-sans, system-ui, sans-serif)" }}>
+      {/* Toast Feedback */}
+      {toastMsg && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            background: "#10B981",
+            color: "#FFF",
+            padding: "12px 20px",
+            borderRadius: "8px",
+            fontWeight: 600,
+            fontSize: "13px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <Check size={16} />
+          {toastMsg}
+        </div>
+      )}
+
       {/* Top Banner & Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "28px" }}>
         {[
@@ -150,169 +213,407 @@ export default function MediaLibraryPage() {
             />
           </div>
 
-          <label
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              padding: "9px 16px",
-              background: "linear-gradient(135deg, #B8975A, #8F723E)",
-              color: "#FFF",
-              borderRadius: "8px",
-              fontWeight: 700,
-              fontSize: "12px",
-              cursor: "pointer",
-            }}
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="admin-btn admin-btn--primary"
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "8px 16px", fontSize: "12px" }}
           >
-            <Upload size={14} /> Upload Media
-            <input type="file" accept="image/*,video/*" onChange={handleUploadSimulate} style={{ display: "none" }} />
-          </label>
+            <Plus size={14} /> Add Media
+          </button>
         </div>
       </div>
 
-      {/* Main Grid & Inspector */}
-      <div style={{ display: "grid", gridTemplateColumns: activeAsset ? "1fr 340px" : "1fr", gap: "20px" }}>
+      {/* Main Grid + Inspector Sidebar */}
+      <div style={{ display: "grid", gridTemplateColumns: activeAsset ? "1fr 340px" : "1fr", gap: "20px", alignItems: "start" }}>
         {/* Media Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "16px" }}>
-          {filtered.map((asset) => {
-            const isSelected = activeAsset?.id === asset.id;
-            return (
-              <div
-                key={asset.id}
-                onClick={() => setActiveAsset(asset)}
-                style={{
-                  background: "#FFF",
-                  borderRadius: "12px",
-                  border: isSelected ? "2px solid #B8975A" : "1px solid #E5E7EB",
-                  overflow: "hidden",
-                  cursor: "pointer",
-                  boxShadow: isSelected ? "0 4px 16px rgba(184,151,90,0.2)" : "0 2px 6px rgba(0,0,0,0.03)",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                <div style={{ height: "140px", background: "#1C1C1C", position: "relative", overflow: "hidden" }}>
-                  <img
-                    src={asset.url}
-                    alt={asset.altText}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                  <span
-                    style={{
-                      position: "absolute",
-                      bottom: "8px",
-                      right: "8px",
-                      background: "rgba(0,0,0,0.65)",
-                      color: "#FFF",
-                      padding: "2px 6px",
-                      borderRadius: "4px",
-                      fontSize: "10px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {asset.type}
-                  </span>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "16px" }}>
+          {filtered.map((asset) => (
+            <div
+              key={asset.id}
+              onClick={() => setActiveAsset(asset)}
+              style={{
+                background: "#FFF",
+                borderRadius: "12px",
+                border: "1px solid",
+                borderColor: activeAsset?.id === asset.id ? "#B8975A" : "#F3F4F6",
+                boxShadow: activeAsset?.id === asset.id ? "0 0 0 2px #B8975A" : "0 2px 6px rgba(0,0,0,0.03)",
+                overflow: "hidden",
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <div style={{ position: "relative", height: "135px", background: "#1F2937", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <img
+                  src={asset.url}
+                  alt={asset.altText}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "8px",
+                    left: "8px",
+                    background: "rgba(0,0,0,0.6)",
+                    color: "#FFF",
+                    fontSize: "10px",
+                    fontWeight: 700,
+                    padding: "2px 6px",
+                    borderRadius: "4px",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {asset.type}
+                </span>
+              </div>
+              <div style={{ padding: "10px 12px" }}>
+                <div style={{ fontSize: "12px", fontWeight: 700, color: "#111827", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={asset.name}>
+                  {asset.name}
                 </div>
-                <div style={{ padding: "10px 12px" }}>
-                  <div style={{ fontSize: "12px", fontWeight: 700, color: "#111827", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {asset.name}
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#9CA3AF", marginTop: "4px" }}>
-                    <span>{asset.folder}</span>
-                    <span>{asset.size}</span>
-                  </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px", fontSize: "11px", color: "#9CA3AF" }}>
+                  <span>{asset.folder}</span>
+                  <span>{asset.size}</span>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
+
+          {filtered.length === 0 && (
+            <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "60px 20px", background: "#FFF", borderRadius: "14px", border: "1px solid #F3F4F6", color: "#9CA3AF" }}>
+              <ImageIcon size={36} style={{ margin: "0 auto 12px", opacity: 0.4 }} />
+              <p style={{ margin: 0, fontSize: "14px" }}>No media assets found in this folder</p>
+            </div>
+          )}
         </div>
 
-        {/* Detail Inspector Drawer */}
+        {/* Selected Asset Details Panel */}
         {activeAsset && (
-          <div style={{ background: "#FFF", borderRadius: "14px", border: "1px solid #E5E7EB", padding: "20px", height: "fit-content", position: "sticky", top: "20px" }}>
+          <div style={{ background: "#FFF", borderRadius: "14px", border: "1px solid #F3F4F6", padding: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)", position: "sticky", top: "20px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#B8975A" }}>
-                Asset Details
-              </span>
+              <h3 style={{ fontSize: "14px", fontWeight: 700, color: "#111827", margin: 0 }}>Asset Details</h3>
               <button
                 onClick={() => setActiveAsset(null)}
-                style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer", fontSize: "18px" }}
+                style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer", fontSize: "16px", padding: 0 }}
               >
-                ×
+                ✕
               </button>
             </div>
 
-            <div style={{ borderRadius: "8px", overflow: "hidden", background: "#1C1C1C", maxHeight: "180px", marginBottom: "16px" }}>
-              <img src={activeAsset.url} alt={activeAsset.altText} style={{ width: "100%", height: "100%", objectFit: "contain", maxHeight: "180px" }} />
+            <div style={{ width: "100%", height: "180px", borderRadius: "8px", overflow: "hidden", background: "#1F2937", marginBottom: "16px" }}>
+              <img
+                src={activeAsset.url}
+                alt={activeAsset.altText}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontSize: "12px" }}>
-              <div>
-                <label style={{ display: "block", color: "#6B7280", fontWeight: 600, marginBottom: "2px" }}>Filename</label>
-                <div style={{ fontWeight: 700, color: "#111827", wordBreak: "break-all" }}>{activeAsset.name}</div>
-              </div>
+            <div style={{ fontSize: "13px", fontWeight: 700, color: "#111827", marginBottom: "4px", wordBreak: "break-all" }}>
+              {activeAsset.name}
+            </div>
+            <div style={{ fontSize: "11px", color: "#9CA3AF", marginBottom: "16px" }}>
+              {activeAsset.altText}
+            </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                <div>
-                  <span style={{ color: "#6B7280" }}>Dimensions:</span>
-                  <div style={{ fontWeight: 600, color: "#111827" }}>{activeAsset.dimensions}</div>
-                </div>
-                <div>
-                  <span style={{ color: "#6B7280" }}>File Size:</span>
-                  <div style={{ fontWeight: 600, color: "#111827" }}>{activeAsset.size}</div>
-                </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "12px", borderTop: "1px solid #F3F4F6", paddingTop: "12px", marginBottom: "16px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#9CA3AF" }}>Folder:</span>
+                <span style={{ fontWeight: 600, color: "#111827" }}>{activeAsset.folder}</span>
               </div>
-
-              <div>
-                <label style={{ display: "block", color: "#6B7280", fontWeight: 600, marginBottom: "4px" }}>Alt Text (SEO)</label>
-                <input
-                  type="text"
-                  value={activeAsset.altText}
-                  onChange={(e) => {
-                    const updated = { ...activeAsset, altText: e.target.value };
-                    setActiveAsset(updated);
-                    setMedia(media.map((m) => (m.id === activeAsset.id ? updated : m)));
-                  }}
-                  style={{ width: "100%", padding: "7px 10px", border: "1px solid #D1D5DB", borderRadius: "6px", fontSize: "12px", boxSizing: "border-box" }}
-                />
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#9CA3AF" }}>File Size:</span>
+                <span style={{ fontWeight: 600, color: "#111827" }}>{activeAsset.size}</span>
               </div>
-
-              <div>
-                <label style={{ display: "block", color: "#6B7280", fontWeight: 600, marginBottom: "4px" }}>Asset URL</label>
-                <div style={{ display: "flex", gap: "6px" }}>
-                  <input
-                    readOnly
-                    value={activeAsset.url}
-                    style={{ flex: 1, padding: "7px 10px", border: "1px solid #D1D5DB", borderRadius: "6px", fontSize: "11px", background: "#F9FAFB" }}
-                  />
-                  <button
-                    onClick={() => handleCopyLink(activeAsset.url, activeAsset.id)}
-                    style={{ padding: "7px 10px", background: "#111827", color: "#FFF", border: "none", borderRadius: "6px", cursor: "pointer", display: "flex", alignItems: "center" }}
-                  >
-                    {copiedId === activeAsset.id ? <Check size={14} style={{ color: "#10B981" }} /> : <Copy size={14} />}
-                  </button>
-                </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#9CA3AF" }}>Dimensions:</span>
+                <span style={{ fontWeight: 600, color: "#111827" }}>{activeAsset.dimensions}</span>
               </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#9CA3AF" }}>Added:</span>
+                <span style={{ fontWeight: 600, color: "#111827" }}>{activeAsset.dateAdded}</span>
+              </div>
+            </div>
 
-              <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
-                <a
-                  href={activeAsset.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ flex: 1, padding: "8px", textAlign: "center", background: "#F3F4F6", borderRadius: "6px", color: "#374151", fontWeight: 600, textDecoration: "none", fontSize: "12px" }}
-                >
-                  Open Original
-                </a>
+            {/* Action Buttons */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <button
+                onClick={() => handleCopyLink(activeAsset.url, activeAsset.id)}
+                style={{
+                  width: "100%",
+                  padding: "9px 12px",
+                  borderRadius: "8px",
+                  border: "1px solid #E5E7EB",
+                  background: "#FFF",
+                  color: "#374151",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                }}
+              >
+                {copiedId === activeAsset.id ? <Check size={14} style={{ color: "#10B981" }} /> : <Copy size={14} />}
+                {copiedId === activeAsset.id ? "URL Copied!" : "Copy Image Link"}
+              </button>
+
+              <div style={{ display: "flex", gap: "8px" }}>
                 <button
-                  onClick={() => handleDelete(activeAsset.id)}
-                  style={{ padding: "8px 12px", background: "#FEE2E2", color: "#DC2626", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "12px" }}
+                  onClick={() => handleOpenEdit(activeAsset)}
+                  style={{
+                    flex: 1,
+                    padding: "9px 12px",
+                    borderRadius: "8px",
+                    border: "1px solid #E5E7EB",
+                    background: "#FFF",
+                    color: "#374151",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                  }}
                 >
-                  <Trash2 size={14} />
+                  <Edit2 size={13} /> Edit
+                </button>
+
+                <button
+                  onClick={() => handleDelete(activeAsset)}
+                  style={{
+                    flex: 1,
+                    padding: "9px 12px",
+                    borderRadius: "8px",
+                    border: "none",
+                    background: "#FEE2E2",
+                    color: "#DC2626",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                  }}
+                >
+                  <Trash2 size={13} /> Delete
                 </button>
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* EDIT ASSET MODAL */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {editingAsset && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.55)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: "20px",
+          }}
+          onClick={() => setEditingAsset(null)}
+        >
+          <div
+            className="admin-table-wrap"
+            style={{ width: "100%", maxWidth: "500px", padding: "28px", margin: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
+              <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "22px", fontWeight: 600, color: "var(--charcoal)", margin: 0 }}>
+                Edit Media Asset
+              </h2>
+              <button onClick={() => setEditingAsset(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  Filename *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  Folder Category
+                </label>
+                <select
+                  value={editFolder}
+                  onChange={(e) => setEditFolder(e.target.value as MediaAsset["folder"])}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                >
+                  <option value="Projects">Projects</option>
+                  <option value="Services">Services</option>
+                  <option value="Hero">Hero & Brand</option>
+                  <option value="Team">Team</option>
+                  <option value="Renders">Renders</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  Image URL *
+                </label>
+                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                  <img
+                    src={editUrl || "/images/hero-luxury.jpg"}
+                    alt="Preview"
+                    style={{ width: "54px", height: "40px", objectFit: "cover", borderRadius: "6px", border: "1px solid #E0E0E0" }}
+                  />
+                  <input
+                    type="text"
+                    required
+                    value={editUrl}
+                    onChange={(e) => setEditUrl(e.target.value)}
+                    style={{ flex: 1, padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  Alt Description / SEO Title
+                </label>
+                <input
+                  type="text"
+                  value={editAlt}
+                  onChange={(e) => setEditAlt(e.target.value)}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                />
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px", borderTop: "1px solid #F0F0F0", paddingTop: "14px" }}>
+                <button type="button" onClick={() => setEditingAsset(null)} className="admin-btn admin-btn--outline">
+                  Cancel
+                </button>
+                <button type="submit" className="admin-btn admin-btn--primary">
+                  Save Changes & Update Website
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* ADD ASSET MODAL */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {showAddModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.55)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: "20px",
+          }}
+          onClick={() => setShowAddModal(false)}
+        >
+          <div
+            className="admin-table-wrap"
+            style={{ width: "100%", maxWidth: "500px", padding: "28px", margin: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
+              <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "22px", fontWeight: 600, color: "var(--charcoal)", margin: 0 }}>
+                Add Media Asset
+              </h2>
+              <button onClick={() => setShowAddModal(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddMedia} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  Image URL / Path *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="/images/real-bedroom-headboard.jpg"
+                  value={addUrl}
+                  onChange={(e) => setAddUrl(e.target.value)}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  Display Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Master Bedroom Headboard"
+                  value={addName}
+                  onChange={(e) => setAddName(e.target.value)}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  Folder Category
+                </label>
+                <select
+                  value={addFolder}
+                  onChange={(e) => setAddFolder(e.target.value as MediaAsset["folder"])}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                >
+                  <option value="Projects">Projects</option>
+                  <option value="Services">Services</option>
+                  <option value="Hero">Hero & Brand</option>
+                  <option value="Team">Team</option>
+                  <option value="Renders">Renders</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                  Alt Description / SEO Title
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Master Bedroom Wood Panelling and Indirect LED"
+                  value={addAlt}
+                  onChange={(e) => setAddAlt(e.target.value)}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                />
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px", borderTop: "1px solid #F0F0F0", paddingTop: "14px" }}>
+                <button type="button" onClick={() => setShowAddModal(false)} className="admin-btn admin-btn--outline">
+                  Cancel
+                </button>
+                <button type="submit" className="admin-btn admin-btn--primary">
+                  Add to Library
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
