@@ -66,6 +66,10 @@ export const INITIAL_MEDIA_ASSETS: MediaAsset[] = [
   { id: "m-12", name: "real-kitchen-profile.jpg", url: "/images/real-kitchen-profile.jpg", folder: "Projects", size: "81 KB", dimensions: "1280 × 960", type: "JPEG", altText: "Under-Cabinet Profile LED & Undermount Sink", dateAdded: "2024-10-05" },
   { id: "m-13", name: "real-kitchen-saket.jpg", url: "/images/real-kitchen-saket.jpg", folder: "Projects", size: "105 KB", dimensions: "1600 × 1200", type: "JPEG", altText: "Saket Turnkey Dual-Tone Modular Kitchen", dateAdded: "2024-10-05" },
   { id: "m-14", name: "hero-luxury.jpg", url: "/images/hero-luxury.jpg", folder: "Hero", size: "380 KB", dimensions: "2560 × 1440", type: "JPEG", altText: "The Bright Space Interiors Hero Showcase", dateAdded: "2024-09-01" },
+  { id: "m-15", name: "salon-rawls-reception.jpg", url: "/images/salon-rawls-reception.jpg", folder: "Projects", size: "193 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Rawls Salon Royal Carpet Reception Desk & Gold Crest", dateAdded: "2024-10-06" },
+  { id: "m-16", name: "salon-rawls-mainhall.jpg", url: "/images/salon-rawls-mainhall.jpg", folder: "Projects", size: "204 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Rawls Salon Grand Hall Architectural Mirrors & Stations", dateAdded: "2024-10-06" },
+  { id: "m-17", name: "salon-rawls-styling-suites.jpg", url: "/images/salon-rawls-styling-suites.jpg", folder: "Projects", size: "187 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Rawls Salon Ornate Gold Mirrors & Cognac Styling Chairs", dateAdded: "2024-10-06" },
+  { id: "m-18", name: "salon-rawls-facade-site.jpg", url: "/images/salon-rawls-facade-site.jpg", folder: "Projects", size: "255 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Rawls Salon Multi-Tier Neoclassical Facade Scaffolding", dateAdded: "2024-10-06" },
 ];
 
 export interface CmsStore {

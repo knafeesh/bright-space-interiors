@@ -19,6 +19,7 @@ import {
 import { TESTIMONIALS, WHY_US_PILLARS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects, useCmsServices } from "@/lib/cms";
 import ProjectVideosSection from "@/components/ui/ProjectVideosSection";
+import SalonCategorySlideshow from "@/components/ui/SalonCategorySlideshow";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
 function AnimatedCounter({
@@ -569,6 +570,11 @@ export default function HomePage() {
               </button>
             ))}
           </div>
+
+          {/* Salon Slow Slideshow */}
+          {activeFilter.toLowerCase() === "salon" && (
+            <SalonCategorySlideshow />
+          )}
 
           <div className="projects-grid">
             {filteredProjects.slice(0, 6).map((project) => (

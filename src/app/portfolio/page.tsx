@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects } from "@/lib/cms";
+import SalonCategorySlideshow from "@/components/ui/SalonCategorySlideshow";
 
 const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
 
@@ -68,6 +69,11 @@ export default function PortfolioPage() {
               </button>
             ))}
           </div>
+
+          {/* Salon Slow Slideshow */}
+          {activeFilter.toLowerCase() === "salon" && (
+            <SalonCategorySlideshow />
+          )}
 
           {/* Grid */}
           <div className="portfolio-grid">

@@ -183,10 +183,39 @@ export const SPECIALTY_SERVICES = [
 
 export const PROJECTS = [
   {
+    id: 101,
+    slug: "rawls-salon-luxury",
+    title: "Rawls Salon — Flagship Turnkey Luxury Salon",
+    category: "Salon",
+    location: "Delhi NCR",
+    area: "5,000 sq ft",
+    year: "2024",
+    duration: "12 weeks",
+    featured: true,
+    image: "/images/salon-rawls-reception.jpg",
+    gallery: [
+      "/images/salon-rawls-reception.jpg",
+      "/images/salon-rawls-mainhall.jpg",
+      "/images/salon-rawls-styling-suites.jpg",
+      "/images/salon-rawls-facade-site.jpg",
+    ],
+    description:
+      "Complete turnkey facade engineering, MEP infrastructure, and opulent European interior execution for Rawls Salon. Features custom gold-leaf arched styling mirrors, geometric marble flooring, illuminated 3D crest branding, and artisanal carpet reception counter.",
+    challenge:
+      "Executing multi-level structural facade modifications alongside bespoke joinery, acoustic privacy treatment suites, and high-efficiency central ventilation on schedule.",
+    solution:
+      "Precision steel facade scaffolding reinforcement, handcrafted gold-leaf styling arches, Italian marble flooring, and customized retail vitrines.",
+    clientQuote:
+      "The craftsmanship from the facade structure to the interior mirrors and reception desk is top-tier.",
+    clientName: "Rawls Salon Management",
+    materials: ["Gold-Leaf Arched Framing", "Illuminated Crest Signage", "Checkerboard Marble", "Custom Carpet Reception Desk", "Double-Glazed Facade"],
+    bgGradient: "linear-gradient(135deg, #1C1917 0%, #2A231E 100%)",
+  },
+  {
     id: 1,
     slug: "the-hair-palace-london",
     title: "The Hair Palace London — Salon & Academy",
-    category: "Commercial",
+    category: "Salon",
     location: "Delhi NCR",
     area: "4,500 sq ft",
     year: "2024",
@@ -216,7 +245,7 @@ export const PROJECTS = [
     id: 2,
     slug: "hair-palace-salon-lounge",
     title: "L'Oréal & Kérastase Retail Lounge",
-    category: "Commercial",
+    category: "Salon",
     location: "Delhi NCR",
     area: "2,200 sq ft",
     year: "2024",
@@ -245,7 +274,7 @@ export const PROJECTS = [
     id: 3,
     slug: "hair-palace-vip-pedispa",
     title: "Executive Waiting Suite & Pedispa",
-    category: "Commercial",
+    category: "Salon",
     location: "Delhi NCR",
     area: "1,800 sq ft",
     year: "2024",
@@ -274,7 +303,7 @@ export const PROJECTS = [
     id: 4,
     slug: "hair-palace-royal-styling",
     title: "Royal Styling Stations & Private Treatment Suites",
-    category: "Commercial",
+    category: "Salon",
     location: "Delhi NCR",
     area: "2,000 sq ft",
     year: "2024",
