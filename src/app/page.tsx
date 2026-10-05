@@ -403,7 +403,7 @@ export default function HomePage() {
                 }}
               >
                 <img
-                  src="/images/modular-kitchen.jpg"
+                  src={cmsProjects[2]?.image || cmsServices[0]?.image || "/images/modular-kitchen.jpg"}
                   alt="Bright Space Interiors Crafted Spaces"
                   style={{
                     width: "100%",
@@ -483,7 +483,7 @@ export default function HomePage() {
 
         <div className="services-tiles">
           {cmsServices.map((service) => {
-            const imgSrc = SERVICE_IMAGES[service.slug] || service.image || "/images/service-residential.jpg";
+            const imgSrc = service.image || SERVICE_IMAGES[service.slug] || "/images/service-residential.jpg";
             return (
               <Link
                 key={service.slug}

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { SERVICES, PROJECTS, WHATSAPP_NUMBER } from "@/lib/data";
+import { useCmsServices, useCmsProjects } from "@/lib/cms";
 import { ArrowRight, Plus } from "lucide-react";
 import { use } from "react";
 
@@ -48,32 +49,31 @@ const HERO_IMAGES: Record<string, string> = {
 
 export default function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const service = SERVICES.find((s) => s.slug === slug);
+  return <ServiceDetailClient slug={slug} />;
+}
+
+function ServiceDetailClient({ slug }: { slug: string }) {
+  const cmsServices = useCmsServices();
+  const cmsProjects = useCmsProjects();
+
+  const service =
+    cmsServices.find((s) => s.slug === slug) || SERVICES.find((s) => s.slug === slug);
 
   if (!service) notFound();
 
-  const relatedProjects = PROJECTS.filter(
+  const relatedProjects = (cmsProjects.length > 0 ? cmsProjects : PROJECTS).filter(
     (p) =>
-      p.category.toLowerCase() === slug ||
-      (slug === "residential" && p.category === "Residential") ||
-      (slug === "commercial" && ["Commercial", "Office", "Salon", "Hotel"].includes(p.category))
+      p.category.toLowerCase() === slug.toLowerCase() ||
+      (slug === "residential" && p.category.toLowerCase() === "residential") ||
+      (slug === "commercial" && ["commercial", "office", "salon", "hotel"].includes(p.category.toLowerCase())) ||
+      (slug === "turnkey" && p.category.toLowerCase() === "turnkey")
   ).slice(0, 3);
 
-  return <ServiceDetailClient service={service} relatedProjects={relatedProjects} />;
-}
-
-function ServiceDetailClient({
-  service,
-  relatedProjects,
-}: {
-  service: (typeof SERVICES)[0];
-  relatedProjects: typeof PROJECTS;
-}) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [activePhoto, setActivePhoto] = useState(0);
 
   const gallery = SERVICE_GALLERIES[service.slug] || [];
-  const heroImg = HERO_IMAGES[service.slug] || service.image || "/images/service-residential.jpg";
+  const heroImg = service.image || HERO_IMAGES[service.slug] || "/images/service-residential.jpg";
 
   return (
     <>

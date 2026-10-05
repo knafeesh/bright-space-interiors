@@ -50,6 +50,15 @@ export function saveCmsStore(store: CmsStore): void {
   }
 }
 
+function isSameImage(url1?: string, url2?: string): boolean {
+  if (!url1 || !url2) return false;
+  const clean = (u: string) =>
+    u.trim().replace(/^https?:\/\/[^\/]+/, "").replace(/^\/+/, "").toLowerCase();
+  const c1 = clean(url1);
+  const c2 = clean(url2);
+  return c1 === c2 || c1.endsWith(c2) || c2.endsWith(c1);
+}
+
 // ─── Reactive Hooks ─────────────────────────────────────────────────────────
 
 export function useCmsStore() {
@@ -60,8 +69,8 @@ export function useCmsStore() {
     const current = loadCmsStore();
     setStore(current);
 
-    // 2. Fetch from server to ensure fresh data
-    fetch("/api/content")
+    // 2. Fetch from server to ensure fresh data without cache
+    fetch("/api/content", { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : null))
       .then((serverData) => {
         if (serverData && Array.isArray(serverData.projects)) {
@@ -168,8 +177,49 @@ export function cmsAddSpecialty(newSpecialty: SpecialtyService): void {
 // Media
 export function cmsUpdateMedia(updated: MediaAsset): void {
   const current = loadCmsStore();
+  const oldAsset = current.media.find((m) => m.id === updated.id);
   const nextMedia = current.media.map((m) => (m.id === updated.id ? updated : m));
-  saveCmsStore({ ...current, media: nextMedia });
+
+  let nextProjects = current.projects;
+  let nextServices = current.services;
+  let nextSpecialties = current.specialties;
+
+  // When an admin updates an image's URL, propagate that update live across all projects and services
+  if (oldAsset && oldAsset.url !== updated.url) {
+    nextProjects = current.projects.map((p) => {
+      const isMain = isSameImage(p.image, oldAsset.url) || isSameImage(p.image, oldAsset.name);
+      const nextGallery = p.gallery.map((g) =>
+        isSameImage(g, oldAsset.url) || isSameImage(g, oldAsset.name) ? updated.url : g
+      );
+      return {
+        ...p,
+        image: isMain ? updated.url : p.image,
+        gallery: nextGallery,
+      };
+    });
+
+    nextServices = current.services.map((s) => {
+      if (isSameImage(s.image, oldAsset.url) || isSameImage(s.image, oldAsset.name)) {
+        return { ...s, image: updated.url };
+      }
+      return s;
+    });
+
+    nextSpecialties = current.specialties.map((spec) => {
+      if (isSameImage(spec.image, oldAsset.url) || isSameImage(spec.image, oldAsset.name)) {
+        return { ...spec, image: updated.url };
+      }
+      return spec;
+    });
+  }
+
+  saveCmsStore({
+    ...current,
+    media: nextMedia,
+    projects: nextProjects,
+    services: nextServices,
+    specialties: nextSpecialties,
+  });
 }
 
 export function cmsDeleteMedia(mediaId: string): void {
@@ -186,8 +236,10 @@ export function cmsDeleteMedia(mediaId: string): void {
     const fallbackImage = "/images/hero-luxury.jpg";
 
     nextProjects = current.projects.map((p) => {
-      const isMain = p.image === asset.url;
-      const updatedGallery = p.gallery.filter((g) => g !== asset.url);
+      const isMain = isSameImage(p.image, asset.url) || isSameImage(p.image, asset.name);
+      const updatedGallery = p.gallery.filter(
+        (g) => !isSameImage(g, asset.url) && !isSameImage(g, asset.name)
+      );
       const newMain = isMain ? updatedGallery[0] || fallbackImage : p.image;
       return {
         ...p,
@@ -197,14 +249,14 @@ export function cmsDeleteMedia(mediaId: string): void {
     });
 
     nextServices = current.services.map((s) => {
-      if (s.image === asset.url) {
+      if (isSameImage(s.image, asset.url) || isSameImage(s.image, asset.name)) {
         return { ...s, image: fallbackImage };
       }
       return s;
     });
 
     nextSpecialties = current.specialties.map((spec) => {
-      if (spec.image === asset.url) {
+      if (isSameImage(spec.image, asset.url) || isSameImage(spec.image, asset.name)) {
         return { ...spec, image: fallbackImage };
       }
       return spec;

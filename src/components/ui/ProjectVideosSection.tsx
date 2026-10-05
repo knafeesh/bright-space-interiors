@@ -16,6 +16,7 @@ import {
   Volume2,
 } from "lucide-react";
 import { PROJECT_VIDEOS, ProjectVideo, YOUTUBE_URL, WHATSAPP_NUMBER } from "@/lib/data";
+import { useCmsProjects } from "@/lib/cms";
 
 const CATEGORIES = ["All", "Salon", "Residential", "Modular Kitchen", "Commercial", "Turnkey"];
 
@@ -35,6 +36,7 @@ function getYouTubeEmbedUrl(input?: string): string | null {
 }
 
 export default function ProjectVideosSection() {
+  const cmsProjects = useCmsProjects();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [activeVideo, setActiveVideo] = useState<ProjectVideo | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -302,7 +304,10 @@ export default function ProjectVideosSection() {
           scrollbarColor: "#B89762 rgba(44,36,32,0.06)",
         }}
       >
-        {filteredVideos.map((video, idx) => (
+        {filteredVideos.map((video, idx) => {
+          const matchingProj = cmsProjects.find((p) => p.slug === video.projectSlug);
+          const thumb = matchingProj?.image || video.thumbnail;
+          return (
           <div
             key={video.id}
             onClick={() => setActiveVideo(video)}
@@ -330,7 +335,7 @@ export default function ProjectVideosSection() {
               }}
             >
               <img
-                src={video.thumbnail}
+                src={thumb}
                 alt={video.title}
                 style={{
                   width: "100%",
@@ -556,7 +561,8 @@ export default function ProjectVideosSection() {
               </div>
             </div>
           </div>
-        ))}
+        );
+      })}
       </div>
 
       {/* ── Sub-bar: Schedule a Live Site Walkthrough or Video Consultation ── */}
@@ -765,7 +771,11 @@ export default function ProjectVideosSection() {
                   }}
                 >
                   <img
-                    src={activeVideo.thumbnail}
+                    src={
+                      (activeVideo.projectSlug &&
+                        cmsProjects.find((p) => p.slug === activeVideo.projectSlug)?.image) ||
+                      activeVideo.thumbnail
+                    }
                     alt={activeVideo.title}
                     style={{
                       width: "100%",

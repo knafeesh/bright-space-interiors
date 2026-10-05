@@ -117,6 +117,9 @@ export default function PortfolioManagerPage() {
       .map((m) => m.trim())
       .filter(Boolean);
 
+    const finalMainImage = editImage.trim() || editGallery[0] || "/images/hero-luxury.jpg";
+    const finalGallery = editGallery.length > 0 ? editGallery : [finalMainImage];
+
     const updated: Project = {
       ...editingProject,
       title: editTitle.trim() || editingProject.title,
@@ -131,8 +134,8 @@ export default function PortfolioManagerPage() {
       solution: editSolution.trim() || editingProject.solution,
       clientQuote: editQuote.trim() || editingProject.clientQuote,
       materials: materialsArray.length > 0 ? materialsArray : editingProject.materials,
-      image: editImage.trim() || editingProject.image,
-      gallery: editGallery.length > 0 ? editGallery : [editImage.trim() || editingProject.image],
+      image: finalMainImage,
+      gallery: finalGallery,
       featured: editFeatured,
     };
 
@@ -142,10 +145,11 @@ export default function PortfolioManagerPage() {
   };
 
   const handleRemoveGalleryImage = (indexToRemove: number) => {
+    const removedUrl = editGallery[indexToRemove];
     const updated = editGallery.filter((_, idx) => idx !== indexToRemove);
     setEditGallery(updated);
-    if (editImage === editGallery[indexToRemove] && updated.length > 0) {
-      setEditImage(updated[0]);
+    if (editImage === removedUrl) {
+      setEditImage(updated[0] || "");
     }
   };
 

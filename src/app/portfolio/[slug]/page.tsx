@@ -30,7 +30,6 @@ export default function ProjectDetailPage({
 }) {
   const { slug } = use(params);
   const project = PROJECTS.find((p) => p.slug === slug);
-  if (!project) notFound();
 
-  return <ProjectDetailClient initialProject={project as Project} />;
+  return <ProjectDetailClient initialProject={project as Project | undefined} slug={slug} />;
 }

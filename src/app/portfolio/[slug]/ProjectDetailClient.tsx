@@ -5,14 +5,37 @@ import { useCmsProjects, Project } from "@/lib/cms";
 import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 
 interface Props {
-  initialProject: Project;
+  initialProject?: Project;
+  slug?: string;
 }
 
-export default function ProjectDetailClient({ initialProject }: Props) {
+export default function ProjectDetailClient({ initialProject, slug }: Props) {
   const cmsProjects = useCmsProjects();
 
+  const targetSlug = slug || initialProject?.slug;
   // Find updated version in CMS store or use initial
-  const project = cmsProjects.find((p) => p.slug === initialProject.slug || p.id === initialProject.id) || initialProject;
+  const project =
+    cmsProjects.find(
+      (p) => (targetSlug && p.slug === targetSlug) || (initialProject && p.id === initialProject.id)
+    ) || initialProject;
+
+  if (!project) {
+    return (
+      <div className="container" style={{ padding: "120px 24px", textAlign: "center" }}>
+        <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "32px", color: "var(--charcoal)" }}>
+          Project Not Found
+        </h2>
+        <p style={{ marginTop: "12px", color: "var(--text-muted)" }}>
+          This project may have been updated or removed in the Portfolio Manager.
+        </p>
+        <div style={{ marginTop: "28px" }}>
+          <Link href="/portfolio" className="btn btn--primary">
+            Explore All Projects
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const currentIndex = cmsProjects.findIndex((p) => p.slug === project.slug);
   const prevProject = cmsProjects[currentIndex - 1];
