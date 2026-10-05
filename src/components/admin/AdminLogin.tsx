@@ -46,11 +46,14 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
       }
     } catch (err) {
       // Fallback client check if API unreachable
-      if (trimmedUsername === "mohdmushir12" && password === "mushir@2005") {
+      if (
+        (trimmedUsername === "Azam" || trimmedUsername.toLowerCase() === "azam") &&
+        password === "Azam@2005"
+      ) {
         localStorage.setItem("bs_admin_authenticated", "true");
         localStorage.setItem(
           "bs_admin_user",
-          JSON.stringify({ username: "mohdmushir12", name: "Azam Khan", role: "Super Admin" })
+          JSON.stringify({ username: "Azam", name: "Azam Khan", role: "Super Admin" })
         );
         sessionStorage.setItem("bs_admin_authenticated", "true");
         onLoginSuccess();

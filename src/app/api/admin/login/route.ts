@@ -4,14 +4,17 @@ export async function POST(request: Request) {
   try {
     const { username, password } = await request.json();
 
-    const validUsername = "mohdmushir12";
-    const validPassword = "mushir@2005";
+    const validUsername = "Azam";
+    const validPassword = "Azam@2005";
 
-    if (username === validUsername && password === validPassword) {
+    if (
+      (username === validUsername || username?.toLowerCase() === "azam") &&
+      password === validPassword
+    ) {
       return NextResponse.json({
         success: true,
         user: {
-          username: "mohdmushir12",
+          username: "Azam",
           name: "Azam Khan",
           role: "Super Admin",
         },
