@@ -132,31 +132,31 @@ export const SPECIALTY_SERVICES = [
   {
     name: "Modular Kitchens",
     tagline: "Ergonomic & High-End",
-    image: "/images/real-kitchen-saket.jpg",
+    image: "/images/real-kitchen-maroon.jpg",
     description: "Tailor-made acrylic, PU, and veneer finishes with blum soft-close hardware, pull-out larders, and quartz countertops.",
   },
   {
     name: "Modular Wardrobes",
     tagline: "Custom Storage Systems",
-    image: "/images/modular-wardrobe.jpg",
-    description: "Floor-to-ceiling sliding or hinged wardrobes, tinted glass shutters, sensor LED illumination, and bespoke organizers.",
+    image: "/images/real-wardrobe-tvunit.jpg",
+    description: "Floor-to-ceiling sliding or hinged wardrobes, integrated entertainment consoles, sensor LED illumination, and bespoke organizers.",
   },
   {
     name: "Lighting Design",
     tagline: "Architectural & Ambient",
-    image: "/images/real-salon-mainhall.jpg",
+    image: "/images/real-bedroom-headboard.jpg",
     description: "Layered lighting schemes including magnetic track lights, concealed coves, warm dimmers, and bespoke statement chandeliers.",
   },
   {
     name: "Flooring",
     tagline: "Luxury Stone & Hardwood",
-    image: "/images/specialty-flooring.jpg",
+    image: "/images/real-salon-styling.jpg",
     description: "Precision-laid Italian marble book-matching, herringbone hardwood, vitrified large slabs, and seamless microtopping.",
   },
   {
     name: "Electrical Work",
     tagline: "Safe, Concealed & Smart",
-    image: "/images/specialty-electrical.jpg",
+    image: "/images/real-bedroom-fluted.jpg",
     description: "Full circuit load design, concealed fire-resistant wiring, smart home automation integration, and designer switchplates.",
   },
   {
@@ -300,7 +300,7 @@ export const PROJECTS = [
   {
     id: 5,
     slug: "bespoke-turnkey-modular-kitchen",
-    title: "Bespoke Modern Modular Kitchen",
+    title: "Saket Dual-Tone Modular Kitchen",
     category: "Turnkey",
     location: "Saket, South Delhi",
     area: "1,200 sq ft",
@@ -310,8 +310,9 @@ export const PROJECTS = [
     image: "/images/real-kitchen-saket.jpg",
     gallery: [
       "/images/real-kitchen-saket.jpg",
-      "/images/real-bedroom-fluted.jpg",
-      "/images/real-salon-reception.jpg",
+      "/images/real-kitchen-maroon.jpg",
+      "/images/real-kitchen-profile.jpg",
+      "/images/real-wardrobe-tvunit.jpg",
     ],
     description:
       "Modern turnkey modular kitchen delivered with dual-tone anthracite and ivory acrylic cabinets, seamless quartz countertop, marble splashback, high-efficiency chimney, and architectural timber partition screen.",
@@ -335,11 +336,12 @@ export const PROJECTS = [
     year: "2024",
     duration: "10 weeks",
     featured: true,
-    image: "/images/real-bedroom-fluted.jpg",
+    image: "/images/real-bedroom-headboard.jpg",
     gallery: [
+      "/images/real-bedroom-headboard.jpg",
+      "/images/real-wardrobe-tvunit.jpg",
       "/images/real-bedroom-fluted.jpg",
       "/images/real-kitchen-saket.jpg",
-      "/images/real-salon-chesterfield.jpg",
     ],
     description:
       "A complete bespoke home interior featuring subtle fluted panels, warm ambient lighting, handcrafted cabinetry, and curated marble textures.",
@@ -350,24 +352,25 @@ export const PROJECTS = [
     clientQuote:
       "Bright Space didn't just design our home — they understood our lifestyle and delivered on-time perfection.",
     clientName: "Manish Singh",
-    materials: ["Fluted Wall Cladding", "Teak Wood", "Geometric Up/Down Sconce", "Italian Marble"],
+    materials: ["Floor-to-Ceiling Wood Panelling", "Upholstered Bed Headboard", "Indirect LED Channels", "Italian Marble"],
     bgGradient: "linear-gradient(135deg, #2C2420 0%, #3D3025 100%)",
   },
   {
     id: 7,
     slug: "dwarka-luxury-home",
-    title: "Dwarka Modern Living & Modular",
+    title: "Dwarka Modern Living & Wardrobe Suite",
     category: "Residential",
     location: "Sector 23, Dwarka, Delhi",
     area: "900 sq ft",
     year: "2024",
     duration: "8 weeks",
     featured: true,
-    image: "/images/real-bedroom-fluted.jpg",
+    image: "/images/real-wardrobe-tvunit.jpg",
     gallery: [
+      "/images/real-wardrobe-tvunit.jpg",
+      "/images/real-bedroom-headboard.jpg",
       "/images/real-bedroom-fluted.jpg",
-      "/images/real-kitchen-saket.jpg",
-      "/images/real-salon-styling.jpg",
+      "/images/real-kitchen-maroon.jpg",
     ],
     description:
       "Optimized compact luxury apartment featuring custom space-saving joinery, recessed coves, and premium textured wall coatings.",
@@ -378,11 +381,40 @@ export const PROJECTS = [
     clientQuote:
       "They transformed our 900 sq ft space into feeling like an open luxury suite.",
     clientName: "Ashok Kumar",
-    materials: ["Statuario Marble", "Smoked Glass", "Walnut Veneer", "Brushed Gold"],
+    materials: ["Custom Modular Wardrobe", "Integrated TV Console", "Warm Ambient LED", "Brushed Metal Hardware"],
     bgGradient: "linear-gradient(135deg, #1C2620 0%, #253020 100%)",
   },
   {
     id: 8,
+    slug: "contemporary-turnkey-kitchen",
+    title: "Contemporary Cherry & Cream Turnkey Kitchen",
+    category: "Turnkey",
+    location: "Sushant Lok, Gurugram",
+    area: "1,100 sq ft",
+    year: "2024",
+    duration: "5 weeks",
+    featured: true,
+    image: "/images/real-kitchen-maroon.jpg",
+    gallery: [
+      "/images/real-kitchen-maroon.jpg",
+      "/images/real-kitchen-profile.jpg",
+      "/images/real-kitchen-saket.jpg",
+      "/images/real-wardrobe-tvunit.jpg",
+    ],
+    description:
+      "Ergonomic L-shaped turnkey modular kitchen executed with high-gloss cream overhead cabinets, rich cherry-wine base drawers, concealed under-cabinet profile lighting, and undermount double-bowl sink.",
+    challenge:
+      "Fitting high-capacity storage, heavy appliance wiring, and water filtration equipment seamlessly without compromising visual symmetry.",
+    solution:
+      "Custom cabinetry with soft-close tandem boxes, hidden LED track lighting beneath upper units, and durable high-temperature acrylic finishes.",
+    clientQuote:
+      "The finish on the cabinets and the under-cabinet lighting makes cooking a pleasure. On-time handover with zero hassle.",
+    clientName: "Gurugram Resident",
+    materials: ["High-Gloss Acrylic", "Under-Cabinet Profile LED", "Quartz Worktops", "Stainless Steel Sink"],
+    bgGradient: "linear-gradient(135deg, #2A1C1C 0%, #352020 100%)",
+  },
+  {
+    id: 9,
     slug: "v-deliver-commercial-kitchen",
     title: "V-Deliver Commercial Culinary Facility",
     category: "Commercial",
@@ -394,6 +426,7 @@ export const PROJECTS = [
     image: "/images/real-kitchen-saket.jpg",
     gallery: [
       "/images/real-kitchen-saket.jpg",
+      "/images/real-kitchen-maroon.jpg",
       "/images/real-salon-facade.jpg",
       "/images/real-salon-mainhall.jpg",
     ],
@@ -410,7 +443,7 @@ export const PROJECTS = [
     bgGradient: "linear-gradient(135deg, #1C2030 0%, #202535 100%)",
   },
   {
-    id: 9,
+    id: 10,
     slug: "agarwal-residence-ranchi",
     title: "Agarwal Family Turnkey Residence",
     category: "Residential",
@@ -422,8 +455,9 @@ export const PROJECTS = [
     image: "/images/real-bedroom-fluted.jpg",
     gallery: [
       "/images/real-bedroom-fluted.jpg",
-      "/images/real-kitchen-saket.jpg",
-      "/images/real-salon-chesterfield.jpg",
+      "/images/real-bedroom-headboard.jpg",
+      "/images/real-wardrobe-tvunit.jpg",
+      "/images/real-kitchen-maroon.jpg",
     ],
     description:
       "Turnkey home interior blending classical warmth with modern European minimalism for an expansive family flat.",
