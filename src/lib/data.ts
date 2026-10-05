@@ -502,7 +502,7 @@ export const PROJECT_VIDEOS: ProjectVideo[] = [
     category: "Salon",
     duration: "2:45",
     thumbnail: "/images/real-salon-facade.jpg",
-    youtubeId: "dQw4w9WgXcQ",
+    // When you upload your video to YouTube, add the video ID here (e.g. youtubeId: "YOUR_YOUTUBE_ID")
     description: "An exclusive cinematic walkthrough of our 4,500 sq ft luxury commercial salon & academy in Delhi NCR, featuring double-height glass facades, floral grand archways, and royal chandeliers.",
     projectSlug: "the-hair-palace-london",
     views: "3.4K views",

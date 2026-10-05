@@ -19,6 +19,21 @@ import { PROJECT_VIDEOS, ProjectVideo, YOUTUBE_URL, WHATSAPP_NUMBER } from "@/li
 
 const CATEGORIES = ["All", "Salon", "Residential", "Modular Kitchen", "Commercial", "Turnkey"];
 
+function getYouTubeEmbedUrl(input?: string): string | null {
+  if (!input) return null;
+  const trimmed = input.trim();
+  if (!trimmed) return null;
+  if (trimmed.includes("youtube.com/embed/")) return trimmed;
+  const match = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  if (match && match[1]) {
+    return `https://www.youtube-nocookie.com/embed/${match[1]}?autoplay=1&rel=0&modestbranding=1`;
+  }
+  if (/^[\w-]{11}$/.test(trimmed)) {
+    return `https://www.youtube-nocookie.com/embed/${trimmed}?autoplay=1&rel=0&modestbranding=1`;
+  }
+  return null;
+}
+
 export default function ProjectVideosSection() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [activeVideo, setActiveVideo] = useState<ProjectVideo | null>(null);
@@ -726,9 +741,9 @@ export default function ProjectVideosSection() {
                 width: "100%",
               }}
             >
-              {activeVideo.youtubeId ? (
+              {getYouTubeEmbedUrl(activeVideo.youtubeId) ? (
                 <iframe
-                  src={`https://www.youtube-nocookie.com/embed/${activeVideo.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                  src={getYouTubeEmbedUrl(activeVideo.youtubeId)!}
                   title={activeVideo.title}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
@@ -756,43 +771,87 @@ export default function ProjectVideosSection() {
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
-                      filter: "brightness(0.65)",
+                      filter: "brightness(0.45)",
                     }}
                   />
                   <div
                     style={{
                       position: "absolute",
                       textAlign: "center",
-                      padding: "24px",
+                      padding: "32px 24px",
                       zIndex: 2,
+                      maxWidth: "540px",
                     }}
                   >
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        background: "rgba(220, 38, 38, 0.18)",
+                        color: "#FF6B6B",
+                        border: "1px solid rgba(220, 38, 38, 0.35)",
+                        padding: "4px 14px",
+                        borderRadius: "50px",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        marginBottom: "16px",
+                      }}
+                    >
+                      <Film size={12} />
+                      Official YouTube Walkthrough
+                    </div>
+
+                    <h4
+                      style={{
+                        color: "#FFFFFF",
+                        margin: "0 0 10px",
+                        fontSize: "24px",
+                        fontFamily: "var(--font-serif)",
+                        fontWeight: 500,
+                        letterSpacing: "0.03em",
+                      }}
+                    >
+                      Watch on @thebrightspaceinterior
+                    </h4>
+                    <p
+                      style={{
+                        color: "rgba(255, 255, 255, 0.82)",
+                        fontSize: "13px",
+                        lineHeight: 1.6,
+                        margin: "0 auto 22px",
+                      }}
+                    >
+                      Full site walkthrough video is being uploaded to our official YouTube channel. Subscribe now to watch it first!
+                    </p>
+
                     <a
                       href={YOUTUBE_URL}
                       target="_blank"
                       rel="noopener noreferrer"
+                      className="btn"
                       style={{
-                        width: "72px",
-                        height: "72px",
-                        borderRadius: "50%",
-                        background: "#B89762",
-                        color: "#FFFFFF",
                         display: "inline-flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        boxShadow: "0 0 35px rgba(184, 151, 98, 0.7)",
-                        marginBottom: "16px",
-                        cursor: "pointer",
+                        gap: "8px",
+                        background: "#C5221F",
+                        color: "#FFFFFF",
+                        padding: "12px 28px",
+                        borderRadius: "2px",
+                        fontSize: "12px",
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        textDecoration: "none",
+                        boxShadow: "0 6px 22px rgba(197, 34, 31, 0.4)",
                       }}
                     >
-                      <Play size={28} fill="#FFFFFF" style={{ marginLeft: "3px" }} />
+                      <Film size={15} />
+                      Open Official YouTube Channel
+                      <ExternalLink size={13} />
                     </a>
-                    <h4 style={{ color: "#FFFFFF", margin: "0 0 8px", fontSize: "20px" }}>
-                      Watch Walkthrough on YouTube
-                    </h4>
-                    <p style={{ color: "rgba(255, 255, 255, 0.7)", fontSize: "13px", maxWidth: "420px", margin: "0 auto" }}>
-                      Click below to watch this complete tour in Full HD on our official channel.
-                    </p>
                   </div>
                 </div>
               )}
