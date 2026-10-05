@@ -201,7 +201,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="contact-action__label">Instagram</div>
-                  <div className="contact-action__value">View Featured Reel & Stories</div>
+                  <div className="contact-action__value">@thebrightspaceinterior</div>
                 </div>
               </a>
 
