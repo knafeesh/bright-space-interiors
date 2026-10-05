@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MapPin, Phone, Mail } from "lucide-react";
-import { ADDRESS, PHONE_NUMBER, ALT_PHONE_NUMBER, EMAIL } from "@/lib/data";
+import { ADDRESS, PHONE_NUMBER, ALT_PHONE_NUMBER, EMAIL, INSTAGRAM_URL } from "@/lib/data";
 
 function InstagramIcon({ size = 15 }: { size?: number }) {
   return (
@@ -59,7 +59,7 @@ export default function Footer() {
           </p>
           <div className="footer__social">
             <a
-              href="https://instagram.com"
+              href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="footer__social-link"

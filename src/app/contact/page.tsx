@@ -4,11 +4,22 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Phone, Mail, MessageCircle, MapPin, Clock, Send, CheckCircle } from "lucide-react";
 import { saveNewLead } from "@/lib/leads";
+
+function InstagramIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
 import {
   WHATSAPP_NUMBER,
   PHONE_NUMBER,
   ALT_PHONE_NUMBER,
   EMAIL,
+  INSTAGRAM_URL,
   ADDRESS,
   WHATSAPP_MESSAGE,
 } from "@/lib/data";
@@ -154,7 +165,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="contact-action__label">WhatsApp</div>
-                  <div className="contact-action__value">{ALT_PHONE_NUMBER}</div>
+                  <div className="contact-action__value">{PHONE_NUMBER}</div>
                 </div>
               </a>
 
@@ -164,7 +175,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="contact-action__label">Call Studio</div>
-                  <div className="contact-action__value">{PHONE_NUMBER}</div>
+                  <div className="contact-action__value">{PHONE_NUMBER} / {ALT_PHONE_NUMBER}</div>
                 </div>
               </a>
 
@@ -175,6 +186,22 @@ export default function ContactPage() {
                 <div>
                   <div className="contact-action__label">Email</div>
                   <div className="contact-action__value">{EMAIL}</div>
+                </div>
+              </a>
+
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-action"
+                id="contact-instagram-link"
+              >
+                <div className="contact-action__icon">
+                  <InstagramIcon size={20} />
+                </div>
+                <div>
+                  <div className="contact-action__label">Instagram</div>
+                  <div className="contact-action__value">View Featured Reel & Stories</div>
                 </div>
               </a>
 
