@@ -220,7 +220,7 @@ export default function ContactPage() {
                     For immediate response, WhatsApp us.
                   </p>
                   <a
-                    href="https://wa.me/918168051355?text=Hi%2C%20I%20just%20submitted%20an%20enquiry%20on%20your%20website"
+                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%2C%20I%20just%20submitted%20an%20enquiry%20on%20your%20website`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn btn--primary"

@@ -2,7 +2,7 @@
 // SITE DATA — projects, services, team, testimonials, process
 // ═══════════════════════════════════════════
 
-export const WHATSAPP_NUMBER = "918168051355";
+export const WHATSAPP_NUMBER = "917982364617";
 export const PHONE_NUMBER = "+91 79823 64617";
 export const ALT_PHONE_NUMBER = "+91 81680 51355";
 export const EMAIL = "brightspaceinterior@gmail.com";

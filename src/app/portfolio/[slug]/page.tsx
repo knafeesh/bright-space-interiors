@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { PROJECTS } from "@/lib/data";
+import { PROJECTS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { ArrowLeft, ArrowRight, MapPin, Maximize2, Calendar, Clock } from "lucide-react";
 import type { Metadata } from "next";
 import { use } from "react";
@@ -213,7 +213,7 @@ export default function ProjectDetailPage({
         </p>
         <div className="cta-band__actions">
           <a
-            href="https://wa.me/918168051355?text=Hello%2C%20I%27m%20interested%20in%20your%20interior%20design%20services.%20I%27d%20like%20to%20discuss%20my%20project."
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn--primary btn--large"

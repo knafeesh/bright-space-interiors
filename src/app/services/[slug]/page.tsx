@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { SERVICES, PROJECTS } from "@/lib/data";
+import { SERVICES, PROJECTS, WHATSAPP_NUMBER } from "@/lib/data";
 import { ArrowRight, Plus } from "lucide-react";
 import { use } from "react";
 
@@ -136,7 +136,7 @@ function ServiceDetailClient({
 
               <div style={{ marginTop: "40px", display: "flex", gap: "16px", flexWrap: "wrap" }}>
                 <a
-                  href={`https://wa.me/918168051355?text=Hi%2C%20I%27m%20interested%20in%20${encodeURIComponent(service.title)}`}
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%2C%20I%27m%20interested%20in%20${encodeURIComponent(service.title)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn--primary"
@@ -455,7 +455,7 @@ function ServiceDetailClient({
         <p className="cta-band__subtitle">Book a free consultation today.</p>
         <div className="cta-band__actions">
           <a
-            href={`https://wa.me/918168051355?text=Hi%2C%20I%27m%20interested%20in%20${encodeURIComponent(service.title)}`}
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%2C%20I%27m%20interested%20in%20${encodeURIComponent(service.title)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn--primary btn--large"

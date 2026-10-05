@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X, Menu } from "lucide-react";
+import { WHATSAPP_NUMBER, PHONE_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -138,7 +139,7 @@ export default function Navbar() {
 
         <div className="mobile-nav__bottom">
           <a
-            href="https://wa.me/918168051355?text=Hello%2C%20I%27m%20interested%20in%20your%20interior%20design%20services.%20I%27d%20like%20to%20discuss%20my%20project."
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn--primary"
@@ -146,7 +147,7 @@ export default function Navbar() {
           >
             WhatsApp Us
           </a>
-          <a href="tel:+918168051355" className="btn btn--outline-white">
+          <a href={`tel:${PHONE_NUMBER.replace(/\s+/g, "")}`} className="btn btn--outline-white">
             Call Now
           </a>
         </div>
