@@ -16,7 +16,7 @@ export const SERVICES = [
     slug: "residential",
     title: "Residential Interior",
     subtitle: "Your Home, Elevated",
-    image: "/images/service-residential.jpg",
+    image: "/images/real-bedroom-fluted.jpg",
     description:
       "We transform apartments, flats, and villas into bespoke living spaces that reflect your personality and lifestyle. Every element is considered, every corner crafted.",
     subServices: [
@@ -74,7 +74,7 @@ export const SERVICES = [
     slug: "turnkey",
     title: "Turnkey Projects",
     subtitle: "One Point of Responsibility",
-    image: "/images/real-salon-reception.jpg",
+    image: "/images/real-salon-mainhall.jpg",
     description:
       "From the first brick to the final furnishing — we manage everything, so you don't have to coordinate with multiple vendors. One contract, one team, zero hassle.",
     subServices: [
@@ -103,7 +103,7 @@ export const SERVICES = [
     slug: "design-execution",
     title: "Design & Execution",
     subtitle: "Concept to Completion",
-    image: "/images/service-design.jpg",
+    image: "/images/real-salon-styling.jpg",
     description:
       "A full-service design journey: concept development, 3D visualization, material selection, precision execution, and quality finishing — under one roof.",
     subServices: [
@@ -144,7 +144,7 @@ export const SPECIALTY_SERVICES = [
   {
     name: "Lighting Design",
     tagline: "Architectural & Ambient",
-    image: "/images/specialty-lighting.jpg",
+    image: "/images/real-salon-mainhall.jpg",
     description: "Layered lighting schemes including magnetic track lights, concealed coves, warm dimmers, and bespoke statement chandeliers.",
   },
   {
@@ -168,13 +168,13 @@ export const SPECIALTY_SERVICES = [
   {
     name: "False Ceiling",
     tagline: "Acoustics & Aesthetics",
-    image: "/images/specialty-ceiling.jpg",
+    image: "/images/real-salon-mainhall.jpg",
     description: "Saint-Gobain gypsum boards, multi-level floating designs, cove lighting channels, and wooden acoustic baffles.",
   },
   {
     name: "Wall Design & Painting",
     tagline: "Textures & Bespoke Finishes",
-    image: "/images/specialty-painting.jpg",
+    image: "/images/real-bedroom-fluted.jpg",
     description: "Limewash, micro-cement, Venetian plaster textures, fluted wall panels, and high-durability luxury matte emulsions.",
   },
 ];
@@ -193,9 +193,10 @@ export const PROJECTS = [
     image: "/images/real-salon-facade.jpg",
     gallery: [
       "/images/real-salon-facade.jpg",
+      "/images/real-salon-mainhall.jpg",
+      "/images/real-salon-styling.jpg",
       "/images/real-salon-reception.jpg",
-      "/images/real-salon-chesterfield.jpg",
-      "/images/real-salon-pedispa.jpg",
+      "/images/real-salon-doors.jpg",
     ],
     description:
       "Turnkey architectural facade design and luxury interior execution for The Hair Palace London. Features a grand two-story glass facade, celebratory floral entrance archways, illuminated brand signage, and multi-tier salon academy stations.",
@@ -222,9 +223,9 @@ export const PROJECTS = [
     image: "/images/real-salon-reception.jpg",
     gallery: [
       "/images/real-salon-reception.jpg",
+      "/images/real-salon-mainhall.jpg",
       "/images/real-salon-chesterfield.jpg",
-      "/images/real-salon-facade.jpg",
-      "/images/real-salon-pedispa.jpg",
+      "/images/real-salon-styling.jpg",
     ],
     description:
       "Luxury retail and client reception lounge featuring custom L'Oréal Professionnel Paris and Kérastase Paris branded display shelving, back-lit translucent marble reception desk, statement yellow velvet armchairs, and acoustic ceiling.",
@@ -252,8 +253,8 @@ export const PROJECTS = [
     gallery: [
       "/images/real-salon-chesterfield.jpg",
       "/images/real-salon-pedispa.jpg",
-      "/images/real-salon-reception.jpg",
-      "/images/real-salon-facade.jpg",
+      "/images/real-salon-doors.jpg",
+      "/images/real-salon-mainhall.jpg",
     ],
     description:
       "Distinguished client waiting lounge and dedicated pedicure wellness zone featuring a deep-buttoned burgundy leather Chesterfield sofa, Persian rug, classical gold-leaf mirror, and custom brick-and-timber pedicure stations.",
@@ -269,6 +270,35 @@ export const PROJECTS = [
   },
   {
     id: 4,
+    slug: "hair-palace-royal-styling",
+    title: "Royal Styling Stations & Private Treatment Suites",
+    category: "Commercial",
+    location: "Delhi NCR",
+    area: "2,000 sq ft",
+    year: "2024",
+    duration: "8 weeks",
+    featured: true,
+    image: "/images/real-salon-styling.jpg",
+    gallery: [
+      "/images/real-salon-styling.jpg",
+      "/images/real-salon-doors.jpg",
+      "/images/real-salon-mainhall.jpg",
+      "/images/real-salon-chesterfield.jpg",
+    ],
+    description:
+      "Opulent commercial styling suite featuring arched gold-leaf full-height mirrors, vintage hydraulic styling chairs, checkerboard marble flooring, and private artisanal pine treatment suites with O3+ branding.",
+    challenge:
+      "Accommodating individual client privacy while maintaining a cohesive, open royal luxury atmosphere.",
+    solution:
+      "Constructed custom acoustic private treatment rooms with artisanal pine barn-doors, alongside open-format gilded mirror stations and check-patterned flooring.",
+    clientQuote:
+      "The styling mirrors and timber doors are an instant favorite with our clientele. It creates an unforgettable brand experience.",
+    clientName: "Hair Palace Management",
+    materials: ["Arched Gold-Leaf Framing", "Solid Pine Barn Doors", "Checkerboard Marble", "Hydraulic Leather Chairs"],
+    bgGradient: "linear-gradient(135deg, #2E251A 0%, #3D3220 100%)",
+  },
+  {
+    id: 5,
     slug: "bespoke-turnkey-modular-kitchen",
     title: "Bespoke Modern Modular Kitchen",
     category: "Turnkey",
@@ -280,8 +310,8 @@ export const PROJECTS = [
     image: "/images/real-kitchen-saket.jpg",
     gallery: [
       "/images/real-kitchen-saket.jpg",
+      "/images/real-bedroom-fluted.jpg",
       "/images/real-salon-reception.jpg",
-      "/images/real-salon-chesterfield.jpg",
     ],
     description:
       "Modern turnkey modular kitchen delivered with dual-tone anthracite and ivory acrylic cabinets, seamless quartz countertop, marble splashback, high-efficiency chimney, and architectural timber partition screen.",
@@ -296,7 +326,7 @@ export const PROJECTS = [
     bgGradient: "linear-gradient(135deg, #1C2226 0%, #26221C 100%)",
   },
   {
-    id: 5,
+    id: 6,
     slug: "park-view-city-residence",
     title: "Park View City Luxury Residence",
     category: "Residential",
@@ -305,11 +335,11 @@ export const PROJECTS = [
     year: "2024",
     duration: "10 weeks",
     featured: true,
-    image: "/images/real-salon-chesterfield.jpg",
+    image: "/images/real-bedroom-fluted.jpg",
     gallery: [
-      "/images/real-salon-chesterfield.jpg",
+      "/images/real-bedroom-fluted.jpg",
       "/images/real-kitchen-saket.jpg",
-      "/images/real-salon-reception.jpg",
+      "/images/real-salon-chesterfield.jpg",
     ],
     description:
       "A complete bespoke home interior featuring subtle fluted panels, warm ambient lighting, handcrafted cabinetry, and curated marble textures.",
@@ -320,11 +350,11 @@ export const PROJECTS = [
     clientQuote:
       "Bright Space didn't just design our home — they understood our lifestyle and delivered on-time perfection.",
     clientName: "Manish Singh",
-    materials: ["Italian Marble", "Teak Wood", "Aged Brass", "Handwoven Textiles"],
+    materials: ["Fluted Wall Cladding", "Teak Wood", "Geometric Up/Down Sconce", "Italian Marble"],
     bgGradient: "linear-gradient(135deg, #2C2420 0%, #3D3025 100%)",
   },
   {
-    id: 6,
+    id: 7,
     slug: "dwarka-luxury-home",
     title: "Dwarka Modern Living & Modular",
     category: "Residential",
@@ -333,11 +363,11 @@ export const PROJECTS = [
     year: "2024",
     duration: "8 weeks",
     featured: true,
-    image: "/images/real-kitchen-saket.jpg",
+    image: "/images/real-bedroom-fluted.jpg",
     gallery: [
+      "/images/real-bedroom-fluted.jpg",
       "/images/real-kitchen-saket.jpg",
-      "/images/real-salon-reception.jpg",
-      "/images/real-salon-facade.jpg",
+      "/images/real-salon-styling.jpg",
     ],
     description:
       "Optimized compact luxury apartment featuring custom space-saving joinery, recessed coves, and premium textured wall coatings.",
@@ -352,7 +382,7 @@ export const PROJECTS = [
     bgGradient: "linear-gradient(135deg, #1C2620 0%, #253020 100%)",
   },
   {
-    id: 7,
+    id: 8,
     slug: "v-deliver-commercial-kitchen",
     title: "V-Deliver Commercial Culinary Facility",
     category: "Commercial",
@@ -365,7 +395,7 @@ export const PROJECTS = [
     gallery: [
       "/images/real-kitchen-saket.jpg",
       "/images/real-salon-facade.jpg",
-      "/images/real-salon-pedispa.jpg",
+      "/images/real-salon-mainhall.jpg",
     ],
     description:
       "State-of-the-art commercial culinary facility at Shri Ram Complex, designed for high-efficiency workflow, hygiene, and durability.",
@@ -380,7 +410,7 @@ export const PROJECTS = [
     bgGradient: "linear-gradient(135deg, #1C2030 0%, #202535 100%)",
   },
   {
-    id: 8,
+    id: 9,
     slug: "agarwal-residence-ranchi",
     title: "Agarwal Family Turnkey Residence",
     category: "Residential",
@@ -389,11 +419,11 @@ export const PROJECTS = [
     year: "2024",
     duration: "11 weeks",
     featured: true,
-    image: "/images/real-salon-chesterfield.jpg",
+    image: "/images/real-bedroom-fluted.jpg",
     gallery: [
-      "/images/real-salon-chesterfield.jpg",
+      "/images/real-bedroom-fluted.jpg",
       "/images/real-kitchen-saket.jpg",
-      "/images/real-salon-reception.jpg",
+      "/images/real-salon-chesterfield.jpg",
     ],
     description:
       "Turnkey home interior blending classical warmth with modern European minimalism for an expansive family flat.",
