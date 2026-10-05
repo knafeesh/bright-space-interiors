@@ -7,6 +7,7 @@ export const PHONE_NUMBER = "+91 79823 64617";
 export const ALT_PHONE_NUMBER = "+91 99993 05862";
 export const EMAIL = "brightspaceinterior@gmail.com";
 export const INSTAGRAM_URL = "https://www.instagram.com/thebrightspaceinterior?stkn=M20xdHM3Z3R0dHU5";
+export const YOUTUBE_URL = "https://youtube.com/@thebrightspaceinterior?si=M7h2jqZERzb81ONt";
 export const ADDRESS = "J4/56J, Khirki Extension, Malviya Nagar, New Delhi — 110017";
 export const TAGLINE = "Spaces designed to feel like you.";
 export const WHATSAPP_MESSAGE =

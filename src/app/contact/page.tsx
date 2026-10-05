@@ -14,12 +14,22 @@ function InstagramIcon({ size = 20 }: { size?: number }) {
     </svg>
   );
 }
+
+function YoutubeIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+      <polygon points="10 15 15 12 10 9 10 15" fill="currentColor" />
+    </svg>
+  );
+}
 import {
   WHATSAPP_NUMBER,
   PHONE_NUMBER,
   ALT_PHONE_NUMBER,
   EMAIL,
   INSTAGRAM_URL,
+  YOUTUBE_URL,
   ADDRESS,
   WHATSAPP_MESSAGE,
 } from "@/lib/data";
@@ -201,6 +211,22 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="contact-action__label">Instagram</div>
+                  <div className="contact-action__value">@thebrightspaceinterior</div>
+                </div>
+              </a>
+
+              <a
+                href={YOUTUBE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-action"
+                id="contact-youtube-link"
+              >
+                <div className="contact-action__icon">
+                  <YoutubeIcon size={20} />
+                </div>
+                <div>
+                  <div className="contact-action__label">YouTube</div>
                   <div className="contact-action__value">@thebrightspaceinterior</div>
                 </div>
               </a>
