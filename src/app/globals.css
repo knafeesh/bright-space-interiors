@@ -783,6 +783,108 @@ p {
 }
 
 /* ═══════════════════════════════════════════
+   BRAND STATISTICS SECTION (EDITORIAL LUXURY)
+═══════════════════════════════════════════ */
+.brand-stats-section {
+  padding: 72px 0;
+  background: var(--ivory);
+  border-top: 1px solid rgba(216, 208, 196, 0.45);
+  border-bottom: 1px solid rgba(216, 208, 196, 0.45);
+  position: relative;
+}
+
+.brand-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 36px;
+  max-width: 1140px;
+  margin: 0 auto;
+  align-items: center;
+}
+
+@media (max-width: 960px) {
+  .brand-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .brand-stats-section {
+    padding: 48px 0;
+  }
+  .brand-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}
+
+.brand-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  transition: transform 0.35s ease;
+}
+
+.brand-stat-item:hover {
+  transform: translateY(-2px);
+}
+
+.brand-stat-visual {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(184, 151, 90, 0.08);
+  border: 1px solid rgba(184, 151, 90, 0.28);
+  color: var(--gold);
+  margin-bottom: 12px;
+  transition: all 0.35s ease;
+}
+
+.brand-stat-item:hover .brand-stat-visual {
+  background: rgba(184, 151, 90, 0.16);
+  border-color: var(--gold);
+  transform: scale(1.06);
+}
+
+.brand-stat-number {
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 5.2vw, 64px);
+  font-weight: 400;
+  line-height: 1.0;
+  color: var(--charcoal);
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+
+.brand-stat-number .counter__suffix {
+  font-family: var(--font-serif);
+  color: var(--gold);
+  font-size: 0.72em;
+  font-weight: 300;
+  margin-left: 2px;
+}
+
+.brand-stat-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════
    SERVICES PREVIEW (TILES)
 ═══════════════════════════════════════════ */
 .services-preview {

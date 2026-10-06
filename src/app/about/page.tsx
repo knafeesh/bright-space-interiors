@@ -239,7 +239,7 @@ export default function AboutPage() {
         <div className="container">
           <div className="section-title--center">
             <span className="eyebrow" style={{ color: "var(--gold-light)" }}>Our Journey</span>
-            <h2 style={{ textAlign: "center", color: "var(--ivory)" }}>12 Years of Excellence</h2>
+            <h2 style={{ textAlign: "center", color: "var(--ivory)" }}>9 Years of Excellence</h2>
             <div className="title-line--center title-line" />
           </div>
 

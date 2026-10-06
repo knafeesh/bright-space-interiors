@@ -166,6 +166,102 @@ const HOME_SERVICES = [
   },
 ];
 
+const BRAND_STATS = [
+  {
+    number: 9,
+    suffix: "+",
+    label: "YEARS EXPERIENCE",
+    icon: (
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="4" r="2" />
+        <path d="M12 6L6 21" />
+        <path d="M12 6L18 21" />
+        <path d="M8 15h8" />
+        <circle cx="12" cy="15" r="0.75" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    number: 100,
+    suffix: "+",
+    label: "PROJECTS COMPLETED",
+    icon: (
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M3 21h18" />
+        <path d="M5 21V7l7-4 7 4v14" />
+        <path d="M9 10h6" />
+        <path d="M9 14h6" />
+        <path d="M11 21v-4h2v4" />
+      </svg>
+    ),
+  },
+  {
+    number: 95,
+    suffix: "+",
+    label: "SATISFIED CLIENTS",
+    icon: (
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+        <path d="M12 9v3" />
+        <path d="M10.5 10.5h3" />
+      </svg>
+    ),
+  },
+  {
+    number: 40,
+    suffix: "+",
+    label: "BRILLIANT TEAM",
+    icon: (
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
+];
+
 export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState("All");
   const sectionRef = useFadeIn();
@@ -424,79 +520,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════ ABOUT PREVIEW ══════════════ */}
-      <section className="about-preview section" aria-label="About preview" ref={sectionRef}>
+      {/* ══════════════ BRAND STATISTICS SECTION ══════════════ */}
+      <section className="brand-stats-section" aria-label="Key statistics" ref={sectionRef}>
         <div className="container">
-          <div className="about-preview__inner">
-            {/* Image */}
-            <div className="about-preview__image-wrap fade-in-up">
-              <div
-                className="about-preview__image"
-                style={{
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              >
-                <img
-                  src={cmsProjects[2]?.image || cmsServices[0]?.image || "/images/modular-kitchen.jpg"}
-                  alt="Bright Space Interiors Crafted Spaces"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
-              <div className="about-preview__image-accent" />
-              <div className="about-preview__badge">
-                <div className="about-preview__badge-number">12+</div>
-                <div className="about-preview__badge-text">Years of Excellence</div>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="about-preview__content fade-in-up delay-2">
-              <div className="section-title">
-                <span className="eyebrow">About Bright Space</span>
-                <h2>
-                  We Build Spaces<br />
-                  That Tell Stories
-                </h2>
-                <div className="title-line" />
-                <p>
-                  Founded on the belief that great design transforms lives,
-                  Bright Space Interiors has delivered over 200 projects across
-                  Delhi NCR, Gurugram, Delhi, and beyond. Our approach blends
-                  aesthetic vision with practical precision.
-                </p>
-              </div>
-
-              {/* Counters */}
-              <div className="counters">
-                <div className="counter">
-                  <div className="counter__number">
-                    <AnimatedCounter end={12} suffix="+" />
-                  </div>
-                  <div className="counter__label">Years Experience</div>
+          <div className="brand-stats-grid">
+            {BRAND_STATS.map((stat) => (
+              <div key={stat.label} className="brand-stat-item fade-in-up">
+                <div className="brand-stat-visual" aria-hidden="true">
+                  {stat.icon}
                 </div>
-                <div className="counter">
-                  <div className="counter__number">
-                    <AnimatedCounter end={240} suffix="+" />
-                  </div>
-                  <div className="counter__label">Projects Completed</div>
+                <div className="brand-stat-number">
+                  <AnimatedCounter end={stat.number} suffix={stat.suffix} />
                 </div>
-                <div className="counter">
-                  <div className="counter__number">
-                    <AnimatedCounter end={98} suffix="%" />
-                  </div>
-                  <div className="counter__label">Happy Clients</div>
-                </div>
+                <div className="brand-stat-label">{stat.label}</div>
               </div>
-
-              <Link href="/about" className="btn btn--outline" id="about-know-more">
-                Know More <ArrowRight size={14} />
-              </Link>
-            </div>
+            ))}
           </div>
         </div>
       </section>

@@ -50,7 +50,7 @@ export default function ProcessPage() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px" }}>
               {[
                 { num: "9", label: "Process Steps" },
-                { num: "12+", label: "Years Experience" },
+                { num: "9+", label: "Years Experience" },
                 { num: "240+", label: "Projects Delivered" },
               ].map((stat) => (
                 <div

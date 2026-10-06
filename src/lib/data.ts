@@ -827,7 +827,7 @@ export const WHY_US_PILLARS = [
   },
   {
     title: "Experienced Team",
-    description: "12+ years of expertise across residential, commercial, and hospitality projects.",
+    description: "9+ years of expertise across residential, commercial, and hospitality projects.",
     icon: "users",
   },
   {
