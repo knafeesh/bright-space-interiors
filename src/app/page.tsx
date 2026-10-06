@@ -281,7 +281,7 @@ export default function HomePage() {
               objectFit: "cover",
               objectPosition: "center",
               transform: "scale(1.02)",
-              filter: "contrast(1.06) brightness(0.97) saturate(1.04)",
+              filter: "contrast(1.10) brightness(0.95) saturate(1.08)",
             }}
           />
         </div>
@@ -291,7 +291,7 @@ export default function HomePage() {
             position: "absolute",
             inset: 0,
             background:
-              "radial-gradient(ellipse at center, rgba(250, 247, 242, 0.26) 0%, rgba(250, 247, 242, 0.16) 60%, rgba(245, 239, 235, 0.32) 100%), linear-gradient(to bottom, rgba(250, 247, 242, 0.22) 0%, rgba(250, 247, 242, 0.05) 50%, rgba(250, 247, 242, 0.32) 100%)",
+              "radial-gradient(ellipse at center, rgba(250, 247, 242, 0.12) 0%, rgba(250, 247, 242, 0.06) 60%, rgba(245, 239, 235, 0.18) 100%), linear-gradient(to bottom, rgba(250, 247, 242, 0.14) 0%, rgba(250, 247, 242, 0.0) 50%, rgba(250, 247, 242, 0.20) 100%)",
           }}
         />
 
@@ -314,10 +314,10 @@ export default function HomePage() {
               fontSize: "clamp(34px, 5.5vw, 68px)",
               fontWeight: 500,
               letterSpacing: "0.05em",
-              color: "#161311",
+              color: "#120F0D",
               textTransform: "uppercase",
               lineHeight: 1.15,
-              textShadow: "0 2px 24px rgba(255, 255, 255, 0.95), 0 0 40px rgba(250, 247, 242, 0.9), 0 1px 3px rgba(0, 0, 0, 0.12)",
+              textShadow: "0 2px 28px rgba(255, 255, 255, 0.98), 0 0 45px rgba(250, 247, 242, 0.95), 0 1px 4px rgba(0, 0, 0, 0.15)",
             }}
           >
             Spaces Designed<br />
@@ -327,12 +327,12 @@ export default function HomePage() {
           <p
             style={{
               fontSize: "clamp(14px, 1.6vw, 17px)",
-              color: "#2C2622",
+              color: "#221C18",
               marginTop: "18px",
               letterSpacing: "0.02em",
               maxWidth: "640px",
-              fontWeight: 450,
-              textShadow: "0 1px 16px rgba(255, 255, 255, 0.95), 0 0 28px rgba(250, 247, 242, 0.85)",
+              fontWeight: 500,
+              textShadow: "0 1px 20px rgba(255, 255, 255, 0.98), 0 0 32px rgba(250, 247, 242, 0.95)",
             }}
           >
             Premium turnkey interior solutions, from concept to final handover.
