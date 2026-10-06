@@ -756,66 +756,51 @@ export const TEAM_MEMBERS = [
 export const PROCESS_STEPS = [
   {
     step: 1,
-    title: "Consultation",
-    description: "A free initial call to understand your vision, requirements, and budget.",
-    clientDoes: "Share your vision, wishlist, and timeline.",
-    weDeliver: "Design brief summary, next-steps plan.",
+    title: "DESIGN CONSULTATION",
+    description:
+      "Tell us your vision and share your floor plan, we’ll turn it into tailored 3D designs with an instant quote.",
+    clientDoes: "Share your vision and floor plan with our design team.",
+    weDeliver: "Tailored 3D concept designs and an instant line-item quotation.",
   },
   {
     step: 2,
-    title: "Site Visit",
-    description: "Our team visits the site for detailed measurement and assessment.",
-    clientDoes: "Provide site access and key contacts.",
-    weDeliver: "Site report, floor plan sketch.",
+    title: "BOOK YOUR TOKEN AMOUNT",
+    description:
+      "Ready to begin? Book your Token Amount and take the first step toward your dream space.",
+    clientDoes: "Confirm your project start with a secure token booking amount.",
+    weDeliver: "Dedicated interior design lead assigned and milestone calendar.",
   },
   {
     step: 3,
-    title: "Requirement Discussion",
-    description: "Deep-dive session to finalize scope, style direction, and budget.",
-    clientDoes: "Approve design brief and project scope.",
-    weDeliver: "Detailed scope document and timeline.",
+    title: "SITE MEASUREMENT",
+    description:
+      "We Begin with a Precise Site Measurement to Lay the Foundation for Your Custom Interior Design Journey",
+    clientDoes: "Provide site access for laser measurement and architectural check.",
+    weDeliver: "Precision site survey report, structural verification, and elevation maps.",
   },
   {
     step: 4,
-    title: "Design & 3D",
-    description: "Our designers create full 3D visualizations of your space.",
-    clientDoes: "Review renders and suggest revisions.",
-    weDeliver: "3D renders, mood boards, material palette.",
+    title: "FINALISE YOUR DESIGN",
+    description:
+      "Work Closely with Our Experts to Finalize a Design That Reflects Your Style, Functionality, and Vision",
+    clientDoes: "Select your preferred material finishes, palettes, and fittings.",
+    weDeliver: "Photorealistic 3D visualization renders and detailed Bill of Quantities.",
   },
   {
     step: 5,
-    title: "Quotation",
-    description: "A transparent, line-item quotation with no hidden costs.",
-    clientDoes: "Review and approve the quotation.",
-    weDeliver: "Itemized quote, payment schedule.",
+    title: "START EXECUTION",
+    description:
+      "It’s Go Time! Your Dream Interiors Are Now in Production, Crafted with Care and Quality",
+    clientDoes: "Weekly approval check-ins via digital progress tracker.",
+    weDeliver: "Factory precision fabrication, site execution, and MEP installations.",
   },
   {
     step: 6,
-    title: "Material Selection",
-    description: "Guided selection of all materials, finishes, and furniture.",
-    clientDoes: "Visit showrooms, make final selections.",
-    weDeliver: "Approved material schedule, procurement plan.",
-  },
-  {
-    step: 7,
-    title: "Execution",
-    description: "Our skilled team executes all civil, MEP, and finishing work.",
-    clientDoes: "Regular site visits (optional), approvals.",
-    weDeliver: "Weekly progress reports, site photos.",
-  },
-  {
-    step: 8,
-    title: "Quality Inspection",
-    description: "A comprehensive snag-list and quality check before handover.",
-    clientDoes: "Walk through the space, raise snags.",
-    weDeliver: "Snag resolution report, quality certificate.",
-  },
-  {
-    step: 9,
-    title: "Final Handover",
-    description: "Your space is ready. We walk you through everything.",
-    clientDoes: "Final sign-off and move in.",
-    weDeliver: "Handover certificate, warranty documents.",
+    title: "INSTALLATION & HANDOVER",
+    description:
+      "Move-In Ready! We Set Everything Up So You Can Step Into Your Beautiful New Space",
+    clientDoes: "Final walkthrough inspection and key handover reception.",
+    weDeliver: "Move-in ready space, quality audit sign-off, and 10-year warranty handover.",
   },
 ];
 

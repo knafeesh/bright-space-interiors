@@ -21,6 +21,7 @@ import { useCmsProjects, useCmsServices } from "@/lib/cms";
 import CategoryCarousel from "@/components/ui/CategoryCarousel";
 import ProjectCard from "@/components/ui/ProjectCard";
 import ClientListSection from "@/components/ui/ClientListSection";
+import DesignToMoveInSection from "@/components/ui/DesignToMoveInSection";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
 function AnimatedCounter({
@@ -113,14 +114,6 @@ const QUICK_SERVICES = [
   "Handover & Support",
 ];
 
-const PROCESS_HOME = [
-  { n: "01", title: "Consultation" },
-  { n: "02", title: "Site Visit" },
-  { n: "03", title: "Design & 3D" },
-  { n: "04", title: "Quotation" },
-  { n: "05", title: "Execution" },
-  { n: "06", title: "Handover" },
-];
 
 // Service image map (verified real project photos)
 const SERVICE_IMAGES: Record<string, string> = {
@@ -705,35 +698,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════ PROCESS PREVIEW ══════════════ */}
-      <section className="process-preview section" aria-label="Our process">
-        <div className="container">
-          <div className="section-title--center">
-            <span className="eyebrow">How We Work</span>
-            <h2 style={{ textAlign: "center" }}>Our Process</h2>
-            <div className="title-line--center title-line" />
-            <p style={{ textAlign: "center" }}>
-              A proven 9-step journey from consultation to handover — designed
-              to keep you informed and delighted at every stage.
-            </p>
-          </div>
-
-          <div className="process-timeline">
-            {PROCESS_HOME.map((step) => (
-              <div key={step.n} className="process-step">
-                <div className="process-step__number">{step.n}</div>
-                <div className="process-step__title">{step.title}</div>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ textAlign: "center", marginTop: "48px" }}>
-            <Link href="/process" className="btn btn--outline" id="process-learn-more">
-              See Full Process <ArrowRight size={14} />
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* ══════════════ FROM DESIGN TO MOVE-IN (CUSTOMER JOURNEY) ══════════════ */}
+      <DesignToMoveInSection />
 
       {/* ══════════════ TESTIMONIALS ══════════════ */}
       <section className="testimonials section" aria-label="Testimonials">
