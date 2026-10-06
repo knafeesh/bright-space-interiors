@@ -281,6 +281,7 @@ export default function HomePage() {
               objectFit: "cover",
               objectPosition: "center",
               transform: "scale(1.02)",
+              filter: "contrast(1.06) brightness(0.97) saturate(1.04)",
             }}
           />
         </div>
@@ -290,7 +291,7 @@ export default function HomePage() {
             position: "absolute",
             inset: 0,
             background:
-              "radial-gradient(ellipse at center, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.2) 65%, rgba(250, 247, 242, 0.35) 100%), linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(250, 247, 242, 0.4) 100%)",
+              "radial-gradient(ellipse at center, rgba(250, 247, 242, 0.26) 0%, rgba(250, 247, 242, 0.16) 60%, rgba(245, 239, 235, 0.32) 100%), linear-gradient(to bottom, rgba(250, 247, 242, 0.22) 0%, rgba(250, 247, 242, 0.05) 50%, rgba(250, 247, 242, 0.32) 100%)",
           }}
         />
 
@@ -313,10 +314,10 @@ export default function HomePage() {
               fontSize: "clamp(34px, 5.5vw, 68px)",
               fontWeight: 500,
               letterSpacing: "0.05em",
-              color: "#181615",
+              color: "#161311",
               textTransform: "uppercase",
               lineHeight: 1.15,
-              textShadow: "0 2px 16px rgba(255, 255, 255, 0.7)",
+              textShadow: "0 2px 24px rgba(255, 255, 255, 0.95), 0 0 40px rgba(250, 247, 242, 0.9), 0 1px 3px rgba(0, 0, 0, 0.12)",
             }}
           >
             Spaces Designed<br />
@@ -326,12 +327,12 @@ export default function HomePage() {
           <p
             style={{
               fontSize: "clamp(14px, 1.6vw, 17px)",
-              color: "#35302C",
+              color: "#2C2622",
               marginTop: "18px",
               letterSpacing: "0.02em",
               maxWidth: "640px",
-              fontWeight: 400,
-              textShadow: "0 1px 10px rgba(255, 255, 255, 0.8)",
+              fontWeight: 450,
+              textShadow: "0 1px 16px rgba(255, 255, 255, 0.95), 0 0 28px rgba(250, 247, 242, 0.85)",
             }}
           >
             Premium turnkey interior solutions, from concept to final handover.

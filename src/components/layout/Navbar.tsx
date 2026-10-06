@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { X, Menu } from "lucide-react";
+import { X } from "lucide-react";
 import { WHATSAPP_NUMBER, PHONE_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 
 const navLinks = [
