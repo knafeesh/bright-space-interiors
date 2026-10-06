@@ -9,18 +9,14 @@ import {
   PenTool,
   KeyRound,
   ArrowRight,
-  Shield,
-  Users,
-  Gem,
-  Clock,
-  MessageSquare,
   ChevronRight,
 } from "lucide-react";
-import { TESTIMONIALS, WHY_US_PILLARS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
+import { TESTIMONIALS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects, useCmsServices } from "@/lib/cms";
 import CategoryCarousel from "@/components/ui/CategoryCarousel";
 import ProjectCard from "@/components/ui/ProjectCard";
 import ClientListSection from "@/components/ui/ClientListSection";
+import DesignIdeasSection from "@/components/ui/DesignIdeasSection";
 import DesignToMoveInSection from "@/components/ui/DesignToMoveInSection";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
@@ -87,14 +83,7 @@ function useFadeIn() {
   return ref;
 }
 
-// ─── Icon Map ────────────────────────────────────────────────────────────────
-const PILLAR_ICONS: Record<string, React.ReactNode> = {
-  shield: <Shield size={28} />,
-  users: <Users size={28} />,
-  gem: <Gem size={28} />,
-  clock: <Clock size={28} />,
-  message: <MessageSquare size={28} />,
-};
+
 
 const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
 const SERVICE_ICONS = [
@@ -673,30 +662,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════ WHY CHOOSE US ══════════════ */}
-      <section className="why-us section" aria-label="Why choose us">
-        <div className="container">
-          <div className="section-title--center">
-            <span className="eyebrow">Why Bright Space</span>
-            <h2 style={{ color: "var(--ivory)", textAlign: "center" }}>
-              The Bright Space Difference
-            </h2>
-            <div className="title-line--center title-line" />
-          </div>
-
-          <div className="why-us__grid">
-            {WHY_US_PILLARS.map((pillar) => (
-              <div key={pillar.title} className="why-us__pillar">
-                <div className="why-us__pillar-icon">
-                  {PILLAR_ICONS[pillar.icon]}
-                </div>
-                <div className="why-us__pillar-title">{pillar.title}</div>
-                <p className="why-us__pillar-text">{pillar.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ══════════════ DESIGN IDEAS (INSPIRATION CAROUSEL) ══════════════ */}
+      <DesignIdeasSection />
 
       {/* ══════════════ FROM DESIGN TO MOVE-IN (CUSTOMER JOURNEY) ══════════════ */}
       <DesignToMoveInSection />
