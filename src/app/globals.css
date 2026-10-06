@@ -898,8 +898,8 @@ p {
   left: 50%;
   transform: translateX(-50%);
   background: rgba(22, 19, 17, 0.85);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   border: 1px solid rgba(212, 184, 122, 0.55);
   color: #FAF7F2;
   padding: 5px 13px;
