@@ -3555,11 +3555,9 @@ p {
   overflow-x: auto;
   overflow-y: hidden;
   padding: 10px 24px 24px;
-  scrollbar-width: none;
   -ms-overflow-style: none;
   cursor: grab;
   touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
   scroll-behavior: auto;
 }
 
@@ -3585,8 +3583,8 @@ p {
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.4s ease,
               box-shadow 0.4s ease;
-  user-select: none;
   -webkit-user-select: none;
+  user-select: none;
   display: block;
   text-decoration: none;
 }
@@ -3646,8 +3644,8 @@ p {
   height: 28px;
   border-radius: 50%;
   background: rgba(24, 21, 18, 0.65);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   border: 1px solid rgba(212, 175, 55, 0.4);
   color: var(--gold, #D4AF37);
   display: flex;
