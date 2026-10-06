@@ -1283,6 +1283,7 @@ p {
   background: #161311;
   border-radius: 9px;
   touch-action: pan-y;
+  -webkit-user-select: none;
   user-select: none;
 }
 
