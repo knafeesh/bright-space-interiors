@@ -431,32 +431,39 @@ export const PROJECTS = [
   },
   {
     id: 7,
-    slug: "dwarka-luxury-home",
-    title: "Dwarka Modern Living & Wardrobe Suite",
+    slug: "mr-manish-singh-home-gurugram",
+    title: "Mr. Manish Singh's Home — Civil & Interior Work",
     category: "Residential",
-    location: "Sector 23, Dwarka, Delhi",
-    area: "900 sq ft",
+    location: "Park View City, Sector 48, Gurugram",
+    area: "1,300 sq ft (Carpet Area)",
     year: "2024",
-    duration: "8 weeks",
+    duration: "9 weeks",
     featured: true,
-    image: "/images/real-wardrobe-tvunit.jpg",
+    image: "/images/gurugram-manish-living-mirror-wall.jpg",
     gallery: [
-      "/images/real-wardrobe-tvunit.jpg",
-      "/images/real-bedroom-headboard.jpg",
-      "/images/real-bedroom-fluted.jpg",
-      "/images/real-kitchen-maroon.jpg",
+      "/images/gurugram-manish-living-mirror-wall.jpg",
+      "/images/gurugram-manish-grid-mirror-feature.jpg",
+      "/images/gurugram-manish-fluted-wall-console.jpg",
+      "/images/gurugram-manish-glass-partitions.jpg",
     ],
     description:
-      "Optimized compact luxury apartment featuring custom space-saving joinery, recessed coves, and premium textured wall coatings.",
+      "Comprehensive civil and interior work for Mr. Manish Singh in Park View City, Sector 48, Gurugram. Our turnkey execution included vitrified floor tiling, wooden paint and polish work, bronze grid tinted mirror wall panelling, fluted feature walls with floating console, and architectural glass partitions.",
     challenge:
-      "Maximizing usable living area and natural light within a 900 sq ft footprint without clutter.",
+      "Executing high-precision floor tiling, flawless wooden paint & polish finishes, and seamlessly integrating geometric mirror panelling across a 1,300 sq ft carpet area.",
     solution:
-      "Integrated floor-to-ceiling concealed storage, neutral reflective tones, and an open layout uniting the lounge and dining areas.",
+      "Engineered an open-concept luxury layout: laser-levelled vitrified marble-finish floor tiles, bronze grid accent mirror panelling to expand spatial depth, fluted accent walls with floating vanity joinery, and durable artisanal wood paint and polish finishes.",
     clientQuote:
-      "They transformed our 900 sq ft space into feeling like an open luxury suite.",
-    clientName: "Ashok Kumar",
-    materials: ["Custom Modular Wardrobe", "Integrated TV Console", "Warm Ambient LED", "Brushed Metal Hardware"],
-    bgGradient: "linear-gradient(135deg, #1C2620 0%, #253020 100%)",
+      "Bright Space executed the floor tiles, wooden paint, and polish work with outstanding craftsmanship. The flat feels expansive, modern, and completely transformed.",
+    clientName: "Mr. Manish Singh",
+    materials: [
+      "Vitrified Marble-Finish Floor Tiles",
+      "Bronze Grid Accent Mirror Panelling",
+      "Wooden Paint & Polish Craftsmanship",
+      "Fluted Accent Wall & Sconces",
+      "Architectural Glass Partitions",
+      "Floating Console & Desk Joinery",
+    ],
+    bgGradient: "linear-gradient(135deg, #201E26 0%, #2A2433 100%)",
   },
   {
     id: 8,
@@ -697,11 +704,11 @@ export const TESTIMONIALS = [
   },
   {
     id: 3,
-    name: "Ashok Kumar",
-    project: "Sector 23, Dwarka, Delhi",
+    name: "Mr. Manish Singh",
+    project: "Park View City, Sector 48, Gurugram",
     rating: 5,
     quote:
-      "Their space planning and 3D visualization were incredible. What they showed us in renders was what was delivered on site. Highly recommend Mohd Mushir and his team.",
+      "Bright Space executed the floor tiles, wooden paint, and polish work with outstanding craftsmanship. The flat feels expansive, modern, and completely transformed.",
   },
 ];
 

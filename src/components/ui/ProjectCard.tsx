@@ -14,6 +14,8 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
   const [activeImgIdx, setActiveImgIdx] = useState(0);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const mouseStartX = useRef<number | null>(null);
+  const isDragging = useRef<boolean>(false);
 
   const images =
     project.gallery && project.gallery.length > 0
@@ -64,11 +66,49 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
     touchEndX.current = null;
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    mouseStartX.current = e.clientX;
+    isDragging.current = false;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (mouseStartX.current !== null) {
+      if (Math.abs(e.clientX - mouseStartX.current) > 8) {
+        isDragging.current = true;
+      }
+    }
+  };
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (mouseStartX.current !== null) {
+      const diff = mouseStartX.current - e.clientX;
+      if (Math.abs(diff) > 35) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (diff > 0) {
+          setActiveImgIdx((prev) => (prev + 1) % images.length);
+        } else {
+          setActiveImgIdx((prev) => (prev - 1 + images.length) % images.length);
+        }
+      }
+    }
+    mouseStartX.current = null;
+    setTimeout(() => {
+      isDragging.current = false;
+    }, 50);
+  };
+
   return (
     <Link
       href={`/portfolio/${project.slug}`}
       className="project-card"
       id={`${idPrefix}-${project.id}`}
+      onClick={(e) => {
+        if (isDragging.current) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }}
       style={{
         textDecoration: "none",
         color: "inherit",
@@ -87,10 +127,15 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
           background: "#161311",
           borderRadius: "4px",
           touchAction: "pan-y",
+          userSelect: "none",
+          cursor: isDragging.current ? "grabbing" : "pointer",
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
       >
         {/* Horizontal Sliding Track */}
         <div

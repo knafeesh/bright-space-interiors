@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, MapPin, Maximize2, Calendar, Clock } from "lucide-react";
 import { useCmsProjects, Project } from "@/lib/cms";
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export default function ProjectDetailClient({ initialProject, slug }: Props) {
+  const [activeImage, setActiveImage] = useState<string | null>(null);
   const cmsProjects = useCmsProjects();
 
   const targetSlug = slug || initialProject?.slug;
@@ -140,42 +142,65 @@ export default function ProjectDetailClient({ initialProject, slug }: Props) {
                     height: "100%",
                     minHeight: "440px",
                     overflow: "hidden",
-                    borderRadius: "2px",
+                    borderRadius: "4px",
                     background: "#EAE5DC",
+                    boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
                   }}
                 >
                   <img
-                    src={project.gallery[0] || project.image}
+                    src={activeImage || project.gallery[0] || project.image}
                     alt={`${project.title} Interior`}
                     style={{
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
                       display: "block",
+                      transition: "opacity 0.25s ease",
                     }}
                   />
                 </div>
               </div>
               {project.gallery.length > 1 && (
-                <div className="project-gallery__side" style={{ gridColumn: "span 4", display: "flex", flexDirection: "column", gap: "16px" }}>
-                  {project.gallery.slice(1).map((imgSrc, i) => (
-                    <div
-                      key={i}
-                      className="project-gallery__side-img"
-                      style={{ minHeight: "212px", overflow: "hidden", borderRadius: "2px", background: "#EAE5DC" }}
-                    >
-                      <img
-                        src={imgSrc}
-                        alt={`${project.title} Detail ${i + 1}`}
+                <div
+                  className="project-gallery__side"
+                  style={{
+                    gridColumn: "span 4",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
+                  {project.gallery.map((imgSrc, i) => {
+                    const isSelected = (activeImage || project.gallery[0]) === imgSrc;
+                    return (
+                      <div
+                        key={i}
+                        onClick={() => setActiveImage(imgSrc)}
+                        className="project-gallery__side-img"
                         style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          display: "block",
+                          height: "135px",
+                          overflow: "hidden",
+                          borderRadius: "4px",
+                          background: "#EAE5DC",
+                          cursor: "pointer",
+                          border: isSelected ? "2px solid var(--gold)" : "2px solid transparent",
+                          opacity: isSelected ? 1 : 0.78,
+                          transition: "all 0.2s ease",
                         }}
-                      />
-                    </div>
-                  ))}
+                      >
+                        <img
+                          src={imgSrc}
+                          alt={`${project.title} Detail ${i + 1}`}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            display: "block",
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
