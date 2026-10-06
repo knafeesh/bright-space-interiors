@@ -20,6 +20,7 @@ import { TESTIMONIALS, WHY_US_PILLARS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from 
 import { useCmsProjects, useCmsServices } from "@/lib/cms";
 import CategoryCarousel from "@/components/ui/CategoryCarousel";
 import ProjectCard from "@/components/ui/ProjectCard";
+import ClientListSection from "@/components/ui/ClientListSection";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
 function AnimatedCounter({
@@ -729,6 +730,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ══════════════ OUR GROUP / CLIENT LIST ══════════════ */}
+      <ClientListSection />
 
       {/* ══════════════ CTA BAND ══════════════ */}
       <section className="cta-band" aria-label="Call to action">
