@@ -127,9 +127,44 @@ const SERVICE_IMAGES: Record<string, string> = {
   residential: "/images/real-bedroom-headboard.jpg",
   commercial: "/images/office-gurugram-open-floor.jpg",
   turnkey: "/images/real-kitchen-saket.jpg",
-  "design-execution": "/images/salon-rawls-styling-suites.jpg",
-  design: "/images/salon-rawls-styling-suites.jpg",
+  "design-execution": "/images/sushant-lok-vdeliver-site-execution.jpg",
+  design: "/images/sushant-lok-vdeliver-site-execution.jpg",
 };
+
+const HOME_SERVICES = [
+  {
+    title: "Residential Interior",
+    slug: "residential",
+    image: "/images/real-bedroom-headboard.jpg",
+    description:
+      "Beautifully crafted residential spaces designed around your lifestyle, comfort, and personality.",
+    href: "/services/residential",
+  },
+  {
+    title: "Commercial Interior",
+    slug: "commercial",
+    image: "/images/office-gurugram-open-floor.jpg",
+    description:
+      "Professional commercial spaces designed to reflect your brand, functionality, and business needs.",
+    href: "/services/commercial",
+  },
+  {
+    title: "Turnkey Projects",
+    slug: "turnkey",
+    image: "/images/real-kitchen-saket.jpg",
+    description:
+      "Complete interior solutions from concept and design to execution, finishing, and final handover.",
+    href: "/services/turnkey",
+  },
+  {
+    title: "Design & Execution",
+    slug: "design-execution",
+    image: "/images/sushant-lok-vdeliver-site-execution.jpg",
+    description:
+      "From detailed design concepts to precise execution, we bring every interior vision to life.",
+    href: "/services/design-execution",
+  },
+];
 
 export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState("All");
@@ -479,131 +514,51 @@ export default function HomePage() {
               All Services <ChevronRight size={14} />
             </Link>
           </div>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: "24px",
-            }}
-          >
-            {cmsServices.map((service) => {
-              const imgSrc = service.image || SERVICE_IMAGES[service.slug] || "/images/real-bedroom-headboard.jpg";
+          <div className="services-compact-grid">
+            {HOME_SERVICES.map((service) => {
+              const cmsMatch = cmsServices.find(
+                (s) => s.slug === service.slug || (service.slug === "design-execution" && s.slug === "design")
+              );
+              const imgSrc = cmsMatch?.image || SERVICE_IMAGES[service.slug] || service.image;
+
               return (
-                <Link
+                <div
                   key={service.slug}
-                  href={`/services/${service.slug}`}
                   id={`service-card-${service.slug}`}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    background: "#161311",
-                    border: "1px solid rgba(255, 255, 255, 0.12)",
-                    borderRadius: "6px",
-                    overflow: "hidden",
-                    textDecoration: "none",
-                    color: "inherit",
-                    transition: "transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease",
-                  }}
-                  className="service-framed-card"
+                  className="service-compact-card"
                 >
-                  {/* Real Image Window in the Frame */}
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "230px",
-                      position: "relative",
-                      overflow: "hidden",
-                      background: "#0D0B0A",
-                    }}
+                  {/* Landscape Image with Small Title Overlay Badge */}
+                  <Link
+                    href={service.href}
+                    className="service-compact-card__image-wrap"
+                    aria-label={`View ${service.title}`}
                   >
                     <img
                       src={imgSrc}
                       alt={service.title}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        objectPosition: "center",
-                        display: "block",
-                        transition: "transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
-                      }}
-                      className="service-framed-card__img"
+                      className="service-compact-card__img"
+                      loading="lazy"
                     />
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "12px",
-                        left: "12px",
-                        background: "rgba(0, 0, 0, 0.65)",
-                        backdropFilter: "blur(6px)",
-                        border: "1px solid rgba(212, 184, 122, 0.4)",
-                        color: "#D4B87A",
-                        padding: "4px 10px",
-                        borderRadius: "50px",
-                        fontSize: "10px",
-                        fontWeight: 700,
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      {service.subtitle}
+                    <div className="service-compact-card__img-gradient" />
+                    <div className="service-compact-card__badge">
+                      {service.title}
                     </div>
-                  </div>
+                  </Link>
 
-                  {/* Given Text Below Image in the Frame */}
-                  <div
-                    style={{
-                      padding: "24px 22px 20px",
-                      display: "flex",
-                      flexDirection: "column",
-                      flexGrow: 1,
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div>
-                      <h3
-                        style={{
-                          fontFamily: "var(--font-serif)",
-                          fontSize: "22px",
-                          fontWeight: 500,
-                          color: "#FFFFFF",
-                          margin: "0 0 10px",
-                          lineHeight: 1.3,
-                        }}
-                      >
-                        {service.title}
-                      </h3>
-                      <p
-                        style={{
-                          fontSize: "13px",
-                          lineHeight: 1.65,
-                          color: "rgba(250, 247, 242, 0.72)",
-                          margin: "0 0 20px",
-                        }}
-                      >
-                        {service.description}
-                      </p>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        paddingTop: "14px",
-                        borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-                        color: "#D4B87A",
-                        fontSize: "11px",
-                        fontWeight: 700,
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                      }}
+                  {/* Short Clean Description & Centered Read More Button */}
+                  <div className="service-compact-card__content">
+                    <p className="service-compact-card__desc">
+                      {service.description}
+                    </p>
+                    <Link
+                      href={service.href}
+                      id={`service-btn-${service.slug}`}
+                      className="service-compact-card__btn"
                     >
-                      <span>Explore Service</span>
-                      <ArrowRight size={14} />
-                    </div>
+                      Read More
+                    </Link>
                   </div>
-                </Link>
+                </div>
               );
             })}
           </div>
