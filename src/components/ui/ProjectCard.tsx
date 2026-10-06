@@ -122,11 +122,12 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
         style={{
           position: "relative",
           width: "100%",
-          aspectRatio: "4/3",
+          aspectRatio: "16 / 10",
           overflow: "hidden",
           background: "#161311",
           borderRadius: "9px",
           touchAction: "pan-y",
+          WebkitUserSelect: "none",
           userSelect: "none",
           cursor: isDragging.current ? "grabbing" : "pointer",
         }}
@@ -137,6 +138,30 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
       >
+        {/* Top-Left Category Badge */}
+        <div
+          style={{
+            position: "absolute",
+            top: "10px",
+            left: "10px",
+            zIndex: 3,
+            background: "rgba(20, 18, 16, 0.82)",
+            WebkitBackdropFilter: "blur(6px)",
+            backdropFilter: "blur(6px)",
+            border: "1px solid rgba(212, 184, 122, 0.5)",
+            color: "#E5D2A4",
+            padding: "3.5px 10px",
+            borderRadius: "50px",
+            fontFamily: "var(--font-sans)",
+            fontSize: "9.5px",
+            fontWeight: 700,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            pointerEvents: "none",
+          }}
+        >
+          {project.category}
+        </div>
         {/* Horizontal Sliding Track */}
         <div
           style={{

@@ -59,122 +59,100 @@ export default function ServicesClient() {
             padding: "0 24px",
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "28px",
+            gap: "24px",
           }}
         >
           {services.map((service) => (
             <Link
               key={service.slug}
               href={`/services/${service.slug}`}
-              className="service-framed-card"
+              className="service-compact-card"
               id={`service-hub-${service.slug}`}
               style={{
-                display: "flex",
-                flexDirection: "column",
-                background: "#161311",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                borderRadius: "6px",
-                overflow: "hidden",
                 textDecoration: "none",
                 color: "inherit",
-                transition: "transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                textAlign: "center",
               }}
             >
-              {/* Real Image Window */}
+              {/* Landscape Image with Badge */}
               <div
+                className="service-compact-card__image-wrap"
                 style={{
-                  width: "100%",
-                  height: "240px",
                   position: "relative",
+                  width: "100%",
+                  aspectRatio: "16 / 10",
+                  borderRadius: "9px",
                   overflow: "hidden",
-                  background: "#0D0B0A",
+                  background: "#1A1715",
                 }}
               >
                 <img
                   src={service.image || "/images/real-bedroom-headboard.jpg"}
                   alt={service.title}
+                  className="service-compact-card__img"
                   style={{
                     width: "100%",
                     height: "100%",
                     objectFit: "cover",
                     objectPosition: "center",
                     display: "block",
-                    transition: "transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
                   }}
-                  className="service-framed-card__img"
                 />
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "12px",
-                    left: "12px",
-                    background: "rgba(0, 0, 0, 0.65)",
-                    backdropFilter: "blur(6px)",
-                    border: "1px solid rgba(212, 184, 122, 0.4)",
-                    color: "#D4B87A",
-                    padding: "4px 10px",
-                    borderRadius: "50px",
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {service.subtitle}
+                <div className="service-compact-card__img-gradient" />
+                <div className="service-compact-card__badge">
+                  {service.title}
                 </div>
               </div>
 
-              {/* Given Text Below Image in Frame */}
+              {/* Text Below Image */}
               <div
+                className="service-compact-card__content"
                 style={{
-                  padding: "26px 24px 22px",
                   display: "flex",
                   flexDirection: "column",
                   flexGrow: 1,
                   justifyContent: "space-between",
+                  padding: "14px 6px 0",
+                  textAlign: "center",
                 }}
               >
                 <div>
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-serif)",
-                      fontSize: "24px",
-                      fontWeight: 500,
-                      color: "#FFFFFF",
-                      margin: "0 0 10px",
-                      lineHeight: 1.25,
-                    }}
-                  >
-                    {service.title}
-                  </h3>
                   <p
+                    className="service-compact-card__desc"
                     style={{
                       fontSize: "13px",
-                      lineHeight: 1.65,
-                      color: "rgba(250, 247, 242, 0.72)",
-                      margin: "0 0 16px",
+                      lineHeight: 1.55,
+                      color: "#4E4E4E",
+                      margin: "0 0 14px",
                     }}
                   >
                     {service.description}
                   </p>
+
+                  {/* Sub-services Pills */}
                   <div
                     style={{
                       display: "flex",
                       flexWrap: "wrap",
-                      gap: "6px",
-                      marginBottom: "20px",
+                      gap: "5px",
+                      justifyContent: "center",
+                      marginBottom: "16px",
                     }}
                   >
-                    {service.subServices.slice(0, 4).map((sub) => (
+                    {service.subServices.slice(0, 3).map((sub) => (
                       <span
                         key={sub}
                         style={{
-                          fontSize: "11px",
-                          background: "rgba(255, 255, 255, 0.06)",
-                          border: "1px solid rgba(255, 255, 255, 0.1)",
-                          padding: "3px 8px",
-                          borderRadius: "2px",
-                          color: "rgba(250, 247, 242, 0.8)",
+                          fontSize: "10.5px",
+                          background: "rgba(184, 151, 90, 0.08)",
+                          border: "1px solid rgba(184, 151, 90, 0.22)",
+                          padding: "2.5px 8px",
+                          borderRadius: "4px",
+                          color: "#7E6334",
+                          fontWeight: 500,
                         }}
                       >
                         {sub}
@@ -183,22 +161,11 @@ export default function ServicesClient() {
                   </div>
                 </div>
 
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingTop: "14px",
-                    borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-                    color: "#D4B87A",
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  <span>Explore Service</span>
-                  <ArrowRight size={14} />
+                {/* Preserved Outlined Button: Explore Service */}
+                <div style={{ display: "flex", justifyContent: "center", marginTop: "auto", paddingTop: "8px" }}>
+                  <span className="service-compact-card__btn">
+                    Explore Service <ArrowRight size={12} style={{ marginLeft: "5px" }} />
+                  </span>
                 </div>
               </div>
             </Link>
@@ -226,7 +193,7 @@ export default function ServicesClient() {
               </Link>
             </div>
             <div>
-              <div style={{ position: "relative", marginBottom: "24px", height: "200px", overflow: "hidden", borderRadius: "2px" }}>
+              <div style={{ position: "relative", marginBottom: "24px", height: "200px", overflow: "hidden", borderRadius: "9px", border: "1.5px solid rgba(184, 151, 90, 0.35)", boxShadow: "0 4px 18px rgba(0,0,0,0.18)" }}>
                 <img
                   src="/images/real-salon-mainhall.jpg"
                   alt="Turnkey Execution"
@@ -289,77 +256,91 @@ export default function ServicesClient() {
             {specialties.map((s) => (
               <div
                 key={s.name}
+                className="service-compact-card"
                 style={{
-                  background: "var(--white)",
-                  padding: "24px",
-                  borderRadius: "2px",
-                  border: "1px solid rgba(44,36,32,0.08)",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
-                  transition: "all var(--transition-medium)",
+                  textAlign: "center",
                 }}
               >
-                <div>
-                  <div style={{ height: "150px", overflow: "hidden", borderRadius: "1px", marginBottom: "18px" }}>
-                    <img
-                      src={s.image}
-                      alt={s.name}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        transition: "transform 0.5s ease",
-                      }}
-                    />
-                  </div>
-                  <span
+                {/* Landscape Image with Badge */}
+                <div
+                  className="service-compact-card__image-wrap"
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    aspectRatio: "16 / 10",
+                    borderRadius: "9px",
+                    overflow: "hidden",
+                    background: "#1A1715",
+                  }}
+                >
+                  <img
+                    src={s.image}
+                    alt={s.name}
+                    className="service-compact-card__img"
                     style={{
-                      fontSize: "11px",
-                      letterSpacing: "0.15em",
-                      textTransform: "uppercase",
-                      color: "var(--gold-dark)",
-                      fontWeight: 600,
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center",
+                      display: "block",
                     }}
-                  >
-                    {s.tagline}
-                  </span>
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-serif)",
-                      fontSize: "22px",
-                      color: "var(--charcoal)",
-                      margin: "8px 0 12px",
-                    }}
-                  >
+                  />
+                  <div className="service-compact-card__img-gradient" />
+                  <div className="service-compact-card__badge">
                     {s.name}
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: "14px",
-                      color: "var(--muted)",
-                      lineHeight: 1.6,
-                    }}
-                  >
-                    {s.description}
-                  </p>
+                  </div>
                 </div>
-                <div style={{ marginTop: "24px", paddingTop: "16px", borderTop: "1px solid rgba(44,36,32,0.06)" }}>
-                  <Link
-                    href="/contact"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      letterSpacing: "0.1em",
-                      color: "var(--charcoal)",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Consult on this <ChevronRight size={13} style={{ color: "var(--gold)" }} />
-                  </Link>
+
+                {/* Details */}
+                <div
+                  className="service-compact-card__content"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flexGrow: 1,
+                    justifyContent: "space-between",
+                    padding: "14px 6px 0",
+                    textAlign: "center",
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: "10.5px",
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        color: "var(--gold-dark)",
+                        fontWeight: 600,
+                        marginBottom: "6px",
+                      }}
+                    >
+                      {s.tagline}
+                    </div>
+                    <p
+                      className="service-compact-card__desc"
+                      style={{
+                        fontSize: "13px",
+                        lineHeight: 1.55,
+                        color: "#4E4E4E",
+                        margin: "0 0 16px",
+                      }}
+                    >
+                      {s.description}
+                    </p>
+                  </div>
+
+                  {/* Preserved Button: Consult on this */}
+                  <div style={{ display: "flex", justifyContent: "center", marginTop: "auto", paddingTop: "8px" }}>
+                    <Link
+                      href="/contact"
+                      className="service-compact-card__btn"
+                    >
+                      Consult on this <ChevronRight size={13} style={{ marginLeft: "4px" }} />
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}

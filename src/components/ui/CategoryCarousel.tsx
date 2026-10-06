@@ -254,11 +254,11 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
           position: "relative",
           width: "100%",
           height: "clamp(280px, 46vw, 520px)",
-          borderRadius: "6px",
+          borderRadius: "14px",
           overflow: "hidden",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
+          border: "1.5px solid rgba(184, 151, 90, 0.35)",
           background: "#0D0B0A",
-          boxShadow: "0 18px 45px rgba(0, 0, 0, 0.35)",
+          boxShadow: "0 18px 45px rgba(0, 0, 0, 0.25)",
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}

@@ -6,6 +6,7 @@ import { SERVICES, PROJECTS, WHATSAPP_NUMBER } from "@/lib/data";
 import { useCmsServices, useCmsProjects } from "@/lib/cms";
 import { ArrowRight, Plus } from "lucide-react";
 import { use } from "react";
+import ProjectCard from "@/components/ui/ProjectCard";
 
 // ── Per-service photo gallery sets ──────────────────────────────────────────
 const SERVICE_GALLERIES: Record<string, { src: string; caption: string }[]> = {
@@ -161,9 +162,11 @@ function ServiceDetailClient({ slug }: { slug: string }) {
                       width: "100%",
                       aspectRatio: "16/10",
                       overflow: "hidden",
-                      borderRadius: "2px",
+                      borderRadius: "9px",
+                      border: "1.5px solid rgba(184, 151, 90, 0.32)",
+                      boxShadow: "0 4px 18px rgba(28, 28, 28, 0.05)",
                       position: "relative",
-                      marginBottom: "10px",
+                      marginBottom: "12px",
                     }}
                   >
                     <img
@@ -213,7 +216,7 @@ function ServiceDetailClient({ slug }: { slug: string }) {
                         style={{
                           padding: 0,
                           border: i === activePhoto ? "2px solid var(--gold)" : "2px solid transparent",
-                          borderRadius: "1px",
+                          borderRadius: "6px",
                           overflow: "hidden",
                           cursor: "pointer",
                           aspectRatio: "1",
@@ -308,7 +311,9 @@ function ServiceDetailClient({ slug }: { slug: string }) {
               <div style={{
                 gridRow: "span 2",
                 overflow: "hidden",
-                borderRadius: "2px",
+                borderRadius: "9px",
+                border: "1.5px solid rgba(184, 151, 90, 0.32)",
+                boxShadow: "0 4px 18px rgba(28, 28, 28, 0.05)",
                 position: "relative",
               }}>
                 <img
@@ -332,7 +337,14 @@ function ServiceDetailClient({ slug }: { slug: string }) {
               {gallery.slice(1).map((photo, i) => (
                 <div
                   key={i}
-                  style={{ overflow: "hidden", borderRadius: "2px", aspectRatio: "4/3", position: "relative" }}
+                  style={{
+                    overflow: "hidden",
+                    borderRadius: "9px",
+                    border: "1.5px solid rgba(184, 151, 90, 0.32)",
+                    boxShadow: "0 4px 18px rgba(28, 28, 28, 0.05)",
+                    aspectRatio: "4/3",
+                    position: "relative",
+                  }}
                 >
                   <img
                     src={photo.src}
@@ -373,36 +385,11 @@ function ServiceDetailClient({ slug }: { slug: string }) {
 
             <div className="projects-grid" style={{ marginTop: "48px" }}>
               {relatedProjects.map((project) => (
-                <Link
+                <ProjectCard
                   key={project.id}
-                  href={`/portfolio/${project.slug}`}
-                  className="project-card"
-                  id={`related-project-${project.id}`}
-                >
-                  <div className="project-card__image-wrap">
-                    {project.image ? (
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="project-card__image"
-                        style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                      />
-                    ) : (
-                      <div
-                        className="project-card__image"
-                        style={{ background: project.bgGradient }}
-                      />
-                    )}
-                    <div className="project-card__overlay">
-                      <span className="project-card__view">View Project</span>
-                    </div>
-                  </div>
-                  <div className="project-card__info">
-                    <div className="project-card__category">{project.category}</div>
-                    <div className="project-card__title">{project.title}</div>
-                    <div className="project-card__meta">{project.location} · {project.area}</div>
-                  </div>
-                </Link>
+                  project={project}
+                  idPrefix="service-related"
+                />
               ))}
             </div>
           </div>

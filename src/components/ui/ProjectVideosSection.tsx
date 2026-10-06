@@ -315,13 +315,16 @@ export default function ProjectVideosSection() {
               flex: "0 0 340px",
               scrollSnapAlign: "start",
               background: "#FFFFFF",
-              borderRadius: "4px",
-              overflow: "hidden",
-              border: "1px solid rgba(44, 36, 32, 0.1)",
-              boxShadow: "0 4px 18px rgba(0,0,0,0.04)",
+              borderRadius: "14px",
+              border: "1.5px solid rgba(184, 151, 90, 0.32)",
+              padding: "12px 12px 18px",
+              boxShadow: "0 4px 18px rgba(28, 28, 28, 0.05)",
               cursor: "pointer",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease",
+              transition: "transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease",
               position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
             }}
             className="video-card-hover group"
           >
@@ -331,6 +334,7 @@ export default function ProjectVideosSection() {
                 position: "relative",
                 aspectRatio: "16/10",
                 overflow: "hidden",
+                borderRadius: "9px",
                 background: "#1E1A17",
               }}
             >
@@ -454,69 +458,71 @@ export default function ProjectVideosSection() {
             </div>
 
             {/* Video Details Below */}
-            <div style={{ padding: "18px 20px" }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: "6px",
-                }}
-              >
-                <span
+            <div style={{ padding: "14px 6px 0", display: "flex", flexDirection: "column", flexGrow: 1, justifyContent: "space-between" }}>
+              <div>
+                <div
                   style={{
-                    fontSize: "11px",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: "#8C7148",
-                    fontWeight: 700,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: "6px",
                   }}
                 >
-                  {video.subtitle}
-                </span>
-                {video.views && (
                   <span
                     style={{
-                      fontSize: "11px",
-                      color: "rgba(44, 36, 32, 0.55)",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "3px",
+                      fontSize: "10.5px",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      color: "#8C7148",
+                      fontWeight: 700,
                     }}
                   >
-                    <Eye size={12} />
-                    {video.views}
+                    {video.subtitle}
                   </span>
-                )}
+                  {video.views && (
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        color: "rgba(44, 36, 32, 0.55)",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "3px",
+                      }}
+                    >
+                      <Eye size={12} />
+                      {video.views}
+                    </span>
+                  )}
+                </div>
+
+                <h4
+                  style={{
+                    fontFamily: "var(--font-serif)",
+                    fontSize: "18px",
+                    fontWeight: 600,
+                    lineHeight: 1.35,
+                    color: "#181615",
+                    margin: "0 0 8px",
+                  }}
+                >
+                  {video.title}
+                </h4>
+
+                <p
+                  style={{
+                    fontSize: "12.5px",
+                    lineHeight: 1.55,
+                    color: "rgba(44, 36, 32, 0.7)",
+                    margin: "0 0 16px",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {video.description}
+                </p>
               </div>
-
-              <h4
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: "18px",
-                  fontWeight: 600,
-                  lineHeight: 1.35,
-                  color: "#181615",
-                  margin: "0 0 8px",
-                }}
-              >
-                {video.title}
-              </h4>
-
-              <p
-                style={{
-                  fontSize: "13px",
-                  lineHeight: 1.55,
-                  color: "rgba(44, 36, 32, 0.7)",
-                  margin: "0 0 16px",
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}
-              >
-                {video.description}
-              </p>
 
               {/* Action Button: [ ▶ Watch Video ] */}
               <div
@@ -526,6 +532,7 @@ export default function ProjectVideosSection() {
                   justifyContent: "space-between",
                   paddingTop: "12px",
                   borderTop: "1px solid rgba(44, 36, 32, 0.08)",
+                  marginTop: "auto",
                 }}
               >
                 <span
@@ -533,14 +540,19 @@ export default function ProjectVideosSection() {
                     display: "inline-flex",
                     alignItems: "center",
                     gap: "6px",
-                    fontSize: "12px",
-                    fontWeight: 700,
-                    letterSpacing: "0.08em",
-                    color: "#8B6B38",
+                    padding: "6px 18px",
+                    border: "1.2px solid var(--gold)",
+                    borderRadius: "6px",
+                    background: "transparent",
+                    color: "var(--gold-dark)",
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    letterSpacing: "0.05em",
                     textTransform: "uppercase",
+                    transition: "all 0.25s ease",
                   }}
                 >
-                  <Play size={13} fill="#8B6B38" />
+                  <Play size={11} fill="currentColor" />
                   Watch Video
                 </span>
 

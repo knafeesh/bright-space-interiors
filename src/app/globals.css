@@ -1278,7 +1278,7 @@ p {
 .project-card__image-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   background: #161311;
   border-radius: 9px;
@@ -1353,7 +1353,7 @@ p {
 
 .project-card__title {
   font-family: var(--font-serif);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
   color: var(--charcoal);
   line-height: 1.35;
@@ -2051,19 +2051,54 @@ p {
 .team-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
+  gap: 24px;
   margin-top: 56px;
 }
 
+@media (max-width: 1024px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
 .team-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--white);
+  border: 1.5px solid rgba(184, 151, 90, 0.32);
+  border-radius: 14px;
+  padding: 12px 12px 18px;
+  box-shadow: 0 4px 18px rgba(28, 28, 28, 0.05);
+  transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.32s ease;
+  position: relative;
   text-align: center;
+  overflow: hidden;
+}
+
+.team-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(184, 151, 90, 0.65);
+  box-shadow: 0 12px 32px rgba(184, 151, 90, 0.16), 0 4px 12px rgba(28, 28, 28, 0.08);
 }
 
 .team-card__photo-wrap {
   position: relative;
   overflow: hidden;
-  margin-bottom: 20px;
-  aspect-ratio: 3/4;
+  border-radius: 9px;
+  margin-bottom: 14px;
+  aspect-ratio: 4 / 4.5;
+  background: #161311;
 }
 
 .team-card__photo {
@@ -2079,18 +2114,18 @@ p {
 
 .team-card__name {
   font-family: var(--font-serif);
-  font-size: 22px;
-  font-weight: 400;
+  font-size: 19px;
+  font-weight: 500;
   color: var(--charcoal);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .team-card__role {
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--gold-dark);
 }
 
 .milestone-timeline {
@@ -2364,6 +2399,21 @@ p {
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   margin-top: 48px;
+}
+
+@media (max-width: 1024px) {
+  .portfolio-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 32px;
+  }
 }
 
 .portfolio-grid .project-card:nth-child(4),

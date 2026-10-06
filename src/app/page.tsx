@@ -443,59 +443,85 @@ export default function HomePage() {
               <Link
                 key={p.id}
                 href={`/portfolio/${p.slug}`}
+                className="service-compact-card"
                 style={{
-                  display: "block",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
                   textDecoration: "none",
                   color: "inherit",
-                  transition: "transform var(--transition-base)",
+                  textAlign: "center",
                 }}
-                className="group"
               >
                 <div
+                  className="service-compact-card__image-wrap"
                   style={{
                     position: "relative",
-                    aspectRatio: "16/11",
+                    aspectRatio: "16 / 10",
                     overflow: "hidden",
-                    borderRadius: "1px",
-                    background: "#E8E2D8",
+                    borderRadius: "9px",
+                    background: "#161311",
                   }}
                 >
                   <img
                     src={p.image || "/images/hero-luxury.jpg"}
                     alt={p.title}
+                    className="service-compact-card__img"
                     style={{
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
-                      transition: "transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
+                      objectPosition: "center",
+                      display: "block",
                     }}
-                    className="group-hover:scale-105"
                   />
+                  <div className="service-compact-card__img-gradient" />
+                  <div className="service-compact-card__badge">
+                    {p.category}
+                  </div>
                 </div>
-                <div style={{ paddingTop: "16px" }}>
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-serif)",
-                      fontSize: "17px",
-                      fontWeight: 600,
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      color: "#1C1C1C",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    {p.title}
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: "13px",
-                      color: "rgba(44, 36, 32, 0.68)",
-                      lineHeight: 1.5,
-                      margin: 0,
-                    }}
-                  >
-                    Premium turnkey interior solutions, from concept to final handover.
-                  </p>
+                <div
+                  className="service-compact-card__content"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flexGrow: 1,
+                    justifyContent: "space-between",
+                    padding: "14px 6px 0",
+                    textAlign: "center",
+                  }}
+                >
+                  <div>
+                    <h3
+                      style={{
+                        fontFamily: "var(--font-serif)",
+                        fontSize: "17px",
+                        fontWeight: 600,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        color: "#1C1C1C",
+                        margin: "0 0 6px",
+                      }}
+                    >
+                      {p.title}
+                    </h3>
+                    <p
+                      className="service-compact-card__desc"
+                      style={{
+                        fontSize: "12.5px",
+                        color: "#4E4E4E",
+                        lineHeight: 1.55,
+                        margin: "0 0 14px",
+                      }}
+                    >
+                      Premium turnkey interior solutions, from concept to final handover.
+                    </p>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "center", marginTop: "auto", paddingTop: "6px" }}>
+                    <span className="service-compact-card__btn">
+                      Explore Project <ChevronRight size={13} style={{ marginLeft: "4px" }} />
+                    </span>
+                  </div>
                 </div>
               </Link>
             ))}
