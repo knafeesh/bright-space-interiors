@@ -183,6 +183,35 @@ export const SPECIALTY_SERVICES = [
 
 export const PROJECTS = [
   {
+    id: 101,
+    slug: "rawls-salon-luxury",
+    title: "Rawls Salon — Flagship Turnkey Luxury Salon",
+    category: "Salon",
+    location: "Delhi NCR",
+    area: "5,000 sq ft",
+    year: "2024",
+    duration: "12 weeks",
+    featured: true,
+    image: "/images/salon-rawls-reception.jpg",
+    gallery: [
+      "/images/salon-rawls-reception.jpg",
+      "/images/salon-rawls-mainhall.jpg",
+      "/images/salon-rawls-styling-suites.jpg",
+      "/images/salon-rawls-facade-site.jpg",
+    ],
+    description:
+      "Complete turnkey facade engineering, MEP infrastructure, and opulent European interior execution for Rawls Salon. Features custom gold-leaf arched styling mirrors, geometric marble flooring, illuminated 3D crest branding, and artisanal carpet reception counter.",
+    challenge:
+      "Executing multi-level structural facade modifications alongside bespoke joinery, acoustic privacy treatment suites, and high-efficiency central ventilation on schedule.",
+    solution:
+      "Precision steel facade scaffolding reinforcement, handcrafted gold-leaf styling arches, Italian marble flooring, and customized retail vitrines.",
+    clientQuote:
+      "The craftsmanship from the facade structure to the interior mirrors and reception desk is top-tier.",
+    clientName: "Rawls Salon Management",
+    materials: ["Gold-Leaf Arched Framing", "Illuminated Crest Signage", "Checkerboard Marble", "Custom Carpet Reception Desk", "Double-Glazed Facade"],
+    bgGradient: "linear-gradient(135deg, #1C1917 0%, #2A231E 100%)",
+  },
+  {
     id: 102,
     slug: "gurugram-corporate-office",
     title: "Gurugram Corporate Office — Modern Turnkey Workspace",
@@ -220,33 +249,114 @@ export const PROJECTS = [
     bgGradient: "linear-gradient(135deg, #161D26 0%, #202A36 100%)",
   },
   {
-    id: 101,
-    slug: "rawls-salon-luxury",
-    title: "Rawls Salon — Flagship Turnkey Luxury Salon",
-    category: "Salon",
-    location: "Delhi NCR",
-    area: "5,000 sq ft",
-    year: "2024",
-    duration: "12 weeks",
+    id: 9,
+    slug: "shri-ram-complex-v-deliver-sushant-lok",
+    title: "Shri Ram Complex — Civil, Interior & Waterproofing",
+    category: "Commercial",
+    location: "Shri Ram Complex, Sushant Lok Phase 1, Gurugram",
+    area: "2,500 sq ft (Carpet Area)",
+    year: "2021",
+    duration: "11 weeks (Dec 2020 – 20 Feb 2021)",
     featured: true,
-    image: "/images/salon-rawls-reception.jpg",
+    image: "/images/sushant-lok-vdeliver-site-execution.jpg",
     gallery: [
-      "/images/salon-rawls-reception.jpg",
-      "/images/salon-rawls-mainhall.jpg",
-      "/images/salon-rawls-styling-suites.jpg",
-      "/images/salon-rawls-facade-site.jpg",
+      "/images/sushant-lok-vdeliver-site-execution.jpg",
+      "/images/sushant-lok-vdeliver-stone-cutting-masonry.jpg",
+      "/images/sushant-lok-vdeliver-grand-hall-cove.jpg",
+      "/images/sushant-lok-vdeliver-corridor-framing-flooring.jpg",
+      "/images/sushant-lok-vdeliver-ornate-panelling-joinery.jpg",
     ],
     description:
-      "Complete turnkey facade engineering, MEP infrastructure, and opulent European interior execution for Rawls Salon. Features custom gold-leaf arched styling mirrors, geometric marble flooring, illuminated 3D crest branding, and artisanal carpet reception counter.",
+      "Comprehensive civil and commercial interior execution including specialized industrial waterproofing in V-Deliver kitchen at Shri Ram Complex, Sushant Lok Phase 1, Gurugram. Covering 2,500 sq ft of carpet area, this site started in the first week of December 2020 and was successfully finished on 20 February 2021. Scope included precision on-site stone cutting, diamond-border marble flooring, multi-tier gypsum cove ceiling illumination, commercial waterproofing membranes, and architectural timber panelling.",
     challenge:
-      "Executing multi-level structural facade modifications alongside bespoke joinery, acoustic privacy treatment suites, and high-efficiency central ventilation on schedule.",
+      "Executing rigorous multi-layer commercial waterproofing for the high-capacity V-Deliver kitchen, structural slab core drilling, and simultaneous ornate interior carpentry within an active commercial complex on a tight 11-week deadline.",
     solution:
-      "Precision steel facade scaffolding reinforcement, handcrafted gold-leaf styling arches, Italian marble flooring, and customized retail vitrines.",
+      "Applied specialized commercial-grade waterproofing membranes across the culinary floorplate, deployed laser-guided on-site granite & stone fabrication, crafted classical gypsum mouldings with warm cove LEDs, and engineered custom architectural timber joinery with strict quality milestones.",
     clientQuote:
-      "The craftsmanship from the facade structure to the interior mirrors and reception desk is top-tier.",
-    clientName: "Rawls Salon Management",
-    materials: ["Gold-Leaf Arched Framing", "Illuminated Crest Signage", "Checkerboard Marble", "Custom Carpet Reception Desk", "Double-Glazed Facade"],
-    bgGradient: "linear-gradient(135deg, #1C1917 0%, #2A231E 100%)",
+      "Bright Space executed the civil, interior, and waterproofing work for our 2,500 sq ft facility at Shri Ram Complex with flawless project management, completing on 20 February 2021 right on schedule.",
+    clientName: "Shri Ram Complex / V-Deliver",
+    materials: [
+      "Specialized Commercial Kitchen Waterproofing",
+      "On-Site Marble & Granite Core Cutting",
+      "Diamond Border Geometric Marble Flooring",
+      "Gypsum Cove False Ceiling & LED Profiles",
+      "Architectural Wood Panelling & Custom Joinery",
+      "Ornate Gold-Leaf Mirror Framing",
+    ],
+    bgGradient: "linear-gradient(135deg, #1C2030 0%, #202535 100%)",
+  },
+  {
+    id: 6,
+    slug: "turnkey-modular-kitchens-delhi-ncr",
+    title: "Bespoke Modular Kitchens — Delhi NCR",
+    category: "Turnkey",
+    location: "Amar Colony, Old Rajendra Nagar, Saket, Faridabad, Gurugram, Noida (Delhi NCR)",
+    area: "Multi-Site Turnkey Kitchens",
+    year: "2024",
+    duration: "4–6 Weeks Turnaround",
+    featured: true,
+    image: "/images/kitchen-delhi-ncr-modern-lshape.jpg",
+    gallery: [
+      "/images/kitchen-delhi-ncr-modern-lshape.jpg",
+      "/images/kitchen-delhi-ncr-high-gloss-black-marble.jpg",
+      "/images/kitchen-delhi-ncr-craftsman-installation.jpg",
+      "/images/kitchen-delhi-ncr-profile-lighting-sink.jpg",
+      "/images/kitchen-delhi-ncr-cherry-ivory-dual-tone.jpg",
+    ],
+    description:
+      "Turnkey modular kitchen design and execution across prime locations in Delhi NCR including Amar Colony, Old Rajendra Nagar, Saket, Faridabad, Gurugram, and Noida. Our portfolio highlights high-gloss acrylic & PU shutters, Marquina black marble backsplashes, seamless under-cabinet profile lighting, undermount sinks, Blum soft-close hydraulic hardware, and custom-crafted wooden breakfast counter partitions.",
+    challenge:
+      "Executing precision modular kitchen layouts across varying apartment footprints in Delhi NCR with zero tolerances, water-resistant marine grade carcasses, and fast on-site commissioning.",
+    solution:
+      "Utilized precision laser measurements, BWP boiling waterproof plywood, premium acrylic surfaces, integrated LED profile illumination, and meticulous on-site hardware fitting by master craftsmen.",
+    clientQuote:
+      "The Bright Space Interiors transformed our kitchen into an ergonomic, modern culinary space. Their cabinetry finish, stone backsplash, and lighting details are immaculate.",
+    clientName: "Homeowners across Delhi NCR",
+    materials: [
+      "High-Gloss Acrylic & PU Shutters",
+      "Italian Quartz Countertops",
+      "Marquina Black Marble Backsplash",
+      "Concealed Under-Cabinet LED Profiles",
+      "Blum Soft-Close Hydraulic Hardware",
+      "BWP Marine Grade Plywood",
+    ],
+    bgGradient: "linear-gradient(135deg, #1C2226 0%, #29241C 100%)",
+  },
+  {
+    id: 7,
+    slug: "mr-manish-singh-home-gurugram",
+    title: "Mr. Manish Singh's Home — Civil & Interior Work",
+    category: "Residential",
+    location: "Park View City, Sector 48, Gurugram",
+    area: "1,300 sq ft (Carpet Area)",
+    year: "2024",
+    duration: "9 weeks",
+    featured: true,
+    image: "/images/gurugram-manish-living-mirror-wall.jpg",
+    gallery: [
+      "/images/gurugram-manish-living-mirror-wall.jpg",
+      "/images/gurugram-manish-grid-mirror-feature.jpg",
+      "/images/gurugram-manish-fluted-wall-console.jpg",
+      "/images/gurugram-manish-glass-partitions.jpg",
+    ],
+    description:
+      "Comprehensive civil and interior work for Mr. Manish Singh in Park View City, Sector 48, Gurugram. Our turnkey execution included vitrified floor tiling, wooden paint and polish work, bronze grid tinted mirror wall panelling, fluted feature walls with floating console, and architectural glass partitions.",
+    challenge:
+      "Executing high-precision floor tiling, flawless wooden paint & polish finishes, and seamlessly integrating geometric mirror panelling across a 1,300 sq ft carpet area.",
+    solution:
+      "Engineered an open-concept luxury layout: laser-levelled vitrified marble-finish floor tiles, bronze grid accent mirror panelling to expand spatial depth, fluted accent walls with floating vanity joinery, and durable artisanal wood paint and polish finishes.",
+    clientQuote:
+      "Bright Space executed the floor tiles, wooden paint, and polish work with outstanding craftsmanship. The flat feels expansive, modern, and completely transformed.",
+    clientName: "Mr. Manish Singh",
+    materials: [
+      "Vitrified Marble-Finish Floor Tiles",
+      "Bronze Grid Accent Mirror Panelling",
+      "Wooden Paint & Polish Craftsmanship",
+      "Fluted Accent Wall & Sconces",
+      "Architectural Glass Partitions",
+      "Floating Console & Desk Joinery",
+    ],
+    bgGradient: "linear-gradient(135deg, #201E26 0%, #2A2433 100%)",
   },
   {
     id: 1,
@@ -395,79 +505,6 @@ export const PROJECTS = [
     bgGradient: "linear-gradient(135deg, #1C2226 0%, #26221C 100%)",
   },
   {
-    id: 6,
-    slug: "turnkey-modular-kitchens-delhi-ncr",
-    title: "Bespoke Modular Kitchens — Delhi NCR",
-    category: "Turnkey",
-    location: "Amar Colony, Old Rajendra Nagar, Saket, Faridabad, Gurugram, Noida (Delhi NCR)",
-    area: "Multi-Site Turnkey Kitchens",
-    year: "2024",
-    duration: "4–6 Weeks Turnaround",
-    featured: true,
-    image: "/images/kitchen-delhi-ncr-modern-lshape.jpg",
-    gallery: [
-      "/images/kitchen-delhi-ncr-modern-lshape.jpg",
-      "/images/kitchen-delhi-ncr-high-gloss-black-marble.jpg",
-      "/images/kitchen-delhi-ncr-craftsman-installation.jpg",
-      "/images/kitchen-delhi-ncr-profile-lighting-sink.jpg",
-      "/images/kitchen-delhi-ncr-cherry-ivory-dual-tone.jpg",
-    ],
-    description:
-      "Turnkey modular kitchen design and execution across prime locations in Delhi NCR including Amar Colony, Old Rajendra Nagar, Saket, Faridabad, Gurugram, and Noida. Our portfolio highlights high-gloss acrylic & PU shutters, Marquina black marble backsplashes, seamless under-cabinet profile lighting, undermount sinks, Blum soft-close hydraulic hardware, and custom-crafted wooden breakfast counter partitions.",
-    challenge:
-      "Executing precision modular kitchen layouts across varying apartment footprints in Delhi NCR with zero tolerances, water-resistant marine grade carcasses, and fast on-site commissioning.",
-    solution:
-      "Utilized precision laser measurements, BWP boiling waterproof plywood, premium acrylic surfaces, integrated LED profile illumination, and meticulous on-site hardware fitting by master craftsmen.",
-    clientQuote:
-      "The Bright Space Interiors transformed our kitchen into an ergonomic, modern culinary space. Their cabinetry finish, stone backsplash, and lighting details are immaculate.",
-    clientName: "Homeowners across Delhi NCR",
-    materials: [
-      "High-Gloss Acrylic & PU Shutters",
-      "Italian Quartz Countertops",
-      "Marquina Black Marble Backsplash",
-      "Concealed Under-Cabinet LED Profiles",
-      "Blum Soft-Close Hydraulic Hardware",
-      "BWP Marine Grade Plywood",
-    ],
-    bgGradient: "linear-gradient(135deg, #1C2226 0%, #29241C 100%)",
-  },
-  {
-    id: 7,
-    slug: "mr-manish-singh-home-gurugram",
-    title: "Mr. Manish Singh's Home — Civil & Interior Work",
-    category: "Residential",
-    location: "Park View City, Sector 48, Gurugram",
-    area: "1,300 sq ft (Carpet Area)",
-    year: "2024",
-    duration: "9 weeks",
-    featured: true,
-    image: "/images/gurugram-manish-living-mirror-wall.jpg",
-    gallery: [
-      "/images/gurugram-manish-living-mirror-wall.jpg",
-      "/images/gurugram-manish-grid-mirror-feature.jpg",
-      "/images/gurugram-manish-fluted-wall-console.jpg",
-      "/images/gurugram-manish-glass-partitions.jpg",
-    ],
-    description:
-      "Comprehensive civil and interior work for Mr. Manish Singh in Park View City, Sector 48, Gurugram. Our turnkey execution included vitrified floor tiling, wooden paint and polish work, bronze grid tinted mirror wall panelling, fluted feature walls with floating console, and architectural glass partitions.",
-    challenge:
-      "Executing high-precision floor tiling, flawless wooden paint & polish finishes, and seamlessly integrating geometric mirror panelling across a 1,300 sq ft carpet area.",
-    solution:
-      "Engineered an open-concept luxury layout: laser-levelled vitrified marble-finish floor tiles, bronze grid accent mirror panelling to expand spatial depth, fluted accent walls with floating vanity joinery, and durable artisanal wood paint and polish finishes.",
-    clientQuote:
-      "Bright Space executed the floor tiles, wooden paint, and polish work with outstanding craftsmanship. The flat feels expansive, modern, and completely transformed.",
-    clientName: "Mr. Manish Singh",
-    materials: [
-      "Vitrified Marble-Finish Floor Tiles",
-      "Bronze Grid Accent Mirror Panelling",
-      "Wooden Paint & Polish Craftsmanship",
-      "Fluted Accent Wall & Sconces",
-      "Architectural Glass Partitions",
-      "Floating Console & Desk Joinery",
-    ],
-    bgGradient: "linear-gradient(135deg, #201E26 0%, #2A2433 100%)",
-  },
-  {
     id: 8,
     slug: "contemporary-turnkey-kitchen",
     title: "Contemporary Cherry & Cream Turnkey Kitchen",
@@ -495,35 +532,6 @@ export const PROJECTS = [
     clientName: "Gurugram Resident",
     materials: ["High-Gloss Acrylic", "Under-Cabinet Profile LED", "Quartz Worktops", "Stainless Steel Sink"],
     bgGradient: "linear-gradient(135deg, #2A1C1C 0%, #352020 100%)",
-  },
-  {
-    id: 9,
-    slug: "v-deliver-commercial-kitchen",
-    title: "V-Deliver Commercial Culinary Facility",
-    category: "Commercial",
-    location: "Sushant Lok Phase 1, Gurugram",
-    area: "2,500 sq ft",
-    year: "2023",
-    duration: "9 weeks",
-    featured: true,
-    image: "/images/real-kitchen-saket.jpg",
-    gallery: [
-      "/images/real-kitchen-saket.jpg",
-      "/images/real-kitchen-maroon.jpg",
-      "/images/real-salon-facade.jpg",
-      "/images/real-salon-mainhall.jpg",
-    ],
-    description:
-      "State-of-the-art commercial culinary facility at Shri Ram Complex, designed for high-efficiency workflow, hygiene, and durability.",
-    challenge:
-      "Demanding heavy MEP, exhaust ventilation, commercial gas pipelines, and anti-skid epoxy civil finishes under tight compliance.",
-    solution:
-      "Industrial grade SS-304 fabrication, seamless epoxy flooring, and zoning between prep, cooking, and dispatch stations.",
-    clientQuote:
-      "The engineering and turnkey execution were flawless. Bright Space delivered an industrial kitchen that runs like clockwork.",
-    clientName: "Shri Ram Complex / V-Deliver",
-    materials: ["SS-304 Stainless Steel", "Industrial Epoxy", "Acoustic Insulation", "Fire-Rated Partitions"],
-    bgGradient: "linear-gradient(135deg, #1C2030 0%, #202535 100%)",
   },
   {
     id: 10,
