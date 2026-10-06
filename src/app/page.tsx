@@ -19,6 +19,7 @@ import {
 import { TESTIMONIALS, WHY_US_PILLARS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects, useCmsServices } from "@/lib/cms";
 import CategoryCarousel from "@/components/ui/CategoryCarousel";
+import ProjectCard from "@/components/ui/ProjectCard";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
 function AnimatedCounter({
@@ -642,30 +643,7 @@ export default function HomePage() {
 
           <div className="projects-grid">
             {filteredProjects.slice(0, 6).map((project) => (
-              <Link
-                key={project.id}
-                href={`/portfolio/${project.slug}`}
-                className="project-card"
-                id={`project-card-${project.id}`}
-              >
-                <div className="project-card__image-wrap">
-                  <img
-                    src={project.image || "/images/hero-luxury.jpg"}
-                    alt={project.title}
-                    className="project-card__image"
-                  />
-                  <div className="project-card__overlay">
-                    <span className="project-card__view">View Project</span>
-                  </div>
-                </div>
-                <div className="project-card__info">
-                  <div className="project-card__category">{project.category}</div>
-                  <div className="project-card__title">{project.title}</div>
-                  <div className="project-card__meta">
-                    {project.location} · {project.area}
-                  </div>
-                </div>
-              </Link>
+              <ProjectCard key={project.id} project={project} idPrefix="project-card" />
             ))}
           </div>
         </div>

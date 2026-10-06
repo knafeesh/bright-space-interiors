@@ -4,6 +4,7 @@ import Link from "next/link";
 import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects } from "@/lib/cms";
 import CategoryCarousel from "@/components/ui/CategoryCarousel";
+import ProjectCard from "@/components/ui/ProjectCard";
 
 const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
 
@@ -78,36 +79,7 @@ export default function PortfolioPage() {
           {/* Grid */}
           <div className="portfolio-grid">
             {filtered.map((project) => (
-              <Link
-                key={project.id}
-                href={`/portfolio/${project.slug}`}
-                className="project-card"
-                id={`portfolio-card-${project.id}`}
-              >
-                <div className="project-card__image-wrap">
-                  <img
-                    src={project.image || "/images/hero-luxury.jpg"}
-                    alt={project.title}
-                    className="project-card__image"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      transition: "transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
-                    }}
-                  />
-                  <div className="project-card__overlay">
-                    <span className="project-card__view">View Project</span>
-                  </div>
-                </div>
-                <div className="project-card__info">
-                  <div className="project-card__category">{project.category}</div>
-                  <div className="project-card__title">{project.title}</div>
-                  <div className="project-card__meta">
-                    {project.location} · {project.area} · {project.year}
-                  </div>
-                </div>
-              </Link>
+              <ProjectCard key={project.id} project={project} idPrefix="portfolio-card" />
             ))}
           </div>
 

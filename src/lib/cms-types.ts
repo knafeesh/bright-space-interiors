@@ -75,6 +75,10 @@ export const INITIAL_MEDIA_ASSETS: MediaAsset[] = [
   { id: "m-21", name: "office-gurugram-executive-cabin.jpg", url: "/images/office-gurugram-executive-cabin.jpg", folder: "Projects", size: "113 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Gurugram Office Director's Corner Executive Cabin & Skyline View", dateAdded: "2024-10-06" },
   { id: "m-22", name: "office-gurugram-conference-room.jpg", url: "/images/office-gurugram-conference-room.jpg", folder: "Projects", size: "167 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Gurugram Corporate Office Boardroom & Video Conferencing Table", dateAdded: "2024-10-06" },
   { id: "m-23", name: "office-gurugram-modular-desks.jpg", url: "/images/office-gurugram-modular-desks.jpg", folder: "Projects", size: "196 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Gurugram Office Turnkey Modular Desk Assembly & Cable Trays", dateAdded: "2024-10-06" },
+  { id: "m-24", name: "ranchi-agarwal-dining-hall.jpg", url: "/images/ranchi-agarwal-dining-hall.jpg", folder: "Projects", size: "170 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Mr. Agarwal Home Ranchi Marble Dining Suite & Tufted Chairs", dateAdded: "2024-10-06" },
+  { id: "m-25", name: "ranchi-agarwal-fluted-tv-unit.jpg", url: "/images/ranchi-agarwal-fluted-tv-unit.jpg", folder: "Projects", size: "135 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Mr. Agarwal Home Ranchi Fluted Wooden TV Wall & Curved Console", dateAdded: "2024-10-06" },
+  { id: "m-26", name: "ranchi-agarwal-ceiling-lighting.jpg", url: "/images/ranchi-agarwal-ceiling-lighting.jpg", folder: "Projects", size: "120 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Mr. Agarwal Home Ranchi Gypsum False Ceiling & Warm Cove LEDs", dateAdded: "2024-10-06" },
+  { id: "m-27", name: "ranchi-agarwal-modular-crockery.jpg", url: "/images/ranchi-agarwal-modular-crockery.jpg", folder: "Projects", size: "73 KB", dimensions: "1024 × 768", type: "JPEG", altText: "Mr. Agarwal Home Ranchi Modular Crockery Unit & Illuminated Bar", dateAdded: "2024-10-06" },
 ];
 
 export interface CmsStore {
