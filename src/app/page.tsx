@@ -640,6 +640,17 @@ export default function HomePage() {
               <ProjectCard key={project.id} project={project} idPrefix="project-card" />
             ))}
           </div>
+
+          {/* Bottom Centered Button: EXPLORE ALL PROJECTS */}
+          <div className="projects-section__bottom-action">
+            <Link
+              href="/portfolio"
+              className="btn-explore-all-projects"
+              id="projects-explore-all-bottom"
+            >
+              EXPLORE ALL PROJECTS <ArrowRight size={14} style={{ marginLeft: "8px" }} />
+            </Link>
+          </div>
         </div>
       </section>
 

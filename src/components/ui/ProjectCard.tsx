@@ -125,7 +125,7 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
           aspectRatio: "4/3",
           overflow: "hidden",
           background: "#161311",
-          borderRadius: "4px",
+          borderRadius: "9px",
           touchAction: "pan-y",
           userSelect: "none",
           cursor: isDragging.current ? "grabbing" : "pointer",
@@ -286,6 +286,11 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
         </div>
         <div className="project-card__meta">
           {project.location} · {project.area}
+        </div>
+        <div className="project-card__btn-wrap">
+          <span className="project-card__btn">
+            Explore Project <ChevronRight size={13} style={{ marginLeft: "4px" }} />
+          </span>
         </div>
       </div>
     </Link>
