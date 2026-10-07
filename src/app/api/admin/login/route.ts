@@ -1,17 +1,22 @@
 import { NextResponse } from "next/server";
+import {
+  createSessionToken,
+  getAdminCredentials,
+  SESSION_COOKIE,
+  sessionCookieOptions,
+} from "@/lib/server/admin-auth";
 
 export async function POST(request: Request) {
   try {
     const { username, password } = await request.json();
-
-    const validUsername = "Azam";
-    const validPassword = "Azam@2005";
+    const valid = getAdminCredentials();
 
     if (
-      (username === validUsername || username?.toLowerCase() === "azam") &&
-      password === validPassword
+      typeof username === "string" &&
+      username.trim().toLowerCase() === valid.username.toLowerCase() &&
+      password === valid.password
     ) {
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         user: {
           username: "Azam",
@@ -19,6 +24,8 @@ export async function POST(request: Request) {
           role: "Super Admin",
         },
       });
+      res.cookies.set(SESSION_COOKIE, createSessionToken(valid.username), sessionCookieOptions);
+      return res;
     }
 
     return NextResponse.json(

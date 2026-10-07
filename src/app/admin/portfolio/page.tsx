@@ -19,7 +19,11 @@ import {
   X,
   Check,
   ImageIcon,
+  Upload,
+  AlertCircle,
+  Loader2,
 } from "lucide-react";
+import ImageUploadField from "@/components/admin/ImageUploadField";
 
 export default function PortfolioManagerPage() {
   const projects = useCmsProjects();
@@ -30,6 +34,8 @@ export default function PortfolioManagerPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState("");
+  const [saveErrorMsg, setSaveErrorMsg] = useState("");
+  const [saving, setSaving] = useState(false);
 
   // Add Project Form State
   const [formTitle, setFormTitle] = useState("");
@@ -73,18 +79,31 @@ export default function PortfolioManagerPage() {
 
   const notifySuccess = (msg: string) => {
     setSaveSuccessMsg(msg);
-    setTimeout(() => setSaveSuccessMsg(""), 3000);
+    setTimeout(() => setSaveSuccessMsg(""), 3500);
   };
 
-  const handleToggleFeatured = (project: Project) => {
-    cmsUpdateProject({ ...project, featured: !project.featured });
-    notifySuccess(`Updated featured status for "${project.title}"`);
+  const notifyError = (msg: string) => {
+    setSaveErrorMsg(msg);
+    setTimeout(() => setSaveErrorMsg(""), 5000);
   };
 
-  const handleDelete = (id: number, title: string) => {
+  const handleToggleFeatured = async (project: Project) => {
+    const ok = await cmsUpdateProject({ ...project, featured: !project.featured });
+    if (ok) {
+      notifySuccess(`Updated featured status for "${project.title}"`);
+    } else {
+      notifyError("Failed to update featured status on live website.");
+    }
+  };
+
+  const handleDelete = async (id: number, title: string) => {
     if (confirm(`Are you sure you want to remove "${title}" from your portfolio? This will immediately update the live website.`)) {
-      cmsDeleteProject(id);
-      notifySuccess(`Project "${title}" deleted and removed from website.`);
+      const ok = await cmsDeleteProject(id);
+      if (ok) {
+        notifySuccess(`Project "${title}" deleted and removed from website.`);
+      } else {
+        notifyError(`Failed to delete "${title}" from live website.`);
+      }
     }
   };
 
@@ -108,7 +127,7 @@ export default function PortfolioManagerPage() {
     setNewGalleryUrl("");
   };
 
-  const handleSaveEdit = (e: React.FormEvent) => {
+  const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProject) return;
 
@@ -139,9 +158,15 @@ export default function PortfolioManagerPage() {
       featured: editFeatured,
     };
 
-    cmsUpdateProject(updated);
-    setEditingProject(null);
-    notifySuccess(`Changes saved to "${updated.title}" and updated live on website!`);
+    setSaving(true);
+    const ok = await cmsUpdateProject(updated);
+    setSaving(false);
+    if (ok) {
+      setEditingProject(null);
+      notifySuccess(`Changes saved to "${updated.title}" and updated live on website!`);
+    } else {
+      notifyError(`Could not update "${updated.title}" on live website. Please check connection.`);
+    }
   };
 
   const handleRemoveGalleryImage = (indexToRemove: number) => {
@@ -159,13 +184,20 @@ export default function PortfolioManagerPage() {
     setNewGalleryUrl("");
   };
 
-  const handleCreateProject = (e: React.FormEvent) => {
+  const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle.trim()) return;
 
+    const cleanSlug =
+      formTitle
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || `project-${Date.now()}`;
+
     const newProj: Project = {
       id: Date.now(),
-      slug: formTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      slug: cleanSlug,
       title: formTitle.trim(),
       category: formCategory,
       location: formLocation.trim() || "Delhi NCR",
@@ -184,10 +216,16 @@ export default function PortfolioManagerPage() {
       bgGradient: "linear-gradient(135deg, #24201A 0%, #2E261E 100%)",
     };
 
-    cmsAddProject(newProj);
-    setShowAddModal(false);
-    resetAddForm();
-    notifySuccess(`New project "${newProj.title}" added to portfolio and published live!`);
+    setSaving(true);
+    const ok = await cmsAddProject(newProj);
+    setSaving(false);
+    if (ok) {
+      setShowAddModal(false);
+      resetAddForm();
+      notifySuccess(`New project "${newProj.title}" added to portfolio and published live!`);
+    } else {
+      notifyError(`Could not publish "${newProj.title}". Please check connection.`);
+    }
   };
 
   const resetAddForm = () => {
@@ -225,6 +263,30 @@ export default function PortfolioManagerPage() {
         >
           <Check size={16} />
           {saveSuccessMsg}
+        </div>
+      )}
+
+      {saveErrorMsg && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            background: "#EF4444",
+            color: "#FFF",
+            padding: "12px 20px",
+            borderRadius: "8px",
+            fontWeight: 600,
+            fontSize: "13px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <AlertCircle size={16} />
+          {saveErrorMsg}
         </div>
       )}
 
@@ -550,25 +612,13 @@ export default function PortfolioManagerPage() {
               </div>
 
               {/* Main Featured Image */}
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Primary Featured Image URL *
-                </label>
-                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                  <img
-                    src={editImage || "/images/hero-luxury.jpg"}
-                    alt="Preview"
-                    style={{ width: "64px", height: "48px", objectFit: "cover", borderRadius: "6px", border: "1px solid #E0E0E0" }}
-                  />
-                  <input
-                    type="text"
-                    required
-                    value={editImage}
-                    onChange={(e) => setEditImage(e.target.value)}
-                    style={{ flex: 1, padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                  />
-                </div>
-              </div>
+              <ImageUploadField
+                label="Primary Featured Image URL *"
+                value={editImage}
+                onChange={setEditImage}
+                folder="Projects"
+                required
+              />
 
               {/* Gallery Images with Live Removal & Addition */}
               <div>
@@ -616,10 +666,10 @@ export default function PortfolioManagerPage() {
                   ))}
                 </div>
                 {/* Add image to gallery */}
-                <div style={{ display: "flex", gap: "8px" }}>
+                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                   <input
                     type="text"
-                    placeholder="Paste additional image URL (e.g. /images/real-...)"
+                    placeholder="Paste image URL (e.g. /images/...)"
                     value={newGalleryUrl}
                     onChange={(e) => setNewGalleryUrl(e.target.value)}
                     style={{ flex: 1, padding: "6px 10px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "12px" }}
@@ -630,8 +680,41 @@ export default function PortfolioManagerPage() {
                     className="admin-btn admin-btn--outline"
                     style={{ fontSize: "12px", padding: "6px 12px" }}
                   >
-                    + Add Photo
+                    + Add URL
                   </button>
+                  <label
+                    className="admin-btn admin-btn--outline"
+                    style={{
+                      fontSize: "12px",
+                      padding: "6px 12px",
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                    title="Upload photo from device"
+                  >
+                    <Upload size={13} /> Upload
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const fd = new FormData();
+                        fd.append("file", file);
+                        try {
+                          const res = await fetch("/api/upload", { method: "POST", body: fd });
+                          if (res.ok) {
+                            const data = await res.json();
+                            setEditGallery((prev) => [...prev, data.url]);
+                          }
+                        } catch {}
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
                 </div>
               </div>
 
@@ -725,8 +808,14 @@ export default function PortfolioManagerPage() {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="admin-btn admin-btn--primary">
-                  Save Changes & Update Website
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="admin-btn admin-btn--primary"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                >
+                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
+                  {saving ? "Saving Changes..." : "Save Changes & Update Website"}
                 </button>
               </div>
             </form>
@@ -843,19 +932,13 @@ export default function PortfolioManagerPage() {
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Main Image Path *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="/images/real-salon-facade.jpg"
-                  value={formImage}
-                  onChange={(e) => setFormImage(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
+              <ImageUploadField
+                label="Main Image Path *"
+                value={formImage}
+                onChange={setFormImage}
+                folder="Projects"
+                required
+              />
 
               <div>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
@@ -878,8 +961,14 @@ export default function PortfolioManagerPage() {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="admin-btn admin-btn--primary">
-                  Publish to Portfolio
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="admin-btn admin-btn--primary"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                >
+                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
+                  {saving ? "Publishing Project..." : "Publish to Portfolio"}
                 </button>
               </div>
             </form>

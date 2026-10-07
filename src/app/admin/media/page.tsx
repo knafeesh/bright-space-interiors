@@ -12,7 +12,10 @@ import {
   Edit2,
   Plus,
   X,
+  AlertCircle,
+  Loader2,
 } from "lucide-react";
+import ImageUploadField from "@/components/admin/ImageUploadField";
 import {
   useCmsMedia,
   cmsUpdateMedia,
@@ -28,6 +31,8 @@ export default function MediaLibraryPage() {
   const [activeAsset, setActiveAsset] = useState<MediaAsset | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [saving, setSaving] = useState(false);
 
   // Edit Modal State
   const [editingAsset, setEditingAsset] = useState<MediaAsset | null>(null);
@@ -56,6 +61,11 @@ export default function MediaLibraryPage() {
     setTimeout(() => setToastMsg(""), 3500);
   };
 
+  const notifyError = (msg: string) => {
+    setErrorMsg(msg);
+    setTimeout(() => setErrorMsg(""), 5000);
+  };
+
   const handleCopyLink = (url: string, id: string) => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(window.location.origin + url);
@@ -72,7 +82,7 @@ export default function MediaLibraryPage() {
     setEditUrl(asset.url || "");
   };
 
-  const handleSaveEdit = (e: React.FormEvent) => {
+  const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingAsset) return;
 
@@ -84,25 +94,35 @@ export default function MediaLibraryPage() {
       url: editUrl.trim() || editingAsset.url,
     };
 
-    cmsUpdateMedia(updated);
-    if (activeAsset?.id === updated.id) setActiveAsset(updated);
-    setEditingAsset(null);
-    notify(`Saved media "${updated.name}" and updated live on website!`);
+    setSaving(true);
+    const ok = await cmsUpdateMedia(updated);
+    setSaving(false);
+    if (ok) {
+      if (activeAsset?.id === updated.id) setActiveAsset(updated);
+      setEditingAsset(null);
+      notify(`Saved media "${updated.name}" and updated live on website!`);
+    } else {
+      notifyError(`Failed to save "${updated.name}". Please check connection.`);
+    }
   };
 
-  const handleDelete = (asset: MediaAsset) => {
+  const handleDelete = async (asset: MediaAsset) => {
     if (
       confirm(
         `Are you sure you want to delete "${asset.name}"? If this image is used in any portfolio projects or service pages, it will be automatically removed from their galleries on the website.`
       )
     ) {
-      cmsDeleteMedia(asset.id);
-      if (activeAsset?.id === asset.id) setActiveAsset(null);
-      notify(`Deleted "${asset.name}" and updated all pages on the website.`);
+      const ok = await cmsDeleteMedia(asset.id);
+      if (ok) {
+        if (activeAsset?.id === asset.id) setActiveAsset(null);
+        notify(`Deleted "${asset.name}" and updated all pages on the website.`);
+      } else {
+        notifyError(`Failed to delete "${asset.name}".`);
+      }
     }
   };
 
-  const handleAddMedia = (e: React.FormEvent) => {
+  const handleAddMedia = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addUrl.trim()) return;
 
@@ -118,12 +138,18 @@ export default function MediaLibraryPage() {
       dateAdded: new Date().toISOString().split("T")[0],
     };
 
-    cmsAddMedia(newAsset);
-    setShowAddModal(false);
-    setAddName("");
-    setAddUrl("");
-    setAddAlt("");
-    notify(`Added "${newAsset.name}" to media library and site!`);
+    setSaving(true);
+    const ok = await cmsAddMedia(newAsset);
+    setSaving(false);
+    if (ok) {
+      setShowAddModal(false);
+      setAddName("");
+      setAddUrl("");
+      setAddAlt("");
+      notify(`Added "${newAsset.name}" to media library and site!`);
+    } else {
+      notifyError(`Failed to add "${newAsset.name}".`);
+    }
   };
 
   return (
@@ -150,6 +176,30 @@ export default function MediaLibraryPage() {
         >
           <Check size={16} />
           {toastMsg}
+        </div>
+      )}
+
+      {errorMsg && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            background: "#EF4444",
+            color: "#FFF",
+            padding: "12px 20px",
+            borderRadius: "8px",
+            fontWeight: 600,
+            fontSize: "13px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <AlertCircle size={16} />
+          {errorMsg}
         </div>
       )}
 
@@ -467,25 +517,13 @@ export default function MediaLibraryPage() {
                 </select>
               </div>
 
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Image URL *
-                </label>
-                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                  <img
-                    src={editUrl || "/images/hero-luxury.jpg"}
-                    alt="Preview"
-                    style={{ width: "54px", height: "40px", objectFit: "cover", borderRadius: "6px", border: "1px solid #E0E0E0" }}
-                  />
-                  <input
-                    type="text"
-                    required
-                    value={editUrl}
-                    onChange={(e) => setEditUrl(e.target.value)}
-                    style={{ flex: 1, padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                  />
-                </div>
-              </div>
+              <ImageUploadField
+                label="Image File or URL *"
+                value={editUrl}
+                onChange={setEditUrl}
+                folder={editFolder}
+                required
+              />
 
               <div>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
@@ -503,8 +541,14 @@ export default function MediaLibraryPage() {
                 <button type="button" onClick={() => setEditingAsset(null)} className="admin-btn admin-btn--outline">
                   Cancel
                 </button>
-                <button type="submit" className="admin-btn admin-btn--primary">
-                  Save Changes & Update Website
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="admin-btn admin-btn--primary"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                >
+                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
+                  {saving ? "Saving Changes..." : "Save Changes & Update Website"}
                 </button>
               </div>
             </form>
@@ -545,19 +589,19 @@ export default function MediaLibraryPage() {
             </div>
 
             <form onSubmit={handleAddMedia} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Image URL / Path *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="/images/real-bedroom-headboard.jpg"
-                  value={addUrl}
-                  onChange={(e) => setAddUrl(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
+              <ImageUploadField
+                label="Image File or URL *"
+                value={addUrl}
+                onChange={(url) => {
+                  setAddUrl(url);
+                  if (!addName) {
+                    const filename = url.split("/").pop() || "image.jpg";
+                    setAddName(filename);
+                  }
+                }}
+                folder={addFolder}
+                required
+              />
 
               <div>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
@@ -606,8 +650,14 @@ export default function MediaLibraryPage() {
                 <button type="button" onClick={() => setShowAddModal(false)} className="admin-btn admin-btn--outline">
                   Cancel
                 </button>
-                <button type="submit" className="admin-btn admin-btn--primary">
-                  Add to Library
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="admin-btn admin-btn--primary"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                >
+                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
+                  {saving ? "Adding..." : "Add to Library"}
                 </button>
               </div>
             </form>

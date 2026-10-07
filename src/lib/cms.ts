@@ -34,20 +34,59 @@ export function loadCmsStore(): CmsStore {
   return getDefaultCmsStore();
 }
 
-export function saveCmsStore(store: CmsStore): void {
-  if (typeof window === "undefined") return;
+export const CMS_SAVE_STATUS_EVENT = "bright_space_cms_save_status";
+
+export type CmsSaveStatus =
+  | { state: "saving" }
+  | { state: "saved" }
+  | { state: "error"; message: string };
+
+function emitSaveStatus(status: CmsSaveStatus) {
+  window.dispatchEvent(new CustomEvent<CmsSaveStatus>(CMS_SAVE_STATUS_EVENT, { detail: status }));
+}
+
+// Serialize saves so a slow request can never overwrite a newer one.
+let saveQueue: Promise<unknown> = Promise.resolve();
+
+export function saveCmsStore(store: CmsStore): Promise<boolean> {
+  if (typeof window === "undefined") return Promise.resolve(false);
+
+  // Optimistic local update so the admin UI reacts instantly
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
-    window.dispatchEvent(new CustomEvent(CMS_UPDATE_EVENT, { detail: store }));
-    // Asynchronously sync to server API
-    fetch("/api/content", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(store),
-    }).catch((e) => console.warn("Server sync error:", e));
   } catch (err) {
-    console.error("Failed to save CMS store", err);
+    console.warn("Failed to cache CMS store locally", err);
   }
+  window.dispatchEvent(new CustomEvent(CMS_UPDATE_EVENT, { detail: store }));
+  emitSaveStatus({ state: "saving" });
+
+  const run = async (): Promise<boolean> => {
+    try {
+      const res = await fetch("/api/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(store),
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        emitSaveStatus({
+          state: "error",
+          message: data.error || `Save failed (HTTP ${res.status}). Changes are NOT live yet.`,
+        });
+        return false;
+      }
+      emitSaveStatus({ state: "saved" });
+      return true;
+    } catch {
+      emitSaveStatus({ state: "error", message: "Network error — changes are NOT live yet. Please retry." });
+      return false;
+    }
+  };
+
+  const result = saveQueue.then(run, run);
+  saveQueue = result;
+  return result;
 }
 
 function isSameImage(url1?: string, url2?: string): boolean {
@@ -61,26 +100,50 @@ function isSameImage(url1?: string, url2?: string): boolean {
 
 // ─── Reactive Hooks ─────────────────────────────────────────────────────────
 
-export function useCmsStore() {
+// One shared server request per page load, no matter how many components use the hooks.
+let serverFetch: Promise<CmsStore | null> | null = null;
+let serverLoaded = false;
+
+function fetchServerStore(): Promise<CmsStore | null> {
+  if (!serverFetch) {
+    serverFetch = fetch("/api/content", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data.projects)) {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          } catch {}
+          return data as CmsStore;
+        }
+        return null;
+      })
+      .catch(() => null)
+      .finally(() => {
+        serverLoaded = true;
+      });
+  }
+  return serverFetch;
+}
+
+function useCmsStoreState() {
   const [store, setStore] = useState<CmsStore>(getDefaultCmsStore);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    // 1. Initial read from local storage
-    const current = loadCmsStore();
-    setStore(current);
+    let active = true;
 
-    // 2. Fetch from server to ensure fresh data without cache
-    fetch("/api/content", { cache: "no-store" })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((serverData) => {
-        if (serverData && Array.isArray(serverData.projects)) {
-          setStore(serverData);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(serverData));
-        }
-      })
-      .catch(() => {});
+    // 1. Instant paint from local cache
+    setStore(loadCmsStore());
+    if (serverLoaded) setLoaded(true);
 
-    // 3. Listen to local updates across components
+    // 2. Fresh data from the server (source of truth)
+    fetchServerStore().then((serverData) => {
+      if (!active) return;
+      if (serverData) setStore(serverData);
+      setLoaded(true);
+    });
+
+    // 3. Listen to local updates across components / tabs
     const handleUpdate = (e: Event) => {
       const detail = (e as CustomEvent<CmsStore>).detail;
       if (detail) setStore(detail);
@@ -90,12 +153,22 @@ export function useCmsStore() {
     window.addEventListener(CMS_UPDATE_EVENT, handleUpdate);
     window.addEventListener("storage", handleUpdate);
     return () => {
+      active = false;
       window.removeEventListener(CMS_UPDATE_EVENT, handleUpdate);
       window.removeEventListener("storage", handleUpdate);
     };
   }, []);
 
-  return store;
+  return { store, loaded };
+}
+
+export function useCmsStore() {
+  return useCmsStoreState().store;
+}
+
+/** True once the latest content has been fetched from the server. */
+export function useCmsLoaded(): boolean {
+  return useCmsStoreState().loaded;
 }
 
 export function useCmsProjects(): Project[] {
@@ -121,61 +194,61 @@ export function useCmsMedia(): MediaAsset[] {
 // ─── Mutation Helpers ────────────────────────────────────────────────────────
 
 // Projects
-export function cmsUpdateProject(updated: Project): void {
+export function cmsUpdateProject(updated: Project): Promise<boolean> {
   const current = loadCmsStore();
   const nextProjects = current.projects.map((p) => (p.id === updated.id ? updated : p));
-  saveCmsStore({ ...current, projects: nextProjects });
+  return saveCmsStore({ ...current, projects: nextProjects });
 }
 
-export function cmsDeleteProject(projectId: number): void {
+export function cmsDeleteProject(projectId: number): Promise<boolean> {
   const current = loadCmsStore();
   const nextProjects = current.projects.filter((p) => p.id !== projectId);
-  saveCmsStore({ ...current, projects: nextProjects });
+  return saveCmsStore({ ...current, projects: nextProjects });
 }
 
-export function cmsAddProject(newProject: Project): void {
+export function cmsAddProject(newProject: Project): Promise<boolean> {
   const current = loadCmsStore();
-  saveCmsStore({ ...current, projects: [newProject, ...current.projects] });
+  return saveCmsStore({ ...current, projects: [newProject, ...current.projects] });
 }
 
 // Services
-export function cmsUpdateService(updated: Service): void {
+export function cmsUpdateService(updated: Service): Promise<boolean> {
   const current = loadCmsStore();
   const nextServices = current.services.map((s) => (s.slug === updated.slug ? updated : s));
-  saveCmsStore({ ...current, services: nextServices });
+  return saveCmsStore({ ...current, services: nextServices });
 }
 
-export function cmsDeleteService(slug: string): void {
+export function cmsDeleteService(slug: string): Promise<boolean> {
   const current = loadCmsStore();
   const nextServices = current.services.filter((s) => s.slug !== slug);
-  saveCmsStore({ ...current, services: nextServices });
+  return saveCmsStore({ ...current, services: nextServices });
 }
 
-export function cmsAddService(newService: Service): void {
+export function cmsAddService(newService: Service): Promise<boolean> {
   const current = loadCmsStore();
-  saveCmsStore({ ...current, services: [...current.services, newService] });
+  return saveCmsStore({ ...current, services: [...current.services, newService] });
 }
 
 // Specialties
-export function cmsUpdateSpecialty(originalName: string, updated: SpecialtyService): void {
+export function cmsUpdateSpecialty(originalName: string, updated: SpecialtyService): Promise<boolean> {
   const current = loadCmsStore();
   const nextSpecialties = current.specialties.map((s) => (s.name === originalName ? updated : s));
-  saveCmsStore({ ...current, specialties: nextSpecialties });
+  return saveCmsStore({ ...current, specialties: nextSpecialties });
 }
 
-export function cmsDeleteSpecialty(name: string): void {
+export function cmsDeleteSpecialty(name: string): Promise<boolean> {
   const current = loadCmsStore();
   const nextSpecialties = current.specialties.filter((s) => s.name !== name);
-  saveCmsStore({ ...current, specialties: nextSpecialties });
+  return saveCmsStore({ ...current, specialties: nextSpecialties });
 }
 
-export function cmsAddSpecialty(newSpecialty: SpecialtyService): void {
+export function cmsAddSpecialty(newSpecialty: SpecialtyService): Promise<boolean> {
   const current = loadCmsStore();
-  saveCmsStore({ ...current, specialties: [...current.specialties, newSpecialty] });
+  return saveCmsStore({ ...current, specialties: [...current.specialties, newSpecialty] });
 }
 
 // Media
-export function cmsUpdateMedia(updated: MediaAsset): void {
+export function cmsUpdateMedia(updated: MediaAsset): Promise<boolean> {
   const current = loadCmsStore();
   const oldAsset = current.media.find((m) => m.id === updated.id);
   const nextMedia = current.media.map((m) => (m.id === updated.id ? updated : m));
@@ -213,7 +286,7 @@ export function cmsUpdateMedia(updated: MediaAsset): void {
     });
   }
 
-  saveCmsStore({
+  return saveCmsStore({
     ...current,
     media: nextMedia,
     projects: nextProjects,
@@ -222,7 +295,7 @@ export function cmsUpdateMedia(updated: MediaAsset): void {
   });
 }
 
-export function cmsDeleteMedia(mediaId: string): void {
+export function cmsDeleteMedia(mediaId: string): Promise<boolean> {
   const current = loadCmsStore();
   const asset = current.media.find((m) => m.id === mediaId);
   const nextMedia = current.media.filter((m) => m.id !== mediaId);
@@ -263,7 +336,7 @@ export function cmsDeleteMedia(mediaId: string): void {
     });
   }
 
-  saveCmsStore({
+  return saveCmsStore({
     ...current,
     media: nextMedia,
     projects: nextProjects,
@@ -272,7 +345,7 @@ export function cmsDeleteMedia(mediaId: string): void {
   });
 }
 
-export function cmsAddMedia(newAsset: MediaAsset): void {
+export function cmsAddMedia(newAsset: MediaAsset): Promise<boolean> {
   const current = loadCmsStore();
-  saveCmsStore({ ...current, media: [newAsset, ...current.media] });
+  return saveCmsStore({ ...current, media: [newAsset, ...current.media] });
 }

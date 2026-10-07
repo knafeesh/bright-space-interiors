@@ -76,16 +76,49 @@ const PAGE_TITLES: Record<string, string> = {
   "/admin/settings": "System Settings",
 };
 
+import { CMS_SAVE_STATUS_EVENT, type CmsSaveStatus } from "@/lib/cms";
+import { Loader2, Check, AlertCircle } from "lucide-react";
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [saveStatus, setSaveStatus] = useState<CmsSaveStatus | null>(null);
 
   useEffect(() => {
-    // Check authentication in localStorage and sessionStorage
+    // 1. Initial local auth check for instant paint
     const localAuth = typeof window !== "undefined" && localStorage.getItem("bs_admin_authenticated") === "true";
     const sessionAuth = typeof window !== "undefined" && sessionStorage.getItem("bs_admin_authenticated") === "true";
     setIsAuthenticated(localAuth || sessionAuth);
+
+    // 2. Validate cookie session with server
+    fetch("/api/admin/session", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && typeof data.authenticated === "boolean") {
+          setIsAuthenticated(data.authenticated);
+          if (!data.authenticated) {
+            localStorage.removeItem("bs_admin_authenticated");
+            sessionStorage.removeItem("bs_admin_authenticated");
+          }
+        }
+      })
+      .catch(() => {});
+
+    // 3. Listen to live save status across admin panels
+    const handleSaveStatus = (e: Event) => {
+      const detail = (e as CustomEvent<CmsSaveStatus>).detail;
+      if (detail) {
+        setSaveStatus(detail);
+        if (detail.state === "saved") {
+          setTimeout(() => setSaveStatus(null), 3000);
+        }
+      }
+    };
+    window.addEventListener(CMS_SAVE_STATUS_EVENT, handleSaveStatus);
+    return () => {
+      window.removeEventListener(CMS_SAVE_STATUS_EVENT, handleSaveStatus);
+    };
   }, []);
 
   const handleSignOut = () => {
@@ -94,6 +127,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       localStorage.removeItem("bs_admin_user");
       sessionStorage.removeItem("bs_admin_authenticated");
     }
+    fetch("/api/admin/session", { method: "DELETE" }).catch(() => {});
     setIsAuthenticated(false);
   };
 
@@ -236,6 +270,52 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           <div className="admin-topbar__right">
+            {saveStatus && (
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "6px 12px",
+                  borderRadius: "20px",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  background:
+                    saveStatus.state === "saving"
+                      ? "rgba(197, 168, 128, 0.15)"
+                      : saveStatus.state === "saved"
+                      ? "rgba(16, 185, 129, 0.15)"
+                      : "rgba(239, 68, 68, 0.15)",
+                  color:
+                    saveStatus.state === "saving"
+                      ? "#A27B42"
+                      : saveStatus.state === "saved"
+                      ? "#059669"
+                      : "#DC2626",
+                  border: `1px solid ${
+                    saveStatus.state === "saving"
+                      ? "rgba(197, 168, 128, 0.3)"
+                      : saveStatus.state === "saved"
+                      ? "rgba(16, 185, 129, 0.3)"
+                      : "rgba(239, 68, 68, 0.3)"
+                  }`,
+                }}
+              >
+                {saveStatus.state === "saving" && (
+                  <Loader2 size={12} style={{ animation: "spin 1s linear infinite" }} />
+                )}
+                {saveStatus.state === "saved" && <Check size={12} />}
+                {saveStatus.state === "error" && <AlertCircle size={12} />}
+                <span>
+                  {saveStatus.state === "saving"
+                    ? "Updating live site..."
+                    : saveStatus.state === "saved"
+                    ? "Live Synced"
+                    : "Sync Failed"}
+                </span>
+              </div>
+            )}
+
             <div className="admin-topbar__notification" id="admin-notifications" title="8 unread notifications">
               <Bell size={16} />
               <div className="admin-topbar__notification-dot" />

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, MapPin, Maximize2, Calendar, Clock } from "lucide-react";
-import { useCmsProjects, Project } from "@/lib/cms";
+import { useCmsProjects, useCmsLoaded, Project } from "@/lib/cms";
 import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
 export default function ProjectDetailClient({ initialProject, slug }: Props) {
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const cmsProjects = useCmsProjects();
+  const cmsLoaded = useCmsLoaded();
 
   const targetSlug = slug || initialProject?.slug;
   // Find updated version in CMS store or use initial
@@ -20,6 +21,11 @@ export default function ProjectDetailClient({ initialProject, slug }: Props) {
     cmsProjects.find(
       (p) => (targetSlug && p.slug === targetSlug) || (initialProject && p.id === initialProject.id)
     ) || initialProject;
+
+  // Newly added projects only exist in the live CMS — wait for it before showing "not found"
+  if (!project && !cmsLoaded) {
+    return <div style={{ minHeight: "70vh" }} aria-busy="true" />;
+  }
 
   if (!project) {
     return (

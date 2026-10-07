@@ -21,7 +21,10 @@ import {
   CheckCircle2,
   X,
   Check,
+  AlertCircle,
+  Loader2,
 } from "lucide-react";
+import ImageUploadField from "@/components/admin/ImageUploadField";
 
 export default function ServicesManagerPage() {
   const coreServices = useCmsServices();
@@ -30,6 +33,8 @@ export default function ServicesManagerPage() {
 
   // Notifications
   const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [saving, setSaving] = useState(false);
 
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
@@ -58,7 +63,12 @@ export default function ServicesManagerPage() {
 
   const notify = (msg: string) => {
     setSuccessMsg(msg);
-    setTimeout(() => setSuccessMsg(""), 3000);
+    setTimeout(() => setSuccessMsg(""), 3500);
+  };
+
+  const notifyError = (msg: string) => {
+    setErrorMsg(msg);
+    setTimeout(() => setErrorMsg(""), 5000);
   };
 
   const handleOpenEditCore = (svc: Service) => {
@@ -70,7 +80,7 @@ export default function ServicesManagerPage() {
     setEditCoreSubServices((svc.subServices || []).join(", "));
   };
 
-  const handleSaveEditCore = (e: React.FormEvent) => {
+  const handleSaveEditCore = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCore) return;
 
@@ -88,9 +98,15 @@ export default function ServicesManagerPage() {
       subServices: subServicesArray.length > 0 ? subServicesArray : editingCore.subServices,
     };
 
-    cmsUpdateService(updated);
-    setEditingCore(null);
-    notify(`Saved changes to "${updated.title}" and updated website live!`);
+    setSaving(true);
+    const ok = await cmsUpdateService(updated);
+    setSaving(false);
+    if (ok) {
+      setEditingCore(null);
+      notify(`Saved changes to "${updated.title}" and updated website live!`);
+    } else {
+      notifyError(`Failed to save "${updated.title}" on live website.`);
+    }
   };
 
   const handleOpenEditSpecialty = (spec: SpecialtyService) => {
@@ -101,7 +117,7 @@ export default function ServicesManagerPage() {
     setEditSpecDesc(spec.description || "");
   };
 
-  const handleSaveEditSpecialty = (e: React.FormEvent) => {
+  const handleSaveEditSpecialty = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingSpecialty) return;
 
@@ -113,32 +129,43 @@ export default function ServicesManagerPage() {
       description: editSpecDesc.trim() || editingSpecialty.description,
     };
 
-    cmsUpdateSpecialty(editingSpecialty.name, updated);
-    setEditingSpecialty(null);
-    notify(`Saved changes to "${updated.name}" trade and updated website live!`);
+    setSaving(true);
+    const ok = await cmsUpdateSpecialty(editingSpecialty.name, updated);
+    setSaving(false);
+    if (ok) {
+      setEditingSpecialty(null);
+      notify(`Saved changes to "${updated.name}" trade and updated website live!`);
+    } else {
+      notifyError(`Failed to save "${updated.name}" on live website.`);
+    }
   };
 
-  const handleDeleteCore = (slug: string, title: string) => {
+  const handleDeleteCore = async (slug: string, title: string) => {
     if (confirm(`Are you sure you want to remove "${title}"? This will immediately update the live website.`)) {
-      cmsDeleteService(slug);
-      notify(`Removed "${title}" from services.`);
+      const ok = await cmsDeleteService(slug);
+      if (ok) notify(`Removed "${title}" from services.`);
+      else notifyError(`Failed to remove "${title}" from live website.`);
     }
   };
 
-  const handleDeleteSpecialty = (name: string) => {
+  const handleDeleteSpecialty = async (name: string) => {
     if (confirm(`Are you sure you want to remove "${name}" specialty trade? This will immediately update the live website.`)) {
-      cmsDeleteSpecialty(name);
-      notify(`Removed "${name}" from specialty trades.`);
+      const ok = await cmsDeleteSpecialty(name);
+      if (ok) notify(`Removed "${name}" from specialty trades.`);
+      else notifyError(`Failed to remove "${name}" from live website.`);
     }
   };
 
-  const handleCreateService = (e: React.FormEvent) => {
+  const handleCreateService = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
 
+    setSaving(true);
+    let ok = false;
+
     if (activeTab === "core") {
       const created: Service = {
-        slug: newTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+        slug: newTitle.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || `service-${Date.now()}`,
         title: newTitle.trim(),
         subtitle: newSubtitle.trim() || "Tailored Luxury Spaces",
         image: newImage.trim() || "/images/real-bedroom-fluted.jpg",
@@ -149,8 +176,8 @@ export default function ServicesManagerPage() {
           { q: "What is the typical execution timeline?", a: "Timelines range from 4 to 12 weeks depending on scope." },
         ],
       };
-      cmsAddService(created);
-      notify(`Added new service "${created.title}" to live website!`);
+      ok = await cmsAddService(created);
+      if (ok) notify(`Added new service "${created.title}" to live website!`);
     } else {
       const createdSpecialty: SpecialtyService = {
         name: newTitle.trim(),
@@ -158,15 +185,20 @@ export default function ServicesManagerPage() {
         image: newImage.trim() || "/images/real-kitchen-saket.jpg",
         description: newDesc.trim() || "High-end bespoke material execution.",
       };
-      cmsAddSpecialty(createdSpecialty);
-      notify(`Added new specialty trade "${createdSpecialty.name}" to live website!`);
+      ok = await cmsAddSpecialty(createdSpecialty);
+      if (ok) notify(`Added new specialty trade "${createdSpecialty.name}" to live website!`);
     }
 
-    setShowAddModal(false);
-    setNewTitle("");
-    setNewSubtitle("");
-    setNewDesc("");
-    setNewSubServices("");
+    setSaving(false);
+    if (ok) {
+      setShowAddModal(false);
+      setNewTitle("");
+      setNewSubtitle("");
+      setNewDesc("");
+      setNewSubServices("");
+    } else {
+      notifyError("Failed to add service to live website. Please check connection.");
+    }
   };
 
   return (
@@ -193,6 +225,30 @@ export default function ServicesManagerPage() {
         >
           <Check size={16} />
           {successMsg}
+        </div>
+      )}
+
+      {errorMsg && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            background: "#EF4444",
+            color: "#FFF",
+            padding: "12px 20px",
+            borderRadius: "8px",
+            fontWeight: 600,
+            fontSize: "13px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <AlertCircle size={16} />
+          {errorMsg}
         </div>
       )}
 
@@ -432,25 +488,13 @@ export default function ServicesManagerPage() {
                 />
               </div>
 
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Cover Image URL *
-                </label>
-                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                  <img
-                    src={editCoreImage || "/images/hero-luxury.jpg"}
-                    alt="Preview"
-                    style={{ width: "54px", height: "40px", objectFit: "cover", borderRadius: "6px", border: "1px solid #E0E0E0" }}
-                  />
-                  <input
-                    type="text"
-                    required
-                    value={editCoreImage}
-                    onChange={(e) => setEditCoreImage(e.target.value)}
-                    style={{ flex: 1, padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                  />
-                </div>
-              </div>
+              <ImageUploadField
+                label="Cover Image *"
+                value={editCoreImage}
+                onChange={setEditCoreImage}
+                folder="Services"
+                required
+              />
 
               <div>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
@@ -480,8 +524,14 @@ export default function ServicesManagerPage() {
                 <button type="button" onClick={() => setEditingCore(null)} className="admin-btn admin-btn--outline">
                   Cancel
                 </button>
-                <button type="submit" className="admin-btn admin-btn--primary">
-                  Save Changes & Update Website
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="admin-btn admin-btn--primary"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                >
+                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
+                  {saving ? "Saving Changes..." : "Save Changes & Update Website"}
                 </button>
               </div>
             </form>
@@ -552,25 +602,13 @@ export default function ServicesManagerPage() {
                 />
               </div>
 
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Trade Photo URL *
-                </label>
-                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                  <img
-                    src={editSpecImage || "/images/hero-luxury.jpg"}
-                    alt="Preview"
-                    style={{ width: "54px", height: "40px", objectFit: "cover", borderRadius: "6px", border: "1px solid #E0E0E0" }}
-                  />
-                  <input
-                    type="text"
-                    required
-                    value={editSpecImage}
-                    onChange={(e) => setEditSpecImage(e.target.value)}
-                    style={{ flex: 1, padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                  />
-                </div>
-              </div>
+              <ImageUploadField
+                label="Trade Photo *"
+                value={editSpecImage}
+                onChange={setEditSpecImage}
+                folder="Services"
+                required
+              />
 
               <div>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
@@ -588,8 +626,14 @@ export default function ServicesManagerPage() {
                 <button type="button" onClick={() => setEditingSpecialty(null)} className="admin-btn admin-btn--outline">
                   Cancel
                 </button>
-                <button type="submit" className="admin-btn admin-btn--primary">
-                  Save Changes & Update Website
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="admin-btn admin-btn--primary"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                >
+                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
+                  {saving ? "Saving Changes..." : "Save Changes & Update Website"}
                 </button>
               </div>
             </form>
@@ -657,18 +701,13 @@ export default function ServicesManagerPage() {
                 />
               </div>
 
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Cover Image URL *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={newImage}
-                  onChange={(e) => setNewImage(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
+              <ImageUploadField
+                label="Cover Image / Photo *"
+                value={newImage}
+                onChange={setNewImage}
+                folder="Services"
+                required
+              />
 
               <div>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
@@ -702,8 +741,14 @@ export default function ServicesManagerPage() {
                 <button type="button" onClick={() => setShowAddModal(false)} className="admin-btn admin-btn--outline">
                   Cancel
                 </button>
-                <button type="submit" className="admin-btn admin-btn--primary">
-                  Publish to Website
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="admin-btn admin-btn--primary"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                >
+                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
+                  {saving ? "Publishing..." : "Publish to Website"}
                 </button>
               </div>
             </form>
