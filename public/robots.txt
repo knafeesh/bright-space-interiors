@@ -1,0 +1,11 @@
+# robots.txt for https://www.brightspaceinterior.in/
+User-agent: *
+Allow: /
+
+# Disallow admin, API, and post-submission thank you routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /thank-you
+
+# XML Sitemap location
+Sitemap: https://www.brightspaceinterior.in/sitemap.xml

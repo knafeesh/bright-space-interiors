@@ -3,6 +3,10 @@ import "./globals.css";
 import ConditionalShell from "@/components/layout/ConditionalShell";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.brightspaceinterior.in"),
+  alternates: {
+    canonical: "/",
+  },
   title: {
     default: "Bright Space Interiors | Luxury Interior Design & Turnkey Execution",
     template: "%s | Bright Space Interiors",
