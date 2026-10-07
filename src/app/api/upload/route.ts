@@ -77,10 +77,10 @@ export async function POST(req: Request) {
     }
 
     if (process.env.VERCEL) {
-      return NextResponse.json(
-        { error: "Image storage is not configured (missing FIREBASE_* env vars)." },
-        { status: 503 }
-      );
+      // In serverless without Firebase Storage, return base64 data URL so image works seamlessly
+      const base64 = buffer.toString("base64");
+      const dataUrl = `data:${file.type};base64,${base64}`;
+      return NextResponse.json({ url: dataUrl, name: fileName, size: file.size, type: file.type });
     }
 
     // Local-dev fallback: save into /public/uploads

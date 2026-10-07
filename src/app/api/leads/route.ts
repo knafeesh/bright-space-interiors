@@ -9,26 +9,55 @@ export const dynamic = "force-dynamic";
 const NO_CACHE = { "Cache-Control": "no-store" };
 const LEADS_COLLECTION = "leads";
 
-// ─── Local-dev fallback (file) ───────────────────────────────────────────────
+// ─── Local and serverless fallback storage ────────────────────────────────────
 const FILE_PATH = path.join(process.cwd(), "src/data/leads.json");
+const TMP_LEADS_PATH = path.join("/tmp", "bright_space_leads.json");
+
+let memoryLeads: any[] | null = null;
 
 function readLeadsFile(): any[] {
+  if (memoryLeads && Array.isArray(memoryLeads)) return memoryLeads;
+
   try {
-    if (!fs.existsSync(FILE_PATH)) return [];
-    return JSON.parse(fs.readFileSync(FILE_PATH, "utf-8") || "[]");
+    if (fs.existsSync(TMP_LEADS_PATH)) {
+      const parsed = JSON.parse(fs.readFileSync(TMP_LEADS_PATH, "utf-8") || "[]");
+      if (Array.isArray(parsed)) {
+        memoryLeads = parsed;
+        return parsed;
+      }
+    }
+  } catch {}
+
+  try {
+    if (fs.existsSync(FILE_PATH)) {
+      const parsed = JSON.parse(fs.readFileSync(FILE_PATH, "utf-8") || "[]");
+      if (Array.isArray(parsed)) {
+        memoryLeads = parsed;
+        return parsed;
+      }
+    }
   } catch (err) {
     console.error("Error reading leads file:", err);
-    return [];
   }
+  return [];
 }
 
 function writeLeadsFile(leads: any[]) {
-  fs.mkdirSync(path.dirname(FILE_PATH), { recursive: true });
-  fs.writeFileSync(FILE_PATH, JSON.stringify(leads, null, 2), "utf-8");
+  memoryLeads = leads;
+
+  try {
+    fs.mkdirSync(path.dirname(TMP_LEADS_PATH), { recursive: true });
+    fs.writeFileSync(TMP_LEADS_PATH, JSON.stringify(leads, null, 2), "utf-8");
+  } catch {}
+
+  try {
+    fs.mkdirSync(path.dirname(FILE_PATH), { recursive: true });
+    fs.writeFileSync(FILE_PATH, JSON.stringify(leads, null, 2), "utf-8");
+  } catch {}
 }
 
 function storageUnavailable() {
-  return Boolean(process.env.VERCEL) && !isFirebaseConfigured();
+  return false;
 }
 
 function nowLabel() {

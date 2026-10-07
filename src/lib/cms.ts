@@ -67,6 +67,7 @@ export function saveCmsStore(store: CmsStore): Promise<boolean> {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(store),
         cache: "no-store",
+        credentials: "same-origin",
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -106,7 +107,7 @@ let serverLoaded = false;
 
 function fetchServerStore(): Promise<CmsStore | null> {
   if (!serverFetch) {
-    serverFetch = fetch("/api/content", { cache: "no-store" })
+    serverFetch = fetch("/api/content", { cache: "no-store", credentials: "same-origin" })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && Array.isArray(data.projects)) {

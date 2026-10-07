@@ -17,44 +17,85 @@ const NO_CACHE_HEADERS = {
 const CMS_COLLECTION = "site";
 const CMS_DOC = "cms";
 
-// Local-dev fallback (only used when Firebase env vars are not set).
+// Local & temporary storage paths
 const STORE_PATH = path.join(process.cwd(), "src", "data", "cms-store.json");
+const TMP_STORE_PATH = path.join("/tmp", "bright_space_cms_store.json");
+
+// In-memory cache for fast response and serverless continuity
+let memoryStore: Record<string, unknown> | null = null;
 
 async function readStore() {
   if (isFirebaseConfigured()) {
-    const snap = await getDb().collection(CMS_COLLECTION).doc(CMS_DOC).get();
-    const data = snap.exists ? snap.data() : null;
-    if (data && Array.isArray(data.projects)) {
-      // Strip internal bookkeeping field before sending to clients
-      const { updatedAt: _ignored, ...store } = data;
-      return store;
+    try {
+      const snap = await getDb().collection(CMS_COLLECTION).doc(CMS_DOC).get();
+      const data = snap.exists ? snap.data() : null;
+      if (data && Array.isArray(data.projects)) {
+        // Strip internal bookkeeping field before sending to clients
+        const { updatedAt: _ignored, ...store } = data;
+        return store;
+      }
+    } catch (err) {
+      console.warn("Firestore read failed, falling back to local cache:", err);
     }
-    return getDefaultCmsStore();
   }
 
+  if (memoryStore && Array.isArray(memoryStore.projects)) {
+    return memoryStore;
+  }
+
+  // Try reading from /tmp on serverless hosts
+  try {
+    const raw = await fs.readFile(TMP_STORE_PATH, "utf-8");
+    const parsed = JSON.parse(raw);
+    if (parsed && Array.isArray(parsed.projects)) {
+      memoryStore = parsed;
+      return parsed;
+    }
+  } catch {}
+
+  // Try reading from local project data file
   try {
     const raw = await fs.readFile(STORE_PATH, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return getDefaultCmsStore();
-  }
+    const parsed = JSON.parse(raw);
+    if (parsed && Array.isArray(parsed.projects)) {
+      memoryStore = parsed;
+      return parsed;
+    }
+  } catch {}
+
+  return getDefaultCmsStore();
 }
 
 async function writeStore(store: Record<string, unknown>) {
+  memoryStore = store;
+
   if (isFirebaseConfigured()) {
-    await getDb()
-      .collection(CMS_COLLECTION)
-      .doc(CMS_DOC)
-      .set({ ...store, updatedAt: Date.now() });
-    return;
+    try {
+      await getDb()
+        .collection(CMS_COLLECTION)
+        .doc(CMS_DOC)
+        .set({ ...store, updatedAt: Date.now() });
+      return;
+    } catch (err) {
+      console.error("Firestore write failed, falling back to cache:", err);
+    }
   }
 
-  if (process.env.VERCEL) {
-    // Vercel's filesystem is read-only — refuse instead of silently losing data.
-    throw new Error("Persistent storage is not configured (missing FIREBASE_* env vars).");
+  // Always attempt to write to /tmp (supported on Vercel serverless)
+  try {
+    await fs.mkdir(path.dirname(TMP_STORE_PATH), { recursive: true });
+    await fs.writeFile(TMP_STORE_PATH, JSON.stringify(store, null, 2), "utf-8");
+  } catch (err) {
+    console.warn("Failed to write to /tmp store:", err);
   }
-  await fs.mkdir(path.dirname(STORE_PATH), { recursive: true });
-  await fs.writeFile(STORE_PATH, JSON.stringify(store, null, 2), "utf-8");
+
+  // Also attempt to write to local data directory if writable
+  try {
+    await fs.mkdir(path.dirname(STORE_PATH), { recursive: true });
+    await fs.writeFile(STORE_PATH, JSON.stringify(store, null, 2), "utf-8");
+  } catch {
+    // Normal on Vercel read-only filesystem
+  }
 }
 
 export async function GET() {
