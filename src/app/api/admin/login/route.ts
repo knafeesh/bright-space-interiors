@@ -33,8 +33,9 @@ export async function POST(request: Request) {
       { status: 401 }
     );
   } catch (error) {
+    console.error("Admin login API error:", error);
     return NextResponse.json(
-      { success: false, error: "Authentication failed" },
+      { success: false, error: "Authentication failed. Please try again." },
       { status: 500 }
     );
   }
