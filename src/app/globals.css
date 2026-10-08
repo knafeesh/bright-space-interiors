@@ -624,7 +624,171 @@ p {
 }
 
 /* ═══════════════════════════════════════════
-   SERVICES QUICK MENU
+   INTERIOR SOLUTIONS SECTION
+═══════════════════════════════════════════ */
+.interior-solutions {
+  padding: 68px 0 76px;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  width: 100%;
+  overflow-x: clip;
+}
+
+.interior-solutions__container {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 28px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.interior-solutions__header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.interior-solutions__title {
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 3.2vw, 36px);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--charcoal);
+  margin: 0 0 14px;
+}
+
+.interior-solutions__grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.interior-solutions__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--white);
+  border: 1px solid rgba(184, 151, 90, 0.28);
+  border-radius: 14px;
+  padding: 26px 12px 22px;
+  text-decoration: none;
+  color: var(--charcoal);
+  box-shadow: 0 3px 12px rgba(28, 24, 22, 0.03);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  min-width: 0;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.interior-solutions__card:hover,
+.interior-solutions__card:focus-visible {
+  background: var(--charcoal);
+  color: var(--ivory);
+  border-color: var(--charcoal);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(28, 24, 22, 0.16);
+}
+
+.interior-solutions__icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  margin-bottom: 14px;
+  transition: color 0.25s ease, transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.interior-solutions__card:hover .interior-solutions__icon,
+.interior-solutions__card:focus-visible .interior-solutions__icon {
+  color: var(--gold-light);
+  transform: scale(1.08);
+}
+
+.interior-solutions__name {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  color: inherit;
+  word-break: normal;
+  overflow-wrap: break-word;
+  padding: 0 4px;
+  transition: color 0.25s ease;
+}
+
+@media (max-width: 1200px) {
+  .interior-solutions__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 900px) {
+  .interior-solutions {
+    padding: 52px 0 60px;
+  }
+  .interior-solutions__container {
+    padding: 0 20px;
+  }
+  .interior-solutions__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .interior-solutions__card {
+    padding: 20px 8px 16px;
+  }
+  .interior-solutions__icon {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 11px;
+  }
+  .interior-solutions__name {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .interior-solutions {
+    padding: 40px 0 48px;
+  }
+  .interior-solutions__container {
+    padding: 0 16px;
+  }
+  .interior-solutions__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .interior-solutions__card {
+    padding: 18px 6px 14px;
+    border-radius: 12px;
+  }
+  .interior-solutions__icon {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 9px;
+  }
+  .interior-solutions__name {
+    font-size: 11.5px;
+    line-height: 1.3;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SERVICES QUICK MENU (LEGACY COMPATIBILITY)
 ═══════════════════════════════════════════ */
 .services-quick {
   padding: 0;

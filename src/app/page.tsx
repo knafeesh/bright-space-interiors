@@ -2,14 +2,20 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  Home,
-  Building2,
-  Briefcase,
-  Hammer,
-  PenTool,
-  KeyRound,
   ArrowRight,
   ChevronRight,
+  CookingPot,
+  Lightbulb,
+  Sofa,
+  BedDouble,
+  Bath,
+  PaintRoller,
+  Tv,
+  DoorOpen,
+  Monitor,
+  Boxes,
+  BookOpen,
+  Frame,
 } from "lucide-react";
 import { TESTIMONIALS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects, useCmsServices } from "@/lib/cms";
@@ -86,21 +92,208 @@ function useFadeIn() {
 
 
 const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
-const SERVICE_ICONS = [
-  <Home size={36} key="home" />,
-  <Building2 size={36} key="building" />,
-  <Briefcase size={36} key="office" />,
-  <Hammer size={36} key="hammer" />,
-  <PenTool size={36} key="pen" />,
-  <KeyRound size={36} key="key" />,
-];
-const QUICK_SERVICES = [
-  "Residential",
-  "Commercial",
-  "Office & Workspace",
-  "Turnkey Projects",
-  "Design & Execution",
-  "Handover & Support",
+interface InteriorSolutionItem {
+  name: string;
+  href: string;
+  icon: React.ReactNode;
+}
+
+const INTERIOR_SOLUTIONS: InteriorSolutionItem[] = [
+  {
+    name: "Modular Kitchen",
+    href: "/services/turnkey",
+    icon: <CookingPot size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "Modular Wardrobe",
+    href: "/services/turnkey",
+    icon: (
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="3" y="2" width="18" height="20" rx="2" />
+        <path d="M12 2v20" />
+        <path d="M9 10v3" />
+        <path d="M15 10v3" />
+      </svg>
+    ),
+  },
+  {
+    name: "Lighting",
+    href: "/services/turnkey",
+    icon: <Lightbulb size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "Furniture",
+    href: "/services/residential",
+    icon: <Sofa size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "Kids Bedroom",
+    href: "/services/residential",
+    icon: <BedDouble size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "Bathroom",
+    href: "/services/residential",
+    icon: <Bath size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "Bathroom Renovation",
+    href: "/services/residential",
+    icon: (
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M7 3h10v6H7z" />
+        <path d="M5 9h14a1 1 0 0 1 1 1v2a7 7 0 0 1-7 7 7 7 0 0 1-7-7v-2a1 1 0 0 1 1-1z" />
+        <path d="M9 19v2" />
+        <path d="M15 19v2" />
+      </svg>
+    ),
+  },
+  {
+    name: "Renovation",
+    href: "/services/turnkey",
+    icon: (
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m14.7 6.3 5 5-2.8 2.8-5-5z" />
+        <path d="m9.3 11.7-5 5 2.8 2.8 5-5z" />
+        <path d="m16 8 2-2a2.83 2.83 0 0 0-4-4l-2 2" />
+        <path d="m8 16-2 2a2.83 2.83 0 0 1-4-4l2-2" />
+      </svg>
+    ),
+  },
+  {
+    name: "Wall Paint",
+    href: "/services/turnkey",
+    icon: <PaintRoller size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "TV Console",
+    href: "/services/residential",
+    icon: <Tv size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "Doors",
+    href: "/services/turnkey",
+    icon: <DoorOpen size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "Workspace",
+    href: "/services/commercial",
+    icon: <Monitor size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "Storage",
+    href: "/services/turnkey",
+    icon: <Boxes size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "Temple",
+    href: "/services/residential",
+    icon: (
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 2v2" />
+        <path d="M12 4c-2 1.5-4 3.5-4 5h8c0-1.5-2-3.5-4-5Z" />
+        <path d="M5 9h14v2H5z" />
+        <path d="M6 11v8" />
+        <path d="M10 11v8" />
+        <path d="M14 11v8" />
+        <path d="M18 11v8" />
+        <path d="M4 19h16v3H4z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Study Area",
+    href: "/services/residential",
+    icon: <BookOpen size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "Foyer Design",
+    href: "/services/residential",
+    icon: (
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m14 7 3 3" />
+        <path d="m9.5 11.5 5-5a2.12 2.12 0 0 1 3 3l-5 5-4.5 1 1-4.5z" />
+        <path d="M4 20h16" />
+      </svg>
+    ),
+  },
+  {
+    name: "Wall Art",
+    href: "/services/residential",
+    icon: <Frame size={36} strokeWidth={1.5} />,
+  },
+  {
+    name: "Smart Home",
+    href: "/services/turnkey",
+    icon: (
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <path d="M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
+        <path d="M9.5 15.5a4 4 0 0 1 5 0" />
+        <path d="M8 18a6 6 0 0 1 8 0" />
+      </svg>
+    ),
+  },
 ];
 
 
@@ -512,20 +705,32 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════ SERVICES QUICK MENU ══════════════ */}
-      <section className="services-quick" aria-label="Services overview">
-        <div className="services-quick__grid">
-          {QUICK_SERVICES.map((name, i) => (
-            <Link
-              key={name}
-              href={i < 4 ? `/services/${cmsServices[i]?.slug || ""}` : "/services"}
-              className="services-quick__item"
-              id={`quick-service-${i}`}
-            >
-              <div className="services-quick__icon">{SERVICE_ICONS[i]}</div>
-              <span className="services-quick__name">{name}</span>
-            </Link>
-          ))}
+      {/* ══════════════ INTERIOR SOLUTIONS SECTION ══════════════ */}
+      <section
+        className="interior-solutions"
+        id="interior-solutions"
+        aria-label="Interior Solutions"
+      >
+        <div className="interior-solutions__container">
+          <div className="interior-solutions__header">
+            <h2 className="interior-solutions__title">Interior Solutions</h2>
+            <div className="title-line--center title-line" style={{ marginTop: "14px" }} />
+          </div>
+
+          <div className="interior-solutions__grid">
+            {INTERIOR_SOLUTIONS.map((item, i) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="interior-solutions__card"
+                id={`interior-solution-${item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                aria-label={item.name}
+              >
+                <div className="interior-solutions__icon">{item.icon}</div>
+                <span className="interior-solutions__name">{item.name}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
