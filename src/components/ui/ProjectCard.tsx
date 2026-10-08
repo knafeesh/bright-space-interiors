@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Project } from "@/lib/cms";
 
 interface ProjectCardProps {
@@ -12,111 +12,31 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project, idPrefix = "project-card" }: ProjectCardProps) {
   const [activeImgIdx, setActiveImgIdx] = useState(0);
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
-  const mouseStartX = useRef<number | null>(null);
-  const isDragging = useRef<boolean>(false);
 
   const images =
     project.gallery && project.gallery.length > 0
       ? project.gallery
       : [project.image || "/images/hero-luxury.jpg"];
 
-  const handlePrev = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setActiveImgIdx((prev) => (prev - 1 + images.length) % images.length);
-  };
-
-  const handleNext = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setActiveImgIdx((prev) => (prev + 1) % images.length);
-  };
-
-  const handleDot = (idx: number, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setActiveImgIdx(idx);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.targetTouches[0].clientX;
-    touchEndX.current = null;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null || touchEndX.current === null) return;
-    const diff = touchStartX.current - touchEndX.current;
-    // horizontal swipe threshold: 35px
-    if (Math.abs(diff) > 35) {
-      if (diff > 0) {
-        // Swiped Left -> Next image
-        setActiveImgIdx((prev) => (prev + 1) % images.length);
-      } else {
-        // Swiped Right -> Prev image
-        setActiveImgIdx((prev) => (prev - 1 + images.length) % images.length);
-      }
-    }
-    touchStartX.current = null;
-    touchEndX.current = null;
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    mouseStartX.current = e.clientX;
-    isDragging.current = false;
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (mouseStartX.current !== null) {
-      if (Math.abs(e.clientX - mouseStartX.current) > 8) {
-        isDragging.current = true;
-      }
-    }
-  };
-
-  const handleMouseUp = (e: React.MouseEvent) => {
-    if (mouseStartX.current !== null) {
-      const diff = mouseStartX.current - e.clientX;
-      if (Math.abs(diff) > 35) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (diff > 0) {
-          setActiveImgIdx((prev) => (prev + 1) % images.length);
-        } else {
-          setActiveImgIdx((prev) => (prev - 1 + images.length) % images.length);
-        }
-      }
-    }
-    mouseStartX.current = null;
-    setTimeout(() => {
-      isDragging.current = false;
-    }, 50);
-  };
+  // Automatic gentle image transition when project has multiple photos
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const timer = setInterval(() => {
+      setActiveImgIdx((prev) => (prev + 1) % images.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [images.length]);
 
   return (
-    <Link
-      href={`/portfolio/${project.slug}`}
+    <div
       className="project-card"
       id={`${idPrefix}-${project.id}`}
-      onClick={(e) => {
-        if (isDragging.current) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      }}
       style={{
-        textDecoration: "none",
-        color: "inherit",
         display: "flex",
         flexDirection: "column",
       }}
     >
-      {/* Horizontal Swipe Image Viewport */}
+      {/* Clean Project Image Viewport (non-clickable) */}
       <div
         className="project-card__image-wrap"
         style={{
@@ -129,14 +49,8 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
           touchAction: "pan-y",
           WebkitUserSelect: "none",
           userSelect: "none",
-          cursor: isDragging.current ? "grabbing" : "pointer",
+          cursor: "default",
         }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
       >
         {/* Top-Left Category Badge */}
         <div
@@ -162,6 +76,7 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
         >
           {project.category}
         </div>
+
         {/* Horizontal Sliding Track */}
         <div
           style={{
@@ -199,99 +114,36 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
           ))}
         </div>
 
-        {/* Hover View Overlay */}
-        <div className="project-card__overlay">
-          <span className="project-card__view">View Project</span>
-        </div>
-
-        {/* Swipe Arrows & Indicator Dots (when project has multiple photos) */}
+        {/* Indicator Dots (when project has multiple photos) */}
         {images.length > 1 && (
-          <>
-            <button
-              onClick={handlePrev}
-              aria-label="Previous photo"
-              style={{
-                position: "absolute",
-                left: "8px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                background: "rgba(0, 0, 0, 0.65)",
-                backdropFilter: "blur(6px)",
-                border: "1px solid rgba(255, 255, 255, 0.25)",
-                color: "#FAF7F2",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                zIndex: 4,
-                transition: "background 0.2s ease, transform 0.2s ease",
-              }}
-            >
-              <ChevronLeft size={16} />
-            </button>
-
-            <button
-              onClick={handleNext}
-              aria-label="Next photo"
-              style={{
-                position: "absolute",
-                right: "8px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                background: "rgba(0, 0, 0, 0.65)",
-                backdropFilter: "blur(6px)",
-                border: "1px solid rgba(255, 255, 255, 0.25)",
-                color: "#FAF7F2",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                zIndex: 4,
-                transition: "background 0.2s ease, transform 0.2s ease",
-              }}
-            >
-              <ChevronRight size={16} />
-            </button>
-
-            {/* Navigation Dots */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "10px",
-                left: 0,
-                right: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "6px",
-                zIndex: 4,
-              }}
-            >
-              {images.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={(e) => handleDot(i, e)}
-                  aria-label={`Go to photo ${i + 1}`}
-                  style={{
-                    width: i === activeImgIdx ? "16px" : "6px",
-                    height: "6px",
-                    borderRadius: "3px",
-                    background: i === activeImgIdx ? "#D4B87A" : "rgba(255, 255, 255, 0.45)",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: 0,
-                    transition: "all 0.25s ease",
-                  }}
-                />
-              ))}
-            </div>
-          </>
+          <div
+            style={{
+              position: "absolute",
+              bottom: "10px",
+              left: 0,
+              right: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "6px",
+              zIndex: 3,
+              pointerEvents: "none",
+            }}
+            aria-hidden="true"
+          >
+            {images.map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  width: i === activeImgIdx ? "16px" : "6px",
+                  height: "6px",
+                  borderRadius: "3px",
+                  background: i === activeImgIdx ? "#D4B87A" : "rgba(255, 255, 255, 0.45)",
+                  transition: "all 0.25s ease",
+                }}
+              />
+            ))}
+          </div>
         )}
       </div>
 
@@ -313,11 +165,16 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
           {project.location} · {project.area}
         </div>
         <div className="project-card__btn-wrap">
-          <span className="project-card__btn">
+          <Link
+            href={`/portfolio/${project.slug}`}
+            className="project-card__btn"
+            id={`${idPrefix}-btn-${project.id}`}
+            style={{ textDecoration: "none" }}
+          >
             Explore Project <ChevronRight size={13} style={{ marginLeft: "4px" }} />
-          </span>
+          </Link>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
