@@ -3557,13 +3557,20 @@ p {
     --container-padding: 0 24px;
   }
   .navbar {
-    padding: 20px 24px;
+    padding: 16px clamp(16px, 4vw, 24px);
+    align-items: center;
+    justify-content: space-between;
   }
-  .navbar__nav {
-    display: none;
+  .navbar--solid {
+    padding: 14px clamp(16px, 4vw, 24px);
+  }
+  .navbar__nav,
+  .navbar__cta {
+    display: none !important;
   }
   .navbar__hamburger {
     display: flex;
+    margin-left: auto;
   }
   .services-quick__grid {
     grid-template-columns: repeat(2, 1fr);
