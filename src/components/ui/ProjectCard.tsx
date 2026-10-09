@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Project } from "@/lib/cms";
@@ -18,14 +18,131 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
       ? project.gallery
       : [project.image || "/images/hero-luxury.jpg"];
 
-  // Automatic gentle image transition when project has multiple photos
-  useEffect(() => {
+  // Touch tracking for mobile swipe
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+  const touchEndY = useRef<number | null>(null);
+
+  // Mouse tracking for desktop drag & click
+  const mouseStartX = useRef<number | null>(null);
+  const mouseStartY = useRef<number | null>(null);
+  const isMouseDragging = useRef(false);
+
+  // Navigate to next image
+  const nextImage = () => {
     if (images.length <= 1) return;
-    const timer = setInterval(() => {
-      setActiveImgIdx((prev) => (prev + 1) % images.length);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, [images.length]);
+    setActiveImgIdx((prev) => (prev + 1) % images.length);
+  };
+
+  // Navigate to previous image
+  const prevImage = () => {
+    if (images.length <= 1) return;
+    setActiveImgIdx((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  // Mobile Touch Handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (images.length <= 1) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchEndX.current = null;
+    touchEndY.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (images.length <= 1 || touchStartX.current === null) return;
+    touchEndX.current = e.touches[0].clientX;
+    touchEndY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = () => {
+    if (images.length <= 1 || touchStartX.current === null) return;
+
+    const startX = touchStartX.current;
+    const startY = touchStartY.current ?? 0;
+    const endX = touchEndX.current;
+    const endY = touchEndY.current;
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+    touchEndX.current = null;
+    touchEndY.current = null;
+
+    if (endX !== null && endY !== null) {
+      const diffX = startX - endX;
+      const diffY = Math.abs(startY - endY);
+
+      // Horizontal swipe threshold: 35px and more horizontal than vertical
+      if (Math.abs(diffX) > 35 && Math.abs(diffX) > diffY) {
+        if (diffX > 0) {
+          // Swiped left -> next image
+          nextImage();
+        } else {
+          // Swiped right -> previous image
+          prevImage();
+        }
+        return;
+      }
+
+      // Tap if movement is minimal
+      if (Math.abs(diffX) < 10 && diffY < 10) {
+        nextImage();
+        return;
+      }
+    } else {
+      // Touch and release without move -> Tap to next image
+      nextImage();
+    }
+  };
+
+  // Desktop Mouse Handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0 || images.length <= 1) return;
+    mouseStartX.current = e.clientX;
+    mouseStartY.current = e.clientY;
+    isMouseDragging.current = false;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (mouseStartX.current === null) return;
+    const diffX = Math.abs(e.clientX - mouseStartX.current);
+    const diffY = Math.abs(e.clientY - (mouseStartY.current ?? e.clientY));
+    if (diffX > 8 && diffX > diffY) {
+      isMouseDragging.current = true;
+    }
+  };
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (mouseStartX.current === null) return;
+    const diffX = mouseStartX.current - e.clientX;
+    const diffY = Math.abs((mouseStartY.current ?? e.clientY) - e.clientY);
+    const wasDragging = isMouseDragging.current;
+
+    mouseStartX.current = null;
+    mouseStartY.current = null;
+    isMouseDragging.current = false;
+
+    if (images.length <= 1) return;
+
+    if (wasDragging && Math.abs(diffX) > 35 && Math.abs(diffX) > diffY) {
+      if (diffX > 0) {
+        // Dragged left -> next image
+        nextImage();
+      } else {
+        // Dragged right -> previous image
+        prevImage();
+      }
+    } else if (!wasDragging && Math.abs(diffX) < 10 && diffY < 10) {
+      // Click without drag -> next image
+      nextImage();
+    }
+  };
+
+  const handleDotClick = (idx: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveImgIdx(idx);
+  };
 
   return (
     <div
@@ -34,11 +151,19 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
       style={{
         display: "flex",
         flexDirection: "column",
+        cursor: "default",
       }}
     >
-      {/* Clean Project Image Viewport (non-clickable) */}
+      {/* Clean User-Controlled Project Image Viewport (Does NOT open project) */}
       <div
         className="project-card__image-wrap"
+        title={images.length > 1 ? "Click or swipe to view next image" : undefined}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
         style={{
           position: "relative",
           width: "100%",
@@ -49,7 +174,7 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
           touchAction: "pan-y",
           WebkitUserSelect: "none",
           userSelect: "none",
-          cursor: "default",
+          cursor: images.length > 1 ? "pointer" : "default",
         }}
       >
         {/* Top-Left Category Badge */}
@@ -86,6 +211,7 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
             transform: `translateX(-${activeImgIdx * 100}%)`,
             transition: "transform 0.45s cubic-bezier(0.25, 1, 0.5, 1)",
             willChange: "transform",
+            pointerEvents: "none",
           }}
         >
           {images.map((imgSrc, i) => (
@@ -102,19 +228,22 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
               <img
                 src={imgSrc}
                 alt={`${project.title} - Image ${i + 1}`}
+                draggable={false}
                 style={{
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
                   objectPosition: "center",
                   display: "block",
+                  pointerEvents: "none",
+                  userSelect: "none",
                 }}
               />
             </div>
           ))}
         </div>
 
-        {/* Indicator Dots (when project has multiple photos) */}
+        {/* Manual Indicator Dots (when project has multiple photos) */}
         {images.length > 1 && (
           <div
             style={{
@@ -127,18 +256,24 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
               justifyContent: "center",
               gap: "6px",
               zIndex: 3,
-              pointerEvents: "none",
             }}
             aria-hidden="true"
           >
             {images.map((_, i) => (
-              <div
+              <button
                 key={i}
+                type="button"
+                onClick={(e) => handleDotClick(i, e)}
+                aria-label={`Go to image ${i + 1}`}
                 style={{
                   width: i === activeImgIdx ? "16px" : "6px",
                   height: "6px",
                   borderRadius: "3px",
                   background: i === activeImgIdx ? "#D4B87A" : "rgba(255, 255, 255, 0.45)",
+                  border: "none",
+                  padding: 0,
+                  margin: 0,
+                  cursor: "pointer",
                   transition: "all 0.25s ease",
                 }}
               />
