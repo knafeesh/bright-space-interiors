@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
-import { WHATSAPP_NUMBER, PHONE_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -104,6 +103,7 @@ export default function Navbar() {
           onClick={() => setMobileOpen(true)}
           aria-label="Open menu"
           aria-expanded={mobileOpen}
+          type="button"
         >
           <span />
           <span />
@@ -111,7 +111,7 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation (Clean Elegant White Menu matching reference) */}
       <div
         className={`mobile-nav${mobileOpen ? " mobile-nav--open" : ""}`}
         role="dialog"
@@ -122,35 +122,23 @@ export default function Navbar() {
           className="mobile-nav__close"
           onClick={() => setMobileOpen(false)}
           aria-label="Close menu"
+          type="button"
         >
-          <X size={28} />
+          <X size={30} strokeWidth={1.35} />
         </button>
 
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="mobile-nav__link"
-            onClick={() => setMobileOpen(false)}
-          >
-            {link.label}
-          </Link>
-        ))}
-
-        <div className="mobile-nav__bottom">
-          <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn--primary"
-            onClick={() => setMobileOpen(false)}
-          >
-            WhatsApp Us
-          </a>
-          <a href={`tel:${PHONE_NUMBER.replace(/\s+/g, "")}`} className="btn btn--outline-white">
-            Call Now
-          </a>
-        </div>
+        <nav className="mobile-nav__menu" aria-label="Mobile links">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`mobile-nav__link${pathname === link.href ? " mobile-nav__link--active" : ""}`}
+              onClick={() => setMobileOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </>
   );
