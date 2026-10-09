@@ -454,9 +454,6 @@ p {
   padding: clamp(72px, 12vh, 92px) clamp(28px, 8vw, 44px) 40px;
   overflow-y: auto;
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
