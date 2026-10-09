@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import Link from "next/link";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 export interface CarouselSlide {
   id: string;
@@ -157,8 +155,17 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
   const data = CATEGORY_CAROUSELS[normalizedKey];
 
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const resumeTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Touch tracking for mobile swipe
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+  const touchEndY = useRef<number | null>(null);
+
+  // Mouse tracking for desktop drag & click
+  const mouseStartX = useRef<number | null>(null);
+  const mouseStartY = useRef<number | null>(null);
+  const isMouseDragging = useRef(false);
 
   // If category not supported, return null
   if (!data || !data.slides || data.slides.length === 0) {
@@ -177,65 +184,102 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
 
   const handleDotClick = (idx: number) => {
     setCurrentIdx(idx);
-    pauseAndScheduleResume();
   };
-
-  const handlePrev = () => {
-    prevSlide();
-    pauseAndScheduleResume();
-  };
-
-  const handleNext = () => {
-    nextSlide();
-    pauseAndScheduleResume();
-  };
-
-  // Pause on manual interaction and automatically resume after 4 seconds
-  const pauseAndScheduleResume = () => {
-    setIsPaused(true);
-    if (resumeTimerRef.current) {
-      clearTimeout(resumeTimerRef.current);
-    }
-    resumeTimerRef.current = setTimeout(() => {
-      setIsPaused(false);
-    }, 4000);
-  };
-
-  const handleMouseEnter = () => {
-    setIsPaused(true);
-    if (resumeTimerRef.current) {
-      clearTimeout(resumeTimerRef.current);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setIsPaused(false);
-  };
-
-  // 3-second auto-slide interval
-  useEffect(() => {
-    if (isPaused) return;
-
-    const timer = setInterval(() => {
-      nextSlide();
-    }, 3000);
-
-    return () => clearInterval(timer);
-  }, [isPaused, nextSlide]);
-
-  // Clean up timer on unmount
-  useEffect(() => {
-    return () => {
-      if (resumeTimerRef.current) {
-        clearTimeout(resumeTimerRef.current);
-      }
-    };
-  }, []);
 
   // Reset to first slide if category changes
   useEffect(() => {
     setCurrentIdx(0);
   }, [category]);
+
+  // Mobile Touch Handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (total <= 1) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchEndX.current = null;
+    touchEndY.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (total <= 1 || touchStartX.current === null) return;
+    touchEndX.current = e.touches[0].clientX;
+    touchEndY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = () => {
+    if (total <= 1 || touchStartX.current === null) return;
+
+    const startX = touchStartX.current;
+    const startY = touchStartY.current ?? 0;
+    const endX = touchEndX.current;
+    const endY = touchEndY.current;
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+    touchEndX.current = null;
+    touchEndY.current = null;
+
+    if (endX !== null && endY !== null) {
+      const diffX = startX - endX;
+      const diffY = Math.abs(startY - endY);
+
+      if (Math.abs(diffX) > 35 && Math.abs(diffX) > diffY) {
+        if (diffX > 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+        return;
+      }
+
+      if (Math.abs(diffX) < 10 && diffY < 10) {
+        nextSlide();
+        return;
+      }
+    } else {
+      nextSlide();
+    }
+  };
+
+  // Desktop Mouse Handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0 || total <= 1) return;
+    mouseStartX.current = e.clientX;
+    mouseStartY.current = e.clientY;
+    isMouseDragging.current = false;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (mouseStartX.current === null) return;
+    const diffX = Math.abs(e.clientX - mouseStartX.current);
+    const diffY = Math.abs(e.clientY - (mouseStartY.current ?? e.clientY));
+    if (diffX > 8 && diffX > diffY) {
+      isMouseDragging.current = true;
+    }
+  };
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (mouseStartX.current === null) return;
+    const diffX = mouseStartX.current - e.clientX;
+    const diffY = Math.abs((mouseStartY.current ?? e.clientY) - e.clientY);
+    const wasDragging = isMouseDragging.current;
+
+    mouseStartX.current = null;
+    mouseStartY.current = null;
+    isMouseDragging.current = false;
+
+    if (total <= 1) return;
+
+    if (wasDragging && Math.abs(diffX) > 35 && Math.abs(diffX) > diffY) {
+      if (diffX > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    } else if (!wasDragging && Math.abs(diffX) < 10 && diffY < 10) {
+      nextSlide();
+    }
+  };
 
   const currentSlide = data.slides[currentIdx];
 
@@ -248,7 +292,7 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
       id={`category-carousel-${normalizedKey}`}
       aria-label={`${data.title} Image Carousel`}
     >
-      {/* ── Carousel Viewport Frame ── */}
+      {/* ── Carousel Viewport Frame (User controlled: click or swipe to change) ── */}
       <div
         style={{
           position: "relative",
@@ -259,11 +303,18 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
           border: "1.5px solid rgba(184, 151, 90, 0.35)",
           background: "#0D0B0A",
           boxShadow: "0 18px 45px rgba(0, 0, 0, 0.25)",
+          cursor: total > 1 ? "pointer" : "default",
+          touchAction: "pan-y",
+          WebkitUserSelect: "none",
+          userSelect: "none",
         }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onTouchStart={handleMouseEnter}
-        onTouchEnd={handleMouseLeave}
+        title={total > 1 ? "Click or swipe to view next image" : undefined}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
       >
         {/* Horizontal Smooth Slide Track */}
         <div
@@ -274,6 +325,7 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
             transform: `translateX(-${currentIdx * 100}%)`,
             transition: "transform 0.65s cubic-bezier(0.25, 1, 0.5, 1)",
             willChange: "transform",
+            pointerEvents: "none",
           }}
         >
           {data.slides.map((slide, idx) => (
@@ -290,6 +342,7 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
               <img
                 src={slide.image}
                 alt={slide.title}
+                draggable={false}
                 loading={idx === 0 ? "eager" : "lazy"}
                 style={{
                   width: "100%",
@@ -297,6 +350,8 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
                   objectFit: "cover",
                   objectPosition: "center",
                   display: "block",
+                  pointerEvents: "none",
+                  userSelect: "none",
                 }}
               />
             </div>
@@ -331,12 +386,13 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
             fontWeight: 700,
             letterSpacing: "0.1em",
             zIndex: 4,
+            pointerEvents: "none",
           }}
         >
           0{currentIdx + 1} / 0{total}
         </div>
 
-        {/* Bottom Clean Caption & Quick Link */}
+        {/* Bottom Clean Caption */}
         <div
           style={{
             position: "absolute",
@@ -350,6 +406,7 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
             justifyContent: "space-between",
             flexWrap: "wrap",
             gap: "12px",
+            pointerEvents: "none",
           }}
         >
           <div>
@@ -379,85 +436,7 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
               {currentSlide.title}
             </h3>
           </div>
-
-          {currentSlide.projectSlug && (
-            <Link
-              href={`/portfolio/${currentSlide.projectSlug}`}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                background: "rgba(184, 151, 98, 0.9)",
-                color: "#FFFFFF",
-                padding: "8px 18px",
-                fontSize: "11px",
-                fontWeight: 700,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                borderRadius: "2px",
-                textDecoration: "none",
-                transition: "background 0.2s ease",
-              }}
-            >
-              View Project
-              <ArrowRight size={13} />
-            </Link>
-          )}
         </div>
-
-        {/* Left Arrow for Manual Control */}
-        <button
-          onClick={handlePrev}
-          aria-label="Previous slide"
-          style={{
-            position: "absolute",
-            left: "14px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: "42px",
-            height: "42px",
-            borderRadius: "50%",
-            background: "rgba(0, 0, 0, 0.55)",
-            backdropFilter: "blur(8px)",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            color: "#FAF7F2",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            zIndex: 4,
-            transition: "all 0.2s ease",
-          }}
-        >
-          <ChevronLeft size={22} />
-        </button>
-
-        {/* Right Arrow for Manual Control */}
-        <button
-          onClick={handleNext}
-          aria-label="Next slide"
-          style={{
-            position: "absolute",
-            right: "14px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: "42px",
-            height: "42px",
-            borderRadius: "50%",
-            background: "rgba(0, 0, 0, 0.55)",
-            backdropFilter: "blur(8px)",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            color: "#FAF7F2",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            zIndex: 4,
-            transition: "all 0.2s ease",
-          }}
-        >
-          <ChevronRight size={22} />
-        </button>
       </div>
 
       {/* ── Small Navigation Dots Below the Image ── */}
@@ -481,6 +460,7 @@ export default function CategoryCarousel({ category }: CategoryCarouselProps) {
               aria-label={`Go to slide ${idx + 1}`}
               aria-selected={isActive}
               role="tab"
+              type="button"
               style={{
                 height: "8px",
                 width: isActive ? "28px" : "8px",
