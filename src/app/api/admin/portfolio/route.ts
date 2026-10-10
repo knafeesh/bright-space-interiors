@@ -7,6 +7,7 @@ import {
   deleteProjectFromDb,
 } from "@/lib/server/portfolio-db";
 import { Project } from "@/lib/cms-types";
+import { getDb, isFirebaseConfigured } from "@/lib/server/firebase-admin";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -34,8 +35,36 @@ export async function GET(req: Request) {
   }
 
   try {
+    const isConfigured = isFirebaseConfigured();
+    let firestoreError: string | null = null;
+    let docExists = false;
+    let docProjectsCount = 0;
+    if (isConfigured) {
+      try {
+        const snap = await getDb().collection("site").doc("cms").get();
+        docExists = snap.exists;
+        if (snap.exists) {
+          const d = snap.data();
+          docProjectsCount = Array.isArray(d?.projects) ? d.projects.length : 0;
+        }
+      } catch (err: unknown) {
+        firestoreError = err instanceof Error ? err.message : String(err);
+      }
+    }
+
     const projects = await getProjectsFromDb();
-    return NextResponse.json({ projects }, { headers: CORS_HEADERS });
+    return NextResponse.json({
+      projects,
+      debug: {
+        isConfigured,
+        hasProjectId: Boolean(process.env.FIREBASE_PROJECT_ID),
+        hasClientEmail: Boolean(process.env.FIREBASE_CLIENT_EMAIL),
+        hasPrivateKey: Boolean(process.env.FIREBASE_PRIVATE_KEY),
+        docExists,
+        docProjectsCount,
+        firestoreError,
+      }
+    }, { headers: CORS_HEADERS });
   } catch (error) {
     console.error("[api/admin/portfolio] GET error:", error);
     return NextResponse.json(
