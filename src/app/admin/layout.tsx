@@ -21,6 +21,7 @@ import {
   FolderKanban,
   Receipt,
   Images,
+  Sparkles,
 } from "lucide-react";
 
 interface NavLinkItem {
@@ -49,6 +50,7 @@ const NAV_GROUPS: NavGroupItem[] = [
     label: "Content",
     links: [
       { href: "/admin/portfolio", label: "Portfolio Manager", icon: Image },
+      { href: "/admin/design-ideas", label: "Design Ideas Management", icon: Sparkles },
       { href: "/admin/media", label: "Media Library", icon: Images },
       { href: "/admin/services", label: "Services Manager", icon: FileText },
       { href: "/admin/testimonials", label: "Testimonials", icon: Star },
@@ -69,6 +71,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/admin/quotations": "Quotation & BOQ Builder",
   "/admin/projects": "Project Management",
   "/admin/portfolio": "Portfolio Manager",
+  "/admin/design-ideas": "Design Ideas Management",
   "/admin/media": "Media Library",
   "/admin/services": "Services Manager",
   "/admin/testimonials": "Client Testimonials",

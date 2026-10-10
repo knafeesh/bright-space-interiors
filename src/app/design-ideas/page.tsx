@@ -1,16 +1,28 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Sparkles, ArrowRight, Search, ChevronRight } from "lucide-react";
 import { DESIGN_CATEGORIES, CATEGORY_GROUPS } from "@/lib/design-ideas-data";
 
 export default function DesignIdeasHubPage() {
+  const [categories, setCategories] = useState(DESIGN_CATEGORIES);
   const [selectedGroup, setSelectedGroup] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
+  useEffect(() => {
+    fetch("/api/design-ideas", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data.categories) && data.categories.length > 0) {
+          setCategories(data.categories);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const filteredCategories = useMemo(() => {
-    return DESIGN_CATEGORIES.filter((cat) => {
+    return categories.filter((cat) => {
       const matchesGroup = selectedGroup === "All" || cat.group === selectedGroup;
       const matchesSearch =
         searchQuery.trim() === "" ||
@@ -19,7 +31,7 @@ export default function DesignIdeasHubPage() {
         cat.designs.some((d) => d.title.toLowerCase().includes(searchQuery.toLowerCase()));
       return matchesGroup && matchesSearch;
     });
-  }, [selectedGroup, searchQuery]);
+  }, [categories, selectedGroup, searchQuery]);
 
   return (
     <main style={{ background: "var(--ivory, #FAF7F2)", minHeight: "100vh" }}>

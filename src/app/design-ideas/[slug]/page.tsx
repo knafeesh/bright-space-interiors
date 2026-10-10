@@ -7,7 +7,14 @@ import {
   getDesignCategoryBySlug,
   DESIGN_CATEGORIES,
 } from "@/lib/design-ideas-data";
-import { WHATSAPP_NUMBER, PHONE_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
+import {
+  getAllCategoriesFromDb,
+  getCategoryFromDbBySlug,
+} from "@/lib/server/design-ideas-db";
+import { WHATSAPP_NUMBER, PHONE_NUMBER } from "@/lib/data";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -22,7 +29,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const category = getDesignCategoryBySlug(slug);
+  const category = (await getCategoryFromDbBySlug(slug)) || getDesignCategoryBySlug(slug);
   if (!category) {
     return {
       title: "Design Ideas | The Bright Space Interiors",
@@ -41,14 +48,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function DesignCategoryPage({ params }: Props) {
   const { slug } = await params;
-  const category = getDesignCategoryBySlug(slug);
+  const category = (await getCategoryFromDbBySlug(slug)) || getDesignCategoryBySlug(slug);
 
   if (!category) {
     notFound();
   }
 
-  // Related categories from the same or adjacent groups
-  const otherCategories = DESIGN_CATEGORIES.filter((c) => c.slug !== category.slug).slice(0, 6);
+  // Related categories from database or initial list
+  const allCategories = await getAllCategoriesFromDb().catch(() => DESIGN_CATEGORIES);
+  const otherCategories = allCategories.filter((c) => c.slug !== category.slug).slice(0, 6);
 
   const customWhatsAppMsg = `Hello The Bright Space Interiors, I am interested in your ${category.name} concepts and would like to get a design consultation.`;
 
