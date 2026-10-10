@@ -52,6 +52,10 @@ export async function GET(req: Request) {
       }
     }
 
+    const envKeys = Object.keys(process.env).filter(
+      (k) => !k.includes("KEY") && !k.includes("SECRET") && !k.includes("PASSWORD")
+    );
+
     const projects = await getProjectsFromDb();
     return NextResponse.json({
       projects,
@@ -63,6 +67,7 @@ export async function GET(req: Request) {
         docExists,
         docProjectsCount,
         firestoreError,
+        envKeys,
       }
     }, { headers: CORS_HEADERS });
   } catch (error) {
