@@ -62,22 +62,17 @@ export default function Navbar() {
   return (
     <>
       <nav className={navClass} aria-label="Main navigation">
-        <Link href="/" className="navbar__logo" aria-label="The Bright Space Interiors Home">
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <svg width="26" height="26" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 36C20 36 20 22 20 4C20 4 29 11 31 22C32.4 29.8 26.5 35.5 20 36Z" fill="#C5A880" fillOpacity="0.85" />
-              <path d="M20 36C20 36 20 22 20 4C20 4 11 11 9 22C7.6 29.8 13.5 35.5 20 36Z" fill="#B8975A" />
-              <path d="M20 12C20 12 25 18 25 24" stroke="#FFF8EE" strokeWidth="1.2" strokeLinecap="round" />
-              <path d="M20 18C20 18 15 22 15 27" stroke="#FFF8EE" strokeWidth="1.2" strokeLinecap="round" />
-            </svg>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontFamily: "var(--font-serif)", fontSize: "16px", letterSpacing: "0.12em", fontWeight: 600, color: "var(--charcoal)", textTransform: "uppercase", lineHeight: 1.1 }}>
-                The Bright Space
-              </span>
-              <span style={{ fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--gold-dark)", fontWeight: 500, marginTop: "2px" }}>
-                Interiors
-              </span>
-            </div>
+        <Link href="/" className="navbar__logo" aria-label="Bright Space Interiors Home">
+          <img
+            src="/logo.png"
+            alt="Bright Space Interiors Official Logo"
+            width={46}
+            height={46}
+            className="navbar__logo-img"
+          />
+          <div className="navbar__logo-text">
+            <span className="navbar__logo-name">Bright Space</span>
+            <span className="navbar__logo-tagline">Interiors</span>
           </div>
         </Link>
 

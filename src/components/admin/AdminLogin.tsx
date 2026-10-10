@@ -122,15 +122,22 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: "56px",
-                height: "56px",
-                borderRadius: "14px",
-                background: "linear-gradient(135deg, rgba(197, 168, 128, 0.16) 0%, rgba(197, 168, 128, 0.04) 100%)",
-                border: "1px solid rgba(197, 168, 128, 0.35)",
                 marginBottom: "16px",
               }}
             >
-              <ShieldCheck size={28} style={{ color: "#DFBE99" }} />
+              <img
+                src="/logo.png"
+                alt="Bright Space Interiors Official Logo"
+                width={72}
+                height={72}
+                style={{
+                  width: "72px",
+                  height: "72px",
+                  borderRadius: "50%",
+                  objectFit: "contain",
+                  boxShadow: "0 0 28px rgba(197, 168, 128, 0.28)",
+                }}
+              />
             </div>
 
             <h1

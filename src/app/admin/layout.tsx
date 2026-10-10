@@ -196,10 +196,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         style={mobileMenuOpen ? { display: "flex", position: "fixed", top: 0, left: 0, zIndex: 100, width: "260px" } : {}}
       >
         <div className="admin-sidebar__brand" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div>
-            <div className="admin-sidebar__brand-name">Bright Space</div>
-            <div className="admin-sidebar__brand-sub">Admin Panel</div>
-          </div>
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }} title="Go to Website Homepage">
+            <img
+              src="/logo.png"
+              alt="Bright Space Interiors"
+              width={36}
+              height={36}
+              style={{
+                width: "36px",
+                height: "36px",
+                borderRadius: "50%",
+                objectFit: "contain",
+                flexShrink: 0,
+              }}
+            />
+            <div>
+              <div className="admin-sidebar__brand-name">Bright Space</div>
+              <div className="admin-sidebar__brand-sub">Admin Panel</div>
+            </div>
+          </Link>
           {mobileMenuOpen && (
             <button
               onClick={() => setMobileMenuOpen(false)}

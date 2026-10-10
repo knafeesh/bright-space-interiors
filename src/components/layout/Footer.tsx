@@ -50,8 +50,35 @@ export default function Footer() {
       <div className="footer__grid">
         {/* Brand */}
         <div>
-          <div className="footer__brand-name">Bright Space</div>
-          <div className="footer__brand-tagline">Interiors</div>
+          <Link
+            href="/"
+            aria-label="Bright Space Interiors Home"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "12px",
+              textDecoration: "none",
+              marginBottom: "16px",
+            }}
+          >
+            <img
+              src="/logo.png"
+              alt="Bright Space Interiors Official Logo"
+              width={48}
+              height={48}
+              style={{
+                width: "48px",
+                height: "48px",
+                objectFit: "contain",
+                borderRadius: "50%",
+                flexShrink: 0,
+              }}
+            />
+            <div>
+              <div className="footer__brand-name">Bright Space</div>
+              <div className="footer__brand-tagline">Interiors</div>
+            </div>
+          </Link>
           <p className="footer__brand-desc">
             A premium interior design studio crafting spaces that blend
             aesthetic excellence with functional precision — from concept
