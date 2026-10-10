@@ -61,7 +61,31 @@ function readCookie(req: Request, name: string): string | undefined {
 }
 
 export function isAdminRequest(req: Request): boolean {
-  return verifySessionToken(readCookie(req, SESSION_COOKIE));
+  const token = readCookie(req, SESSION_COOKIE);
+  if (token && verifySessionToken(token)) return true;
+
+  const authHeader = req.headers.get("authorization");
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const bearer = authHeader.slice(7).trim();
+    if (verifySessionToken(bearer)) return true;
+  }
+
+  return false;
+}
+
+export function getSessionCookieOptions(req?: Request) {
+  const host = req?.headers.get("host") || "";
+  const isProd = process.env.NODE_ENV === "production";
+  const isBrightSpaceDomain = host.includes("brightspaceinterior.in");
+
+  return {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: "lax" as const,
+    path: "/",
+    domain: isProd && isBrightSpaceDomain ? ".brightspaceinterior.in" : undefined,
+    maxAge: SESSION_TTL_SECONDS,
+  };
 }
 
 export const sessionCookieOptions = {
@@ -69,6 +93,7 @@ export const sessionCookieOptions = {
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,
   path: "/",
+  domain: process.env.NODE_ENV === "production" ? ".brightspaceinterior.in" : undefined,
   maxAge: SESSION_TTL_SECONDS,
 };
 

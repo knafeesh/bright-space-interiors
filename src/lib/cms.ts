@@ -105,9 +105,14 @@ function isSameImage(url1?: string, url2?: string): boolean {
 let serverFetch: Promise<CmsStore | null> | null = null;
 let serverLoaded = false;
 
+export function invalidateCmsCache() {
+  serverFetch = null;
+  serverLoaded = false;
+}
+
 function fetchServerStore(): Promise<CmsStore | null> {
   if (!serverFetch) {
-    serverFetch = fetch("/api/content", { cache: "no-store", credentials: "same-origin" })
+    serverFetch = fetch(`/api/content?t=${Date.now()}`, { cache: "no-store", credentials: "same-origin" })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && Array.isArray(data.projects)) {
@@ -195,19 +200,89 @@ export function useCmsMedia(): MediaAsset[] {
 // ─── Mutation Helpers ────────────────────────────────────────────────────────
 
 // Projects
-export function cmsUpdateProject(updated: Project): Promise<boolean> {
+export async function cmsUpdateProject(updated: Project): Promise<boolean> {
+  invalidateCmsCache();
+  try {
+    const res = await fetch("/api/admin/portfolio", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+      credentials: "same-origin",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.projects)) {
+        const current = loadCmsStore();
+        const updatedStore = { ...current, projects: data.projects };
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
+        } catch {}
+        window.dispatchEvent(new CustomEvent(CMS_UPDATE_EVENT, { detail: updatedStore }));
+        return true;
+      }
+    }
+  } catch (err) {
+    console.warn("Direct /api/admin/portfolio PUT failed, using fallback:", err);
+  }
+
   const current = loadCmsStore();
   const nextProjects = current.projects.map((p) => (p.id === updated.id ? updated : p));
   return saveCmsStore({ ...current, projects: nextProjects });
 }
 
-export function cmsDeleteProject(projectId: number): Promise<boolean> {
+export async function cmsDeleteProject(projectId: number): Promise<boolean> {
+  invalidateCmsCache();
+  try {
+    const res = await fetch(`/api/admin/portfolio?id=${projectId}`, {
+      method: "DELETE",
+      credentials: "same-origin",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.projects)) {
+        const current = loadCmsStore();
+        const updatedStore = { ...current, projects: data.projects };
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
+        } catch {}
+        window.dispatchEvent(new CustomEvent(CMS_UPDATE_EVENT, { detail: updatedStore }));
+        return true;
+      }
+    }
+  } catch (err) {
+    console.warn("Direct /api/admin/portfolio DELETE failed, using fallback:", err);
+  }
+
   const current = loadCmsStore();
   const nextProjects = current.projects.filter((p) => p.id !== projectId);
   return saveCmsStore({ ...current, projects: nextProjects });
 }
 
-export function cmsAddProject(newProject: Project): Promise<boolean> {
+export async function cmsAddProject(newProject: Project): Promise<boolean> {
+  invalidateCmsCache();
+  try {
+    const res = await fetch("/api/admin/portfolio", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newProject),
+      credentials: "same-origin",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.projects)) {
+        const current = loadCmsStore();
+        const updatedStore = { ...current, projects: data.projects };
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
+        } catch {}
+        window.dispatchEvent(new CustomEvent(CMS_UPDATE_EVENT, { detail: updatedStore }));
+        return true;
+      }
+    }
+  } catch (err) {
+    console.warn("Direct /api/admin/portfolio POST failed, using fallback:", err);
+  }
+
   const current = loadCmsStore();
   return saveCmsStore({ ...current, projects: [newProject, ...current.projects] });
 }

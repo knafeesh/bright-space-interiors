@@ -16,15 +16,17 @@ export async function POST(request: Request) {
       username.trim().toLowerCase() === valid.username.toLowerCase() &&
       password === valid.password
     ) {
+      const token = createSessionToken(valid.username);
       const res = NextResponse.json({
         success: true,
+        token,
         user: {
           username: "Azam",
           name: "Azam Khan",
           role: "Super Admin",
         },
       });
-      res.cookies.set(SESSION_COOKIE, createSessionToken(valid.username), sessionCookieOptions);
+      res.cookies.set(SESSION_COOKIE, token, sessionCookieOptions);
       return res;
     }
 

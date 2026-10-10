@@ -42,7 +42,9 @@ export default function PortfolioManagerPage() {
   const [formCategory, setFormCategory] = useState("Residential");
   const [formLocation, setFormLocation] = useState("");
   const [formArea, setFormArea] = useState("");
+  const [formYear, setFormYear] = useState(new Date().getFullYear().toString());
   const [formDuration, setFormDuration] = useState("");
+  const [formStatus, setFormStatus] = useState("Completed");
   const [formClient, setFormClient] = useState("");
   const [formDesc, setFormDesc] = useState("");
   const [formImage, setFormImage] = useState("/images/real-salon-facade.jpg");
@@ -54,6 +56,7 @@ export default function PortfolioManagerPage() {
   const [editArea, setEditArea] = useState("");
   const [editYear, setEditYear] = useState("");
   const [editDuration, setEditDuration] = useState("");
+  const [editStatus, setEditStatus] = useState("Completed");
   const [editClient, setEditClient] = useState("");
   const [editDesc, setEditDesc] = useState("");
   const [editChallenge, setEditChallenge] = useState("");
@@ -79,16 +82,17 @@ export default function PortfolioManagerPage() {
 
   const notifySuccess = (msg: string) => {
     setSaveSuccessMsg(msg);
-    setTimeout(() => setSaveSuccessMsg(""), 3500);
+    setTimeout(() => setSaveSuccessMsg(""), 4000);
   };
 
   const notifyError = (msg: string) => {
     setSaveErrorMsg(msg);
-    setTimeout(() => setSaveErrorMsg(""), 5000);
+    setTimeout(() => setSaveErrorMsg(""), 6000);
   };
 
   const handleToggleFeatured = async (project: Project) => {
-    const ok = await cmsUpdateProject({ ...project, featured: !project.featured });
+    const updated = { ...project, featured: !project.featured };
+    const ok = await cmsUpdateProject(updated);
     if (ok) {
       notifySuccess(`Updated featured status for "${project.title}"`);
     } else {
@@ -98,11 +102,29 @@ export default function PortfolioManagerPage() {
 
   const handleDelete = async (id: number, title: string) => {
     if (confirm(`Are you sure you want to remove "${title}" from your portfolio? This will immediately update the live website.`)) {
-      const ok = await cmsDeleteProject(id);
-      if (ok) {
-        notifySuccess(`Project "${title}" deleted and removed from website.`);
-      } else {
-        notifyError(`Failed to delete "${title}" from live website.`);
+      setSaving(true);
+      try {
+        const res = await fetch(`/api/admin/portfolio?id=${id}`, {
+          method: "DELETE",
+          credentials: "same-origin",
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.success) {
+          notifyError(data.error || `Failed to delete "${title}" from database.`);
+          setSaving(false);
+          return;
+        }
+        await cmsDeleteProject(id);
+        notifySuccess(`Project "${title}" deleted and removed from live website.`);
+      } catch {
+        const ok = await cmsDeleteProject(id);
+        if (ok) {
+          notifySuccess(`Project "${title}" deleted and removed from website.`);
+        } else {
+          notifyError(`Failed to delete "${title}" from live website.`);
+        }
+      } finally {
+        setSaving(false);
       }
     }
   };
@@ -115,6 +137,7 @@ export default function PortfolioManagerPage() {
     setEditArea(project.area || "");
     setEditYear(project.year || new Date().getFullYear().toString());
     setEditDuration(project.duration || "");
+    setEditStatus(project.status || "Completed");
     setEditClient(project.clientName || "");
     setEditDesc(project.description || "");
     setEditChallenge(project.challenge || "");
@@ -141,17 +164,20 @@ export default function PortfolioManagerPage() {
 
     const updated: Project = {
       ...editingProject,
+      id: editingProject.id,
+      slug: editingProject.slug,
       title: editTitle.trim() || editingProject.title,
       category: editCategory || editingProject.category,
-      location: editLocation.trim() || editingProject.location,
-      area: editArea.trim() || editingProject.area,
+      location: editLocation.trim(),
+      area: editArea.trim(),
       year: editYear.trim() || editingProject.year,
-      duration: editDuration.trim() || editingProject.duration,
-      clientName: editClient.trim() || editingProject.clientName,
-      description: editDesc.trim() || editingProject.description,
-      challenge: editChallenge.trim() || editingProject.challenge,
-      solution: editSolution.trim() || editingProject.solution,
-      clientQuote: editQuote.trim() || editingProject.clientQuote,
+      duration: editDuration.trim(),
+      status: editStatus.trim() || "Completed",
+      clientName: editClient.trim(),
+      description: editDesc.trim(),
+      challenge: editChallenge.trim(),
+      solution: editSolution.trim(),
+      clientQuote: editQuote.trim(),
       materials: materialsArray.length > 0 ? materialsArray : editingProject.materials,
       image: finalMainImage,
       gallery: finalGallery,
@@ -159,13 +185,41 @@ export default function PortfolioManagerPage() {
     };
 
     setSaving(true);
-    const ok = await cmsUpdateProject(updated);
-    setSaving(false);
-    if (ok) {
+    setSaveErrorMsg("");
+    setSaveSuccessMsg("");
+
+    try {
+      // 1. Direct Server-Side Database Update & Path Revalidation
+      const res = await fetch("/api/admin/portfolio", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+        credentials: "same-origin",
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.success) {
+        setSaving(false);
+        notifyError(data.error || `Could not save changes to "${updated.title}". Please try again.`);
+        return;
+      }
+
+      // 2. Sync client-side reactive CMS store
+      await cmsUpdateProject(data.project || updated);
+      setSaving(false);
       setEditingProject(null);
-      notifySuccess(`Changes saved to "${updated.title}" and updated live on website!`);
-    } else {
-      notifyError(`Could not update "${updated.title}" on live website. Please check connection.`);
+      notifySuccess(`Changes saved to "${updated.title}" and published live on website!`);
+    } catch {
+      // Fallback update
+      const ok = await cmsUpdateProject(updated);
+      setSaving(false);
+      if (ok) {
+        setEditingProject(null);
+        notifySuccess(`Changes saved to "${updated.title}" and updated live on website!`);
+      } else {
+        notifyError(`Could not update "${updated.title}" on live website. Please check connection.`);
+      }
     }
   };
 
@@ -202,8 +256,9 @@ export default function PortfolioManagerPage() {
       category: formCategory,
       location: formLocation.trim() || "Delhi NCR",
       area: formArea.trim() || "2,500 sq ft",
-      year: new Date().getFullYear().toString(),
+      year: formYear.trim() || new Date().getFullYear().toString(),
       duration: formDuration.trim() || "8 weeks",
+      status: formStatus || "Completed",
       featured: true,
       image: formImage.trim() || "/images/real-salon-facade.jpg",
       gallery: [formImage.trim() || "/images/real-salon-facade.jpg"],
@@ -217,14 +272,39 @@ export default function PortfolioManagerPage() {
     };
 
     setSaving(true);
-    const ok = await cmsAddProject(newProj);
-    setSaving(false);
-    if (ok) {
+    setSaveErrorMsg("");
+    setSaveSuccessMsg("");
+
+    try {
+      const res = await fetch("/api/admin/portfolio", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newProj),
+        credentials: "same-origin",
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) {
+        setSaving(false);
+        notifyError(data.error || `Could not create project "${newProj.title}".`);
+        return;
+      }
+
+      await cmsAddProject(data.project || newProj);
+      setSaving(false);
       setShowAddModal(false);
       resetAddForm();
       notifySuccess(`New project "${newProj.title}" added to portfolio and published live!`);
-    } else {
-      notifyError(`Could not publish "${newProj.title}". Please check connection.`);
+    } catch {
+      const ok = await cmsAddProject(newProj);
+      setSaving(false);
+      if (ok) {
+        setShowAddModal(false);
+        resetAddForm();
+        notifySuccess(`New project "${newProj.title}" added to portfolio and published live!`);
+      } else {
+        notifyError(`Could not publish "${newProj.title}". Please check connection.`);
+      }
     }
   };
 
@@ -233,7 +313,9 @@ export default function PortfolioManagerPage() {
     setFormCategory("Residential");
     setFormLocation("");
     setFormArea("");
+    setFormYear(new Date().getFullYear().toString());
     setFormDuration("");
+    setFormStatus("Completed");
     setFormClient("");
     setFormDesc("");
   };
@@ -575,13 +657,14 @@ export default function PortfolioManagerPage() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
                     Location
                   </label>
                   <input
                     type="text"
+                    placeholder="e.g. Gurugram, Delhi NCR"
                     value={editLocation}
                     onChange={(e) => setEditLocation(e.target.value)}
                     style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
@@ -593,21 +676,52 @@ export default function PortfolioManagerPage() {
                   </label>
                   <input
                     type="text"
+                    placeholder="e.g. 2,500 sq ft"
                     value={editArea}
                     onChange={(e) => setEditArea(e.target.value)}
                     style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
                   />
                 </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                    Duration / Year
+                    Project Year
                   </label>
                   <input
                     type="text"
+                    placeholder="e.g. 2024"
+                    value={editYear}
+                    onChange={(e) => setEditYear(e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                    Project Duration
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 8 weeks"
                     value={editDuration}
                     onChange={(e) => setEditDuration(e.target.value)}
                     style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
                   />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                    Project Status
+                  </label>
+                  <select
+                    value={editStatus}
+                    onChange={(e) => setEditStatus(e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                  >
+                    <option value="Completed">Completed</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Handed Over">Handed Over</option>
+                  </select>
                 </div>
               </div>
 
@@ -920,6 +1034,21 @@ export default function PortfolioManagerPage() {
                 </div>
                 <div>
                   <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                    Project Year
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 2024"
+                    value={formYear}
+                    onChange={(e) => setFormYear(e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
                     Duration
                   </label>
                   <input
@@ -929,6 +1058,20 @@ export default function PortfolioManagerPage() {
                     onChange={(e) => setFormDuration(e.target.value)}
                     style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
                   />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+                    Status
+                  </label>
+                  <select
+                    value={formStatus}
+                    onChange={(e) => setFormStatus(e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                  >
+                    <option value="Completed">Completed</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Handed Over">Handed Over</option>
+                  </select>
                 </div>
               </div>
 

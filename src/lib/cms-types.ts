@@ -10,6 +10,7 @@ export interface Project {
   year: string;
   duration: string;
   featured: boolean;
+  status?: string;
   image: string;
   gallery: string[];
   description: string;
