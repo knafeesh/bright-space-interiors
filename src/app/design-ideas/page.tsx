@@ -3,22 +3,42 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Sparkles, ArrowRight, Search, ChevronRight } from "lucide-react";
-import { DESIGN_CATEGORIES, CATEGORY_GROUPS } from "@/lib/design-ideas-data";
+import { DESIGN_CATEGORIES, CATEGORY_GROUPS, DesignCategory } from "@/lib/design-ideas-data";
+import {
+  loadStoredDesignCategories,
+  saveStoredDesignCategories,
+  DESIGN_IDEAS_UPDATE_EVENT,
+} from "@/lib/design-ideas-client";
 
 export default function DesignIdeasHubPage() {
-  const [categories, setCategories] = useState(DESIGN_CATEGORIES);
+  const [categories, setCategories] = useState<DesignCategory[]>(() => {
+    return loadStoredDesignCategories() || DESIGN_CATEGORIES;
+  });
   const [selectedGroup, setSelectedGroup] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    const handleUpdate = (e: Event) => {
+      const detail = (e as CustomEvent<DesignCategory[]>).detail;
+      if (detail && Array.isArray(detail)) {
+        setCategories(detail);
+      }
+    };
+    window.addEventListener(DESIGN_IDEAS_UPDATE_EVENT, handleUpdate);
+
     fetch("/api/design-ideas", { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && Array.isArray(data.categories) && data.categories.length > 0) {
           setCategories(data.categories);
+          saveStoredDesignCategories(data.categories);
         }
       })
       .catch(() => {});
+
+    return () => {
+      window.removeEventListener(DESIGN_IDEAS_UPDATE_EVENT, handleUpdate);
+    };
   }, []);
 
   const filteredCategories = useMemo(() => {

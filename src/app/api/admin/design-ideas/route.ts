@@ -76,6 +76,7 @@ export async function POST(req: Request) {
         success: true,
         message: `Design "${title.trim()}" added successfully.`,
         design: result.design,
+        categories: result.categories,
       },
       { headers: NO_CACHE_HEADERS }
     );
@@ -132,6 +133,7 @@ export async function PUT(req: Request) {
         success: true,
         message: `Design "${title.trim()}" updated successfully.`,
         design: result.design,
+        categories: result.categories,
       },
       { headers: NO_CACHE_HEADERS }
     );
@@ -175,6 +177,7 @@ export async function DELETE(req: Request) {
         success: true,
         message: "Design deleted successfully.",
         id,
+        categories: result.categories,
       },
       { headers: NO_CACHE_HEADERS }
     );

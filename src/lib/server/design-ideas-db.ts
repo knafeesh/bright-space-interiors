@@ -137,7 +137,7 @@ export async function getCategoryFromDbBySlug(slug: string): Promise<DesignCateg
 export async function addDesignCardToDb(
   categorySlug: string,
   data: { title: string; image: string }
-): Promise<{ success: boolean; design?: DesignCard; error?: string }> {
+): Promise<{ success: boolean; design?: DesignCard; categories?: DesignCategory[]; error?: string }> {
   const categories = await getAllCategoriesFromDb();
   const categoryIndex = categories.findIndex((c) => c.slug === categorySlug);
 
@@ -158,12 +158,12 @@ export async function addDesignCardToDb(
 
   // Invalidate public page caches
   try {
-    revalidatePath(`/design-ideas/${categorySlug}`);
-    revalidatePath("/design-ideas");
-    revalidatePath("/");
+    revalidatePath(`/design-ideas/${categorySlug}`, "page");
+    revalidatePath("/design-ideas", "page");
+    revalidatePath("/", "layout");
   } catch {}
 
-  return { success: true, design: newDesign };
+  return { success: true, design: newDesign, categories };
 }
 
 /**
@@ -172,7 +172,7 @@ export async function addDesignCardToDb(
 export async function updateDesignCardInDb(
   id: string,
   data: { title: string; image: string; categorySlug: string; oldCategorySlug?: string }
-): Promise<{ success: boolean; design?: DesignCard; error?: string }> {
+): Promise<{ success: boolean; design?: DesignCard; categories?: DesignCategory[]; error?: string }> {
   const categories = await getAllCategoriesFromDb();
   const currentCategorySlug = data.oldCategorySlug || data.categorySlug;
 
@@ -201,38 +201,40 @@ export async function updateDesignCardInDb(
     image: data.image.trim(),
   };
 
+  const sourceCatSlug = categories[sourceCatIndex].slug;
+  const targetCatSlug = data.categorySlug || sourceCatSlug;
+
   // Check if moving to a different category
-  if (data.categorySlug && data.categorySlug !== categories[sourceCatIndex].slug) {
-    const targetCatIndex = categories.findIndex((c) => c.slug === data.categorySlug);
+  if (targetCatSlug !== sourceCatSlug) {
+    const targetCatIndex = categories.findIndex((c) => c.slug === targetCatSlug);
     if (targetCatIndex === -1) {
-      return { success: false, error: `Target category "${data.categorySlug}" does not exist.` };
+      return { success: false, error: `Target category "${targetCatSlug}" does not exist.` };
     }
     // Remove from source category
     categories[sourceCatIndex].designs.splice(designIndex, 1);
     // Add to target category
     categories[targetCatIndex].designs = [updatedDesign, ...(categories[targetCatIndex].designs || [])];
-
-    try {
-      revalidatePath(`/design-ideas/${categories[sourceCatIndex].slug}`);
-      revalidatePath(`/design-ideas/${categories[targetCatIndex].slug}`);
-    } catch {}
   } else {
     // Update in-place
     categories[sourceCatIndex].designs[designIndex] = updatedDesign;
-
-    try {
-      revalidatePath(`/design-ideas/${categories[sourceCatIndex].slug}`);
-    } catch {}
   }
 
+  // 1. Await database persistence FIRST
   await saveCategoriesToDb(categories);
 
+  // 2. Invalidate server-side page caches
   try {
-    revalidatePath("/design-ideas");
-    revalidatePath("/");
-  } catch {}
+    revalidatePath(`/design-ideas/${sourceCatSlug}`, "page");
+    if (targetCatSlug !== sourceCatSlug) {
+      revalidatePath(`/design-ideas/${targetCatSlug}`, "page");
+    }
+    revalidatePath("/design-ideas", "page");
+    revalidatePath("/", "layout");
+  } catch (revErr) {
+    console.warn("[design-ideas-db] revalidatePath warning:", revErr);
+  }
 
-  return { success: true, design: updatedDesign };
+  return { success: true, design: updatedDesign, categories };
 }
 
 /**
@@ -241,7 +243,7 @@ export async function updateDesignCardInDb(
 export async function deleteDesignCardFromDb(
   id: string,
   categorySlug?: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; categories?: DesignCategory[]; error?: string }> {
   const categories = await getAllCategoriesFromDb();
 
   let targetCatIndex = -1;
@@ -304,10 +306,10 @@ export async function deleteDesignCardFromDb(
   }
 
   try {
-    revalidatePath(`/design-ideas/${deletedCatSlug}`);
-    revalidatePath("/design-ideas");
-    revalidatePath("/");
+    revalidatePath(`/design-ideas/${deletedCatSlug}`, "page");
+    revalidatePath("/design-ideas", "page");
+    revalidatePath("/", "layout");
   } catch {}
 
-  return { success: true };
+  return { success: true, categories };
 }

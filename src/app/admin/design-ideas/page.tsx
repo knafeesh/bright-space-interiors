@@ -21,9 +21,15 @@ import {
   Filter,
 } from "lucide-react";
 import { DesignCategory, DesignCard } from "@/lib/design-ideas-data";
+import {
+  saveStoredDesignCategories,
+  loadStoredDesignCategories,
+} from "@/lib/design-ideas-client";
 
 export default function AdminDesignIdeasPage() {
-  const [categories, setCategories] = useState<DesignCategory[]>([]);
+  const [categories, setCategories] = useState<DesignCategory[]>(() => {
+    return loadStoredDesignCategories() || [];
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -93,6 +99,7 @@ export default function AdminDesignIdeasPage() {
       const data = await res.json();
       if (data && Array.isArray(data.categories)) {
         setCategories(data.categories);
+        saveStoredDesignCategories(data.categories);
       } else {
         throw new Error("Invalid response format.");
       }
@@ -232,8 +239,8 @@ export default function AdminDesignIdeasPage() {
       setShowAddModal(false);
 
       // Update local state smoothly
-      setCategories((prev) =>
-        prev.map((cat) => {
+      setCategories((prev) => {
+        const next = data.categories || prev.map((cat) => {
           if (cat.slug === addCategorySlug) {
             return {
               ...cat,
@@ -241,8 +248,10 @@ export default function AdminDesignIdeasPage() {
             };
           }
           return cat;
-        })
-      );
+        });
+        saveStoredDesignCategories(next);
+        return next;
+      });
     } catch (err: any) {
       notifyError(err.message || "Failed to save design.");
     } finally {
@@ -296,7 +305,7 @@ export default function AdminDesignIdeasPage() {
       // Update local state smoothly
       setCategories((prev) => {
         const isMoved = editingCard.categorySlug !== editCategorySlug;
-        return prev.map((cat) => {
+        const next = data.categories || prev.map((cat) => {
           if (isMoved) {
             if (cat.slug === editingCard.categorySlug) {
               return {
@@ -318,6 +327,8 @@ export default function AdminDesignIdeasPage() {
           }
           return cat;
         });
+        saveStoredDesignCategories(next);
+        return next;
       });
 
       setEditingCard(null);
@@ -349,8 +360,8 @@ export default function AdminDesignIdeasPage() {
       notifySuccess(`Design "${deletingCard.design.title}" deleted successfully.`);
 
       // Update local state
-      setCategories((prev) =>
-        prev.map((cat) => {
+      setCategories((prev) => {
+        const next = data.categories || prev.map((cat) => {
           if (cat.slug === deletingCard.categorySlug) {
             return {
               ...cat,
@@ -358,8 +369,10 @@ export default function AdminDesignIdeasPage() {
             };
           }
           return cat;
-        })
-      );
+        });
+        saveStoredDesignCategories(next);
+        return next;
+      });
 
       setDeletingCard(null);
     } catch (err: any) {
