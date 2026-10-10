@@ -52,22 +52,12 @@ export async function GET(req: Request) {
       }
     }
 
-    const envKeys = Object.keys(process.env).filter(
-      (k) => !k.includes("KEY") && !k.includes("SECRET") && !k.includes("PASSWORD")
-    );
-
     const projects = await getProjectsFromDb();
     return NextResponse.json({
       projects,
-      debug: {
+      storageStatus: {
         isConfigured,
-        hasProjectId: Boolean(process.env.FIREBASE_PROJECT_ID),
-        hasClientEmail: Boolean(process.env.FIREBASE_CLIENT_EMAIL),
-        hasPrivateKey: Boolean(process.env.FIREBASE_PRIVATE_KEY),
-        docExists,
-        docProjectsCount,
-        firestoreError,
-        envKeys,
+        firestoreReady: isConfigured && docExists,
       }
     }, { headers: CORS_HEADERS });
   } catch (error) {
