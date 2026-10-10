@@ -94,7 +94,7 @@ function useFadeIn() {
 const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
 interface InteriorSolutionItem {
   name: string;
-  href: string;
+  href?: string;
   icon: React.ReactNode;
 }
 
@@ -718,17 +718,15 @@ export default function HomePage() {
           </div>
 
           <div className="interior-solutions__grid">
-            {INTERIOR_SOLUTIONS.map((item, i) => (
-              <Link
+            {INTERIOR_SOLUTIONS.map((item) => (
+              <div
                 key={item.name}
-                href={item.href}
                 className="interior-solutions__card"
                 id={`interior-solution-${item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-                aria-label={item.name}
               >
                 <div className="interior-solutions__icon">{item.icon}</div>
                 <span className="interior-solutions__name">{item.name}</span>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
