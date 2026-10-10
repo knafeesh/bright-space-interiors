@@ -341,6 +341,29 @@ const HOME_SERVICES = [
   },
 ];
 
+const DESIGN_PHILOSOPHY_IMAGES = [
+  {
+    src: "/images/design-philosophy/philosophy-1.jpg",
+    alt: "Luxury foyer with marble staircase and golden lighting",
+  },
+  {
+    src: "/images/design-philosophy/philosophy-2.jpg",
+    alt: "Luxury modular kitchen with cream and gold finishes",
+  },
+  {
+    src: "/images/design-philosophy/philosophy-3.jpg",
+    alt: "Luxury living room with geometric TV wall and elegant furniture",
+  },
+  {
+    src: "/images/design-philosophy/philosophy-4.jpg",
+    alt: "Luxury master bedroom with warm lighting and a walk-in wardrobe",
+  },
+  {
+    src: "/images/design-philosophy/philosophy-5.jpg",
+    alt: "Luxury foyer and living area with an illuminated staircase",
+  },
+];
+
 const BRAND_STATS = [
   {
     number: 9,
@@ -583,123 +606,85 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════ FEATURED PROJECTS (AS IN REFERENCE SCREENSHOT) ══════════════ */}
+      {/* ══════════════ OUR DESIGN PHILOSOPHY SECTION ══════════════ */}
       <section
         style={{
           background: "#FAF7F2",
           padding: "70px 0 90px",
           borderTop: "1px solid rgba(44,36,32,0.06)",
         }}
-        aria-label="Featured projects"
+        aria-label="Our Design Philosophy"
       >
-        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 32px" }}>
-          <h2
-            style={{
-              fontFamily: "var(--font-serif)",
-              fontSize: "clamp(26px, 3.2vw, 36px)",
-              fontWeight: 400,
-              letterSpacing: "0.14em",
-              textAlign: "center",
-              textTransform: "uppercase",
-              color: "#1F1D1A",
-              marginBottom: "46px",
-            }}
-          >
-            Featured Projects
-          </h2>
+        <div style={{ maxWidth: 1140, margin: "0 auto", padding: "0 24px" }}>
+          {/* Section Header */}
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
+            <h2
+              style={{
+                fontFamily: "var(--font-serif)",
+                fontSize: "clamp(26px, 3.4vw, 38px)",
+                fontWeight: 500,
+                letterSpacing: "0.14em",
+                textAlign: "center",
+                textTransform: "uppercase",
+                color: "#1F1D1A",
+                margin: "0 0 16px",
+              }}
+            >
+              OUR DESIGN PHILOSOPHY
+            </h2>
+            <div
+              className="title-line--center title-line"
+              style={{ margin: "0 auto 28px" }}
+            />
+            <p
+              style={{
+                maxWidth: "920px",
+                margin: "0 auto",
+                fontSize: "clamp(15px, 1.2vw, 17px)",
+                lineHeight: 1.85,
+                color: "#4A423B",
+                fontWeight: 400,
+                letterSpacing: "0.01em",
+              }}
+            >
+              Luxury Interior Designers in Delhi NCR, Gurugram, Faridabad, Haryana &amp; Punjab — Bright Space Interiors brings premium home interiors tailored to your style. We create timeless, elegant spaces that reflect your taste. Our residential and commercial interior design services combine innovation, functionality, and aesthetics seamlessly. From design consultation to execution and final handover, Bright Space Interiors transforms every space into a statement of style and sophistication.
+            </p>
+          </div>
 
+          {/* 5 Luxury Showcase Images Stack */}
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "24px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "clamp(24px, 3.5vw, 40px)",
+              width: "100%",
+              maxWidth: "1080px",
+              margin: "0 auto",
             }}
           >
-            {cmsProjects.slice(0, 4).map((p) => (
-              <Link
-                key={p.id}
-                href={`/portfolio/${p.slug}`}
-                className="service-compact-card"
+            {DESIGN_PHILOSOPHY_IMAGES.map((img, idx) => (
+              <div
+                key={idx}
                 style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  textDecoration: "none",
-                  color: "inherit",
-                  textAlign: "center",
+                  width: "100%",
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                  boxShadow: "0 10px 32px rgba(28, 24, 22, 0.08)",
+                  border: "1px solid rgba(184, 151, 98, 0.18)",
+                  background: "#161311",
                 }}
               >
-                <div
-                  className="service-compact-card__image-wrap"
+                <img
+                  src={img.src}
+                  alt={img.alt}
                   style={{
-                    position: "relative",
-                    aspectRatio: "16 / 10",
-                    overflow: "hidden",
-                    borderRadius: "9px",
-                    background: "#161311",
+                    width: "100%",
+                    height: "auto",
+                    display: "block",
                   }}
-                >
-                  <img
-                    src={p.image || "/images/hero-luxury.jpg"}
-                    alt={p.title}
-                    className="service-compact-card__img"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      objectPosition: "center",
-                      display: "block",
-                    }}
-                  />
-                  <div className="service-compact-card__img-gradient" />
-                  <div className="service-compact-card__badge">
-                    {p.category}
-                  </div>
-                </div>
-                <div
-                  className="service-compact-card__content"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    flexGrow: 1,
-                    justifyContent: "space-between",
-                    padding: "14px 6px 0",
-                    textAlign: "center",
-                  }}
-                >
-                  <div>
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-serif)",
-                        fontSize: "17px",
-                        fontWeight: 600,
-                        letterSpacing: "0.06em",
-                        textTransform: "uppercase",
-                        color: "#1C1C1C",
-                        margin: "0 0 6px",
-                      }}
-                    >
-                      {p.title}
-                    </h3>
-                    <p
-                      className="service-compact-card__desc"
-                      style={{
-                        fontSize: "12.5px",
-                        color: "#4E4E4E",
-                        lineHeight: 1.55,
-                        margin: "0 0 14px",
-                      }}
-                    >
-                      Premium turnkey interior solutions, from concept to final handover.
-                    </p>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "center", marginTop: "auto", paddingTop: "6px" }}>
-                    <span className="service-compact-card__btn">
-                      Explore Project <ChevronRight size={13} style={{ marginLeft: "4px" }} />
-                    </span>
-                  </div>
-                </div>
-              </Link>
+                  loading={idx === 0 ? "eager" : "lazy"}
+                />
+              </div>
             ))}
           </div>
         </div>
