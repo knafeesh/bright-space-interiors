@@ -10,6 +10,7 @@ export interface DesignIdea {
   category: string;
   image: string;
   alt: string;
+  slug?: string;
 }
 
 export const DESIGN_IDEAS: DesignIdea[] = [
@@ -19,6 +20,7 @@ export const DESIGN_IDEAS: DesignIdea[] = [
     category: "Living Space",
     image: "/images/hero-luxury.jpg",
     alt: "Modern luxury living room interior with contemporary aesthetic",
+    slug: "living-room-designs",
   },
   {
     id: "luxury-bedroom",
@@ -26,6 +28,7 @@ export const DESIGN_IDEAS: DesignIdea[] = [
     category: "Master Suite",
     image: "/images/res-bedroom.jpg",
     alt: "Luxury bedroom with bespoke panelling and warm ambient illumination",
+    slug: "master-bedroom-designs",
   },
   {
     id: "modular-kitchen",
@@ -33,6 +36,7 @@ export const DESIGN_IDEAS: DesignIdea[] = [
     category: "Kitchen & Culinary",
     image: "/images/kitchen-delhi-ncr-modern-lshape.jpg",
     alt: "Modern modular L-shaped luxury kitchen with integrated lighting",
+    slug: "modular-kitchen-designs",
   },
   {
     id: "elegant-dining-room",
@@ -40,6 +44,7 @@ export const DESIGN_IDEAS: DesignIdea[] = [
     category: "Dining Suite",
     image: "/images/ranchi-agarwal-dining-hall.jpg",
     alt: "Elegant dining room interior with designer lighting and luxury furnishings",
+    slug: "dining-room-designs",
   },
   {
     id: "contemporary-living-room",
@@ -47,6 +52,7 @@ export const DESIGN_IDEAS: DesignIdea[] = [
     category: "Living Space",
     image: "/images/gurugram-manish-fluted-wall-console.jpg",
     alt: "Contemporary living room with fluted wall panel and suspended console",
+    slug: "living-room-designs",
   },
   {
     id: "luxury-bathroom",
@@ -54,6 +60,7 @@ export const DESIGN_IDEAS: DesignIdea[] = [
     category: "Bath Suite",
     image: "/images/res-bathroom.jpg",
     alt: "Luxury marble-clad modern bathroom with backlit vanity",
+    slug: "bathroom-designs",
   },
   {
     id: "modern-wardrobe",
@@ -61,6 +68,7 @@ export const DESIGN_IDEAS: DesignIdea[] = [
     category: "Walk-in & Storage",
     image: "/images/modular-wardrobe.jpg",
     alt: "Custom modern modular wardrobe with fluted panels and warm lighting",
+    slug: "wardrobe-designs",
   },
   {
     id: "premium-home-office",
@@ -68,6 +76,7 @@ export const DESIGN_IDEAS: DesignIdea[] = [
     category: "Executive Workspace",
     image: "/images/office-gurugram-executive-cabin.jpg",
     alt: "Premium executive home office and study cabin with skyline views",
+    slug: "office-interiors",
   },
 ];
 
@@ -435,7 +444,7 @@ export default function DesignIdeasSection() {
           {MARQUEE_ITEMS.map((item, index) => (
             <Link
               key={`${item.id}-${index}`}
-              href="/portfolio"
+              href={item.slug ? `/design-ideas/${item.slug}` : "/design-ideas"}
               onClick={handleCardClick}
               className="design-idea-card"
               aria-label={`View ${item.title}`}
@@ -469,6 +478,27 @@ export default function DesignIdeasSection() {
             </Link>
           ))}
         </div>
+      </div>
+
+      {/* Explore All 32 Categories Link */}
+      <div style={{ textAlign: "center", marginTop: "32px", padding: "0 20px" }}>
+        <Link
+          href="/design-ideas"
+          className="btn btn--outline"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "11px",
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            fontWeight: 600,
+            padding: "11px 26px",
+          }}
+        >
+          <span>Explore All 32 Design Categories</span>
+          <ArrowUpRight size={13} />
+        </Link>
       </div>
     </section>
   );
