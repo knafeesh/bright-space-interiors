@@ -1,0 +1,992 @@
+{
+  "projects": [
+    {
+      "id": 101,
+      "slug": "rawls-salon-luxury",
+      "title": "Rawls Salon — Flagship Turnkey Luxury Salon",
+      "category": "Salon",
+      "location": "Delhi NCR",
+      "area": "5,000 sq ft",
+      "year": "2024",
+      "duration": "12 weeks",
+      "featured": true,
+      "image": "/images/salon-rawls-reception.jpg",
+      "gallery": [
+        "/images/salon-rawls-reception.jpg",
+        "/images/salon-rawls-mainhall.jpg",
+        "/images/salon-rawls-styling-suites.jpg",
+        "/images/salon-rawls-facade-site.jpg"
+      ],
+      "description": "Complete turnkey facade engineering, MEP infrastructure, and opulent European interior execution for Rawls Salon. Features custom gold-leaf arched styling mirrors, geometric marble flooring, illuminated 3D crest branding, and artisanal carpet reception counter.",
+      "challenge": "Executing multi-level structural facade modifications alongside bespoke joinery, acoustic privacy treatment suites, and high-efficiency central ventilation on schedule.",
+      "solution": "Precision steel facade scaffolding reinforcement, handcrafted gold-leaf styling arches, Italian marble flooring, and customized retail vitrines.",
+      "clientQuote": "The craftsmanship from the facade structure to the interior mirrors and reception desk is top-tier.",
+      "clientName": "Rawls Salon Management",
+      "materials": [
+        "Gold-Leaf Arched Framing",
+        "Illuminated Crest Signage",
+        "Checkerboard Marble",
+        "Custom Carpet Reception Desk",
+        "Double-Glazed Facade"
+      ],
+      "bgGradient": "linear-gradient(135deg, #1C1917 0%, #2A231E 100%)"
+    },
+    {
+      "id": 102,
+      "slug": "gurugram-corporate-office",
+      "title": "Gurugram Corporate Office — Modern Turnkey Workspace",
+      "category": "Office",
+      "location": "Cyber City, Gurugram",
+      "area": "6,500 sq ft",
+      "year": "2024",
+      "duration": "10 weeks",
+      "featured": true,
+      "image": "/images/office-gurugram-open-floor.jpg",
+      "gallery": [
+        "/images/office-gurugram-open-floor.jpg",
+        "/images/office-gurugram-workstations-lighting.jpg",
+        "/images/office-gurugram-executive-cabin.jpg",
+        "/images/office-gurugram-conference-room.jpg",
+        "/images/office-gurugram-modular-desks.jpg"
+      ],
+      "description": "Turnkey commercial workspace fitout and architectural interior execution for a flagship corporate office in Gurugram. Features an expansive open workstation floor with suspended acoustic dome pendants, geometric suspended LED profile lights, frameless glass executive director cabins, 12-seater boardroom, and modular heavy-gauge desk clusters with integrated raceways.",
+      "challenge": "Transforming a bare-shell corporate floorplate into a high-performance workspace with acoustic isolation between cabins and workstation bays, comprehensive MEP and server cabling, within a fast-tracked 10-week schedule.",
+      "solution": "Constructed sound-dampened acoustic glass partitions, suspended square LED profile luminaires from an exposed dark industrial slab, engineered dual-sided cable trays with modular floor junction boxes, and delivered custom oak veneer executive cabin joinery.",
+      "clientQuote": "Bright Space Interiors delivered our Gurugram corporate headquarters with flawless precision. The workstations, lighting design, and boardroom execution exceed our international corporate standards.",
+      "clientName": "Gurugram Corporate Management",
+      "materials": [
+        "Acoustic Glass Partitions",
+        "Suspended Geometric LED Profiles",
+        "Heavy-Gauge Modular Steel Desks",
+        "Oak Veneer Executive Cabin Joinery",
+        "Acoustic Fabric Screens",
+        "Industrial Baffle Ceilings"
+      ],
+      "bgGradient": "linear-gradient(135deg, #161D26 0%, #202A36 100%)"
+    },
+    {
+      "id": 9,
+      "slug": "shri-ram-complex-v-deliver-sushant-lok",
+      "title": "Shri Ram Complex — Civil, Interior & Waterproofing",
+      "category": "Commercial",
+      "location": "Shri Ram Complex, Sushant Lok Phase 1, Gurugram",
+      "area": "2,500 sq ft (Carpet Area)",
+      "year": "2021",
+      "duration": "11 weeks (Dec 2020 – 20 Feb 2021)",
+      "featured": true,
+      "image": "/images/sushant-lok-vdeliver-site-execution.jpg",
+      "gallery": [
+        "/images/sushant-lok-vdeliver-site-execution.jpg",
+        "/images/sushant-lok-vdeliver-stone-cutting-masonry.jpg",
+        "/images/sushant-lok-vdeliver-grand-hall-cove.jpg",
+        "/images/sushant-lok-vdeliver-corridor-framing-flooring.jpg",
+        "/images/sushant-lok-vdeliver-ornate-panelling-joinery.jpg"
+      ],
+      "description": "Comprehensive civil and commercial interior execution including specialized industrial waterproofing in V-Deliver kitchen at Shri Ram Complex, Sushant Lok Phase 1, Gurugram. Covering 2,500 sq ft of carpet area, this site started in the first week of December 2020 and was successfully finished on 20 February 2021. Scope included precision on-site stone cutting, diamond-border marble flooring, multi-tier gypsum cove ceiling illumination, commercial waterproofing membranes, and architectural timber panelling.",
+      "challenge": "Executing rigorous multi-layer commercial waterproofing for the high-capacity V-Deliver kitchen, structural slab core drilling, and simultaneous ornate interior carpentry within an active commercial complex on a tight 11-week deadline.",
+      "solution": "Applied specialized commercial-grade waterproofing membranes across the culinary floorplate, deployed laser-guided on-site granite & stone fabrication, crafted classical gypsum mouldings with warm cove LEDs, and engineered custom architectural timber joinery with strict quality milestones.",
+      "clientQuote": "Bright Space executed the civil, interior, and waterproofing work for our 2,500 sq ft facility at Shri Ram Complex with flawless project management, completing on 20 February 2021 right on schedule.",
+      "clientName": "Shri Ram Complex / V-Deliver",
+      "materials": [
+        "Specialized Commercial Kitchen Waterproofing",
+        "On-Site Marble & Granite Core Cutting",
+        "Diamond Border Geometric Marble Flooring",
+        "Gypsum Cove False Ceiling & LED Profiles",
+        "Architectural Wood Panelling & Custom Joinery",
+        "Ornate Gold-Leaf Mirror Framing"
+      ],
+      "bgGradient": "linear-gradient(135deg, #1C2030 0%, #202535 100%)"
+    },
+    {
+      "id": 6,
+      "slug": "turnkey-modular-kitchens-delhi-ncr",
+      "title": "Bespoke Modular Kitchens — Delhi NCR",
+      "category": "Turnkey",
+      "location": "Amar Colony, Old Rajendra Nagar, Saket, Faridabad, Gurugram, Noida (Delhi NCR)",
+      "area": "Multi-Site Turnkey Kitchens",
+      "year": "2024",
+      "duration": "4–6 Weeks Turnaround",
+      "featured": true,
+      "image": "/images/kitchen-delhi-ncr-modern-lshape.jpg",
+      "gallery": [
+        "/images/kitchen-delhi-ncr-modern-lshape.jpg",
+        "/images/kitchen-delhi-ncr-high-gloss-black-marble.jpg",
+        "/images/kitchen-delhi-ncr-craftsman-installation.jpg",
+        "/images/kitchen-delhi-ncr-profile-lighting-sink.jpg",
+        "/images/kitchen-delhi-ncr-cherry-ivory-dual-tone.jpg"
+      ],
+      "description": "Turnkey modular kitchen design and execution across prime locations in Delhi NCR including Amar Colony, Old Rajendra Nagar, Saket, Faridabad, Gurugram, and Noida. Our portfolio highlights high-gloss acrylic & PU shutters, Marquina black marble backsplashes, seamless under-cabinet profile lighting, undermount sinks, Blum soft-close hydraulic hardware, and custom-crafted wooden breakfast counter partitions.",
+      "challenge": "Executing precision modular kitchen layouts across varying apartment footprints in Delhi NCR with zero tolerances, water-resistant marine grade carcasses, and fast on-site commissioning.",
+      "solution": "Utilized precision laser measurements, BWP boiling waterproof plywood, premium acrylic surfaces, integrated LED profile illumination, and meticulous on-site hardware fitting by master craftsmen.",
+      "clientQuote": "The Bright Space Interiors transformed our kitchen into an ergonomic, modern culinary space. Their cabinetry finish, stone backsplash, and lighting details are immaculate.",
+      "clientName": "Homeowners across Delhi NCR",
+      "materials": [
+        "High-Gloss Acrylic & PU Shutters",
+        "Italian Quartz Countertops",
+        "Marquina Black Marble Backsplash",
+        "Concealed Under-Cabinet LED Profiles",
+        "Blum Soft-Close Hydraulic Hardware",
+        "BWP Marine Grade Plywood"
+      ],
+      "bgGradient": "linear-gradient(135deg, #1C2226 0%, #29241C 100%)"
+    },
+    {
+      "id": 7,
+      "slug": "mr-manish-singh-home-gurugram",
+      "title": "Mr. Manish Singh's Home — Civil & Interior Work",
+      "category": "Residential",
+      "location": "Park View City, Sector 48, Gurugram",
+      "area": "1,300 sq ft (Carpet Area)",
+      "year": "2024",
+      "duration": "9 weeks",
+      "featured": true,
+      "image": "/images/gurugram-manish-living-mirror-wall.jpg",
+      "gallery": [
+        "/images/gurugram-manish-living-mirror-wall.jpg",
+        "/images/gurugram-manish-grid-mirror-feature.jpg",
+        "/images/gurugram-manish-fluted-wall-console.jpg",
+        "/images/gurugram-manish-glass-partitions.jpg"
+      ],
+      "description": "Comprehensive civil and interior work for Mr. Manish Singh in Park View City, Sector 48, Gurugram. Our turnkey execution included vitrified floor tiling, wooden paint and polish work, bronze grid tinted mirror wall panelling, fluted feature walls with floating console, and architectural glass partitions.",
+      "challenge": "Executing high-precision floor tiling, flawless wooden paint & polish finishes, and seamlessly integrating geometric mirror panelling across a 1,300 sq ft carpet area.",
+      "solution": "Engineered an open-concept luxury layout: laser-levelled vitrified marble-finish floor tiles, bronze grid accent mirror panelling to expand spatial depth, fluted accent walls with floating vanity joinery, and durable artisanal wood paint and polish finishes.",
+      "clientQuote": "Bright Space executed the floor tiles, wooden paint, and polish work with outstanding craftsmanship. The flat feels expansive, modern, and completely transformed.",
+      "clientName": "Mr. Manish Singh",
+      "materials": [
+        "Vitrified Marble-Finish Floor Tiles",
+        "Bronze Grid Accent Mirror Panelling",
+        "Wooden Paint & Polish Craftsmanship",
+        "Fluted Accent Wall & Sconces",
+        "Architectural Glass Partitions",
+        "Floating Console & Desk Joinery"
+      ],
+      "bgGradient": "linear-gradient(135deg, #201E26 0%, #2A2433 100%)"
+    },
+    {
+      "id": 1,
+      "slug": "the-hair-palace-london",
+      "title": "The Hair Palace London — Salon & Academy",
+      "category": "Salon",
+      "location": "Delhi NCR",
+      "area": "4,500 sq ft",
+      "year": "2024",
+      "duration": "14 weeks",
+      "featured": true,
+      "image": "/images/real-salon-facade.jpg",
+      "gallery": [
+        "/images/real-salon-facade.jpg",
+        "/images/real-salon-mainhall.jpg",
+        "/images/real-salon-styling.jpg",
+        "/images/real-salon-reception.jpg",
+        "/images/real-salon-doors.jpg"
+      ],
+      "description": "Turnkey architectural facade design and luxury interior execution for The Hair Palace London. Features a grand two-story glass facade, celebratory floral entrance archways, illuminated brand signage, and multi-tier salon academy stations.",
+      "challenge": "Transforming an expansive commercial space into a distinguished European-style luxury academy while ensuring flawless MEP and sound isolation between academy and salon floors.",
+      "solution": "Engineered structural facade reinforcement, custom architectural signage, high-efficiency central air handling, and zone-specific dimmable lighting throughout.",
+      "clientQuote": "Bright Space Interiors delivered our flagship luxury salon and academy with international standards. The finished execution is stunning.",
+      "clientName": "The Hair Palace London Management",
+      "materials": [
+        "Double-Glazed Facade",
+        "Illuminated 3D Signage",
+        "Travertine Marble",
+        "Acoustic Drywall"
+      ],
+      "bgGradient": "linear-gradient(135deg, #1C1C1C 0%, #2A2521 100%)"
+    },
+    {
+      "id": 2,
+      "slug": "hair-palace-salon-lounge",
+      "title": "L'Oréal & Kérastase Retail Lounge",
+      "category": "Salon",
+      "location": "Delhi NCR",
+      "area": "2,200 sq ft",
+      "year": "2024",
+      "duration": "10 weeks",
+      "featured": true,
+      "image": "/images/real-salon-reception.jpg",
+      "gallery": [
+        "/images/real-salon-reception.jpg",
+        "/images/real-salon-mainhall.jpg",
+        "/images/real-salon-chesterfield.jpg",
+        "/images/real-salon-styling.jpg"
+      ],
+      "description": "Luxury retail and client reception lounge featuring custom L'Oréal Professionnel Paris and Kérastase Paris branded display shelving, back-lit translucent marble reception desk, statement yellow velvet armchairs, and acoustic ceiling.",
+      "challenge": "Balancing high-density retail merchandise display with welcoming, uncluttered five-star hospitality aesthetics.",
+      "solution": "Concealed LED strip illumination behind frosted glass shelves, custom marble counter with inset halo lighting, and rich oak acoustic wall cladding.",
+      "clientQuote": "Product sales and client dwell time doubled immediately. The lighting and marble craftsmanship are world-class.",
+      "clientName": "Salon Director",
+      "materials": [
+        "Italian Statuario Marble",
+        "Black Powder-Coated Steel",
+        "Back-Lit Acrylic",
+        "High-CRI LED"
+      ],
+      "bgGradient": "linear-gradient(135deg, #2E2418 0%, #3D3025 100%)"
+    },
+    {
+      "id": 3,
+      "slug": "hair-palace-vip-pedispa",
+      "title": "Executive Waiting Suite & Pedispa",
+      "category": "Salon",
+      "location": "Delhi NCR",
+      "area": "1,800 sq ft",
+      "year": "2024",
+      "duration": "8 weeks",
+      "featured": true,
+      "image": "/images/real-salon-chesterfield.jpg",
+      "gallery": [
+        "/images/real-salon-chesterfield.jpg",
+        "/images/real-salon-pedispa.jpg",
+        "/images/real-salon-doors.jpg",
+        "/images/real-salon-mainhall.jpg"
+      ],
+      "description": "Distinguished client waiting lounge and dedicated pedicure wellness zone featuring a deep-buttoned burgundy leather Chesterfield sofa, Persian rug, classical gold-leaf mirror, and custom brick-and-timber pedicure stations.",
+      "challenge": "Harmonizing heritage warmth with modern clinical hygiene for premium spa treatments.",
+      "solution": "Exposed rustic brickwork, sealed solid timber planking, individual plumbed hydrotherapy foot basins, and custom leather seating.",
+      "clientQuote": "Our clients love taking photos in this lounge. It feels like an exclusive private club.",
+      "clientName": "VIP Clients",
+      "materials": [
+        "Tufted Genuine Leather",
+        "Natural Exposed Brick",
+        "Bleached Pine Planks",
+        "Hand-Knotted Carpet"
+      ],
+      "bgGradient": "linear-gradient(135deg, #24201A 0%, #2E261E 100%)"
+    },
+    {
+      "id": 4,
+      "slug": "hair-palace-royal-styling",
+      "title": "Royal Styling Stations & Private Treatment Suites",
+      "category": "Salon",
+      "location": "Delhi NCR",
+      "area": "2,000 sq ft",
+      "year": "2024",
+      "duration": "8 weeks",
+      "featured": true,
+      "image": "/images/real-salon-styling.jpg",
+      "gallery": [
+        "/images/real-salon-styling.jpg",
+        "/images/real-salon-doors.jpg",
+        "/images/real-salon-mainhall.jpg",
+        "/images/real-salon-chesterfield.jpg"
+      ],
+      "description": "Opulent commercial styling suite featuring arched gold-leaf full-height mirrors, vintage hydraulic styling chairs, checkerboard marble flooring, and private artisanal pine treatment suites with O3+ branding.",
+      "challenge": "Accommodating individual client privacy while maintaining a cohesive, open royal luxury atmosphere.",
+      "solution": "Constructed custom acoustic private treatment rooms with artisanal pine barn-doors, alongside open-format gilded mirror stations and check-patterned flooring.",
+      "clientQuote": "The styling mirrors and timber doors are an instant favorite with our clientele. It creates an unforgettable brand experience.",
+      "clientName": "Hair Palace Management",
+      "materials": [
+        "Arched Gold-Leaf Framing",
+        "Solid Pine Barn Doors",
+        "Checkerboard Marble",
+        "Hydraulic Leather Chairs"
+      ],
+      "bgGradient": "linear-gradient(135deg, #2E251A 0%, #3D3220 100%)"
+    },
+    {
+      "id": 5,
+      "slug": "bespoke-turnkey-modular-kitchen",
+      "title": "Saket Dual-Tone Modular Kitchen",
+      "category": "Turnkey",
+      "location": "Saket, South Delhi",
+      "area": "1,200 sq ft",
+      "year": "2024",
+      "duration": "6 weeks",
+      "featured": true,
+      "image": "/images/real-kitchen-saket.jpg",
+      "gallery": [
+        "/images/real-kitchen-saket.jpg",
+        "/images/real-kitchen-maroon.jpg",
+        "/images/real-kitchen-profile.jpg",
+        "/images/real-wardrobe-tvunit.jpg"
+      ],
+      "description": "Modern turnkey modular kitchen delivered with dual-tone anthracite and ivory acrylic cabinets, seamless quartz countertop, marble splashback, high-efficiency chimney, and architectural timber partition screen.",
+      "challenge": "Creating maximum storage and prep counter surface in an open-concept flat while providing visual privacy from the living foyer.",
+      "solution": "Full-height vertical cabinetry with soft-close Blum hardware, seamless quartz counter with integrated under-mount sink, and vertical wood baffle divider.",
+      "clientQuote": "From 3D design to site handover, Bright Space managed every detail cleanly. The kitchen finish is immaculate.",
+      "clientName": "South Delhi Resident",
+      "materials": [
+        "Scratch-Resistant Acrylic",
+        "Solid Wood Battens",
+        "Calacatta Quartz",
+        "Tandem Soft-Close"
+      ],
+      "bgGradient": "linear-gradient(135deg, #1C2226 0%, #26221C 100%)"
+    },
+    {
+      "id": 8,
+      "slug": "contemporary-turnkey-kitchen",
+      "title": "Contemporary Cherry & Cream Turnkey Kitchen",
+      "category": "Turnkey",
+      "location": "Sushant Lok, Gurugram",
+      "area": "1,100 sq ft",
+      "year": "2024",
+      "duration": "5 weeks",
+      "featured": true,
+      "image": "/images/real-kitchen-maroon.jpg",
+      "gallery": [
+        "/images/real-kitchen-maroon.jpg",
+        "/images/real-kitchen-profile.jpg",
+        "/images/real-kitchen-saket.jpg",
+        "/images/real-wardrobe-tvunit.jpg"
+      ],
+      "description": "Ergonomic L-shaped turnkey modular kitchen executed with high-gloss cream overhead cabinets, rich cherry-wine base drawers, concealed under-cabinet profile lighting, and undermount double-bowl sink.",
+      "challenge": "Fitting high-capacity storage, heavy appliance wiring, and water filtration equipment seamlessly without compromising visual symmetry.",
+      "solution": "Custom cabinetry with soft-close tandem boxes, hidden LED track lighting beneath upper units, and durable high-temperature acrylic finishes.",
+      "clientQuote": "The finish on the cabinets and the under-cabinet lighting makes cooking a pleasure. On-time handover with zero hassle.",
+      "clientName": "Gurugram Resident",
+      "materials": [
+        "High-Gloss Acrylic",
+        "Under-Cabinet Profile LED",
+        "Quartz Worktops",
+        "Stainless Steel Sink"
+      ],
+      "bgGradient": "linear-gradient(135deg, #2A1C1C 0%, #352020 100%)"
+    },
+    {
+      "id": 10,
+      "slug": "agarwal-residence-ranchi",
+      "title": "Agarwal Family Turnkey Residence",
+      "category": "Residential",
+      "location": "Ranchi",
+      "area": "1,350 sq ft",
+      "year": "2024",
+      "duration": "11 weeks",
+      "featured": true,
+      "image": "/images/real-bedroom-fluted.jpg",
+      "gallery": [
+        "/images/real-bedroom-fluted.jpg",
+        "/images/real-bedroom-headboard.jpg",
+        "/images/real-wardrobe-tvunit.jpg",
+        "/images/real-kitchen-maroon.jpg"
+      ],
+      "description": "Turnkey home interior blending classical warmth with modern European minimalism for an expansive family flat.",
+      "challenge": "Remote project management and procurement with strict timeline constraints.",
+      "solution": "End-to-end off-site fabrication, scheduled site installations, and daily supervisory video updates.",
+      "clientQuote": "Managing our home from start to finish with such professionalism was truly remarkable.",
+      "clientName": "Mr. Agarwal",
+      "materials": [
+        "Teak Wood",
+        "Hand-troweled Plaster",
+        "Vintage Brass",
+        "Italian Marble"
+      ],
+      "bgGradient": "linear-gradient(135deg, #24201A 0%, #2E261E 100%)"
+    }
+  ],
+  "services": [
+    {
+      "slug": "residential",
+      "title": "Residential Interior",
+      "subtitle": "Your Home, Elevated",
+      "image": "/images/real-bedroom-headboard.jpg",
+      "description": "We transform apartments, flats, and villas into bespoke living spaces that reflect your personality and lifestyle. Every element is considered, every corner crafted.",
+      "subServices": [
+        "Apartments & Flats",
+        "Villas & Bungalows",
+        "Bedrooms & Suites",
+        "Living & Dining Rooms",
+        "Modular Kitchens",
+        "Wardrobes & Walk-in Closets"
+      ],
+      "bgColor": "#2E2826",
+      "faqs": [
+        {
+          "q": "How long does a residential interior project take?",
+          "a": "Timeline depends on scope. A single room takes 3–4 weeks; a full apartment typically takes 8–12 weeks from design approval to final handover."
+        },
+        {
+          "q": "Do you work across Delhi NCR and other cities?",
+          "a": "Yes, we are headquartered in New Delhi and actively execute turnkey projects across Delhi, Gurugram, Noida, Faridabad, and Pan-India locations."
+        },
+        {
+          "q": "Can I choose my own materials?",
+          "a": "Absolutely. We guide you through curated material options and also accommodate client-supplied materials and custom finishes."
+        }
+      ]
+    },
+    {
+      "slug": "commercial",
+      "title": "Commercial Interior",
+      "subtitle": "Spaces That Work",
+      "image": "/images/office-gurugram-open-floor.jpg",
+      "description": "We design commercial spaces that balance brand identity, employee productivity, and client impression — offices, showrooms, restaurants, cafés, hotels.",
+      "subServices": [
+        "Offices & Workspaces",
+        "Retail Shops",
+        "Showrooms",
+        "Restaurants & Cafés",
+        "Hotels & Hospitality",
+        "Salons & Spas"
+      ],
+      "bgColor": "#1C2226",
+      "faqs": [
+        {
+          "q": "Can you handle large commercial projects?",
+          "a": "Yes. We have executed projects from small offices to large hotel fit-outs. Our team scales to the project size."
+        },
+        {
+          "q": "Do you offer 3D visualization before execution?",
+          "a": "Yes — all projects include detailed 3D renders for client approval before any execution begins."
+        }
+      ]
+    },
+    {
+      "slug": "turnkey",
+      "title": "Turnkey Projects",
+      "subtitle": "One Point of Responsibility",
+      "image": "/images/real-kitchen-saket.jpg",
+      "description": "From the first brick to the final furnishing — we manage everything, so you don't have to coordinate with multiple vendors. One contract, one team, zero hassle.",
+      "subServices": [
+        "Modular Kitchens",
+        "Modular Wardrobes",
+        "Lighting & Cove Fixtures",
+        "Flooring (Italian Marble & Wooden)",
+        "Electrical Work & Smart Automation",
+        "Civil Work & Space Reconfiguration",
+        "False Ceiling & Gypsum Design",
+        "Wall Design & Luxury Painting"
+      ],
+      "bgColor": "#26221C",
+      "faqs": [
+        {
+          "q": "What does 'turnkey' mean exactly?",
+          "a": "Turnkey means we handle everything — design, civil, electrical, false ceiling, modular cabinetry, flooring, and wall finishes — delivering a fully move-in-ready space."
+        },
+        {
+          "q": "Is turnkey more expensive than managing separately?",
+          "a": "Our bulk procurement and process efficiency often make turnkey cost-comparable or cheaper than managing vendors individually."
+        }
+      ]
+    },
+    {
+      "slug": "design-execution",
+      "title": "Design & Execution",
+      "subtitle": "Concept to Completion",
+      "image": "/images/salon-rawls-styling-suites.jpg",
+      "description": "A full-service design journey: concept development, 3D visualization, material selection, precision execution, and quality finishing — under one roof.",
+      "subServices": [
+        "Concept Development",
+        "3D Design & Visualization",
+        "Material Selection",
+        "Precision Execution",
+        "Quality Finishing",
+        "Final Handover"
+      ],
+      "bgColor": "#22261C",
+      "faqs": [
+        {
+          "q": "How many 3D revision rounds are included?",
+          "a": "Our standard package includes 3 revision rounds. Additional rounds are available at a nominal charge."
+        },
+        {
+          "q": "Do you offer design-only services?",
+          "a": "Yes, we offer standalone design & 3D visualization packages if you have your own execution team."
+        }
+      ]
+    }
+  ],
+  "specialties": [
+    {
+      "name": "Modular Kitchens",
+      "tagline": "Ergonomic & High-End",
+      "image": "/images/real-kitchen-maroon.jpg",
+      "description": "Tailor-made acrylic, PU, and veneer finishes with blum soft-close hardware, pull-out larders, and quartz countertops."
+    },
+    {
+      "name": "Modular Wardrobes",
+      "tagline": "Custom Storage Systems",
+      "image": "/images/real-wardrobe-tvunit.jpg",
+      "description": "Floor-to-ceiling sliding or hinged wardrobes, integrated entertainment consoles, sensor LED illumination, and bespoke organizers."
+    },
+    {
+      "name": "Lighting Design",
+      "tagline": "Architectural & Ambient",
+      "image": "/images/real-bedroom-headboard.jpg",
+      "description": "Layered lighting schemes including magnetic track lights, concealed coves, warm dimmers, and bespoke statement chandeliers."
+    },
+    {
+      "name": "Flooring",
+      "tagline": "Luxury Stone & Hardwood",
+      "image": "/images/real-salon-styling.jpg",
+      "description": "Precision-laid Italian marble book-matching, herringbone hardwood, vitrified large slabs, and seamless microtopping."
+    },
+    {
+      "name": "Electrical Work",
+      "tagline": "Safe, Concealed & Smart",
+      "image": "/images/real-bedroom-fluted.jpg",
+      "description": "Full circuit load design, concealed fire-resistant wiring, smart home automation integration, and designer switchplates."
+    },
+    {
+      "name": "Civil Work",
+      "tagline": "Structural Reconfiguration",
+      "image": "/images/specialty-civil.jpg",
+      "description": "Masonry alterations, partition demolition/creation, plumbing lines, screeding, and high-performance waterproofing."
+    },
+    {
+      "name": "False Ceiling",
+      "tagline": "Acoustics & Aesthetics",
+      "image": "/images/real-salon-mainhall.jpg",
+      "description": "Saint-Gobain gypsum boards, multi-level floating designs, cove lighting channels, and wooden acoustic baffles."
+    },
+    {
+      "name": "Wall Design & Painting",
+      "tagline": "Textures & Bespoke Finishes",
+      "image": "/images/real-bedroom-fluted.jpg",
+      "description": "Limewash, micro-cement, Venetian plaster textures, fluted wall panels, and high-durability luxury matte emulsions."
+    }
+  ],
+  "media": [
+    {
+      "id": "m-1",
+      "name": "real-salon-facade.jpg",
+      "url": "/images/real-salon-facade.jpg",
+      "folder": "Projects",
+      "size": "210 KB",
+      "dimensions": "1920 × 1280",
+      "type": "JPEG",
+      "altText": "The Hair Palace London Glass Facade & Floral Arches",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-2",
+      "name": "real-salon-reception.jpg",
+      "url": "/images/real-salon-reception.jpg",
+      "folder": "Projects",
+      "size": "101 KB",
+      "dimensions": "1600 × 1060",
+      "type": "JPEG",
+      "altText": "L'Oréal & Kérastase Branded Reception Desk",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-3",
+      "name": "real-salon-chesterfield.jpg",
+      "url": "/images/real-salon-chesterfield.jpg",
+      "folder": "Projects",
+      "size": "221 KB",
+      "dimensions": "1920 × 1440",
+      "type": "JPEG",
+      "altText": "VIP Chesterfield Leather Waiting Lounge",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-4",
+      "name": "real-salon-styling.jpg",
+      "url": "/images/real-salon-styling.jpg",
+      "folder": "Projects",
+      "size": "191 KB",
+      "dimensions": "1920 × 1440",
+      "type": "JPEG",
+      "altText": "Gilded Arched Mirrors & Styling Stations",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-5",
+      "name": "real-salon-mainhall.jpg",
+      "url": "/images/real-salon-mainhall.jpg",
+      "folder": "Services",
+      "size": "151 KB",
+      "dimensions": "1920 × 1080",
+      "type": "JPEG",
+      "altText": "Luxury Salon Main Hall & Halo Chandeliers",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-6",
+      "name": "real-salon-doors.jpg",
+      "url": "/images/real-salon-doors.jpg",
+      "folder": "Projects",
+      "size": "122 KB",
+      "dimensions": "1600 × 1200",
+      "type": "JPEG",
+      "altText": "Artisanal Pine Wood Barn Doors Treatment Suites",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-7",
+      "name": "real-salon-pedispa.jpg",
+      "url": "/images/real-salon-pedispa.jpg",
+      "folder": "Projects",
+      "size": "161 KB",
+      "dimensions": "1920 × 1280",
+      "type": "JPEG",
+      "altText": "Hydrotherapy Pedispa Stations & Brick Wall",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-8",
+      "name": "real-bedroom-headboard.jpg",
+      "url": "/images/real-bedroom-headboard.jpg",
+      "folder": "Projects",
+      "size": "221 KB",
+      "dimensions": "1920 × 1440",
+      "type": "JPEG",
+      "altText": "Master Bedroom Floor-to-Ceiling Wood Panelling & Headboard",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-9",
+      "name": "real-bedroom-fluted.jpg",
+      "url": "/images/real-bedroom-fluted.jpg",
+      "folder": "Services",
+      "size": "75 KB",
+      "dimensions": "1280 × 960",
+      "type": "JPEG",
+      "altText": "Fluted Accent Wall & Geometric Sconce Light",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-10",
+      "name": "real-wardrobe-tvunit.jpg",
+      "url": "/images/real-wardrobe-tvunit.jpg",
+      "folder": "Services",
+      "size": "103 KB",
+      "dimensions": "1600 × 1200",
+      "type": "JPEG",
+      "altText": "Custom Modular Wardrobe & Integrated TV Console",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-11",
+      "name": "real-kitchen-maroon.jpg",
+      "url": "/images/real-kitchen-maroon.jpg",
+      "folder": "Services",
+      "size": "97 KB",
+      "dimensions": "1280 × 960",
+      "type": "JPEG",
+      "altText": "Cherry & Cream High-Gloss L-Shaped Modular Kitchen",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-12",
+      "name": "real-kitchen-profile.jpg",
+      "url": "/images/real-kitchen-profile.jpg",
+      "folder": "Projects",
+      "size": "81 KB",
+      "dimensions": "1280 × 960",
+      "type": "JPEG",
+      "altText": "Under-Cabinet Profile LED & Undermount Sink",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-13",
+      "name": "real-kitchen-saket.jpg",
+      "url": "/images/real-kitchen-saket.jpg",
+      "folder": "Projects",
+      "size": "105 KB",
+      "dimensions": "1600 × 1200",
+      "type": "JPEG",
+      "altText": "Saket Turnkey Dual-Tone Modular Kitchen",
+      "dateAdded": "2024-10-05"
+    },
+    {
+      "id": "m-14",
+      "name": "hero-luxury.jpg",
+      "url": "/images/hero-luxury.jpg",
+      "folder": "Hero",
+      "size": "380 KB",
+      "dimensions": "2560 × 1440",
+      "type": "JPEG",
+      "altText": "The Bright Space Interiors Hero Showcase",
+      "dateAdded": "2024-09-01"
+    },
+    {
+      "id": "m-15",
+      "name": "salon-rawls-reception.jpg",
+      "url": "/images/salon-rawls-reception.jpg",
+      "folder": "Projects",
+      "size": "193 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Rawls Salon Royal Carpet Reception Desk & Gold Crest",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-16",
+      "name": "salon-rawls-mainhall.jpg",
+      "url": "/images/salon-rawls-mainhall.jpg",
+      "folder": "Projects",
+      "size": "204 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Rawls Salon Grand Hall Architectural Mirrors & Stations",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-17",
+      "name": "salon-rawls-styling-suites.jpg",
+      "url": "/images/salon-rawls-styling-suites.jpg",
+      "folder": "Projects",
+      "size": "187 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Rawls Salon Ornate Gold Mirrors & Cognac Styling Chairs",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-18",
+      "name": "salon-rawls-facade-site.jpg",
+      "url": "/images/salon-rawls-facade-site.jpg",
+      "folder": "Projects",
+      "size": "255 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Rawls Salon Multi-Tier Neoclassical Facade Scaffolding",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-19",
+      "name": "office-gurugram-open-floor.jpg",
+      "url": "/images/office-gurugram-open-floor.jpg",
+      "folder": "Projects",
+      "size": "186 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Gurugram Corporate Office Open Workstation Floor with Red Baffle Lights",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-20",
+      "name": "office-gurugram-workstations-lighting.jpg",
+      "url": "/images/office-gurugram-workstations-lighting.jpg",
+      "folder": "Projects",
+      "size": "122 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Gurugram Office Geometric Suspended LED Profile Lights & Ochre Screens",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-21",
+      "name": "office-gurugram-executive-cabin.jpg",
+      "url": "/images/office-gurugram-executive-cabin.jpg",
+      "folder": "Projects",
+      "size": "113 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Gurugram Office Director's Corner Executive Cabin & Skyline View",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-22",
+      "name": "office-gurugram-conference-room.jpg",
+      "url": "/images/office-gurugram-conference-room.jpg",
+      "folder": "Projects",
+      "size": "167 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Gurugram Corporate Office Boardroom & Video Conferencing Table",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-23",
+      "name": "office-gurugram-modular-desks.jpg",
+      "url": "/images/office-gurugram-modular-desks.jpg",
+      "folder": "Projects",
+      "size": "196 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Gurugram Office Turnkey Modular Desk Assembly & Cable Trays",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-24",
+      "name": "ranchi-agarwal-dining-hall.jpg",
+      "url": "/images/ranchi-agarwal-dining-hall.jpg",
+      "folder": "Projects",
+      "size": "170 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Mr. Agarwal Home Ranchi Marble Dining Suite & Tufted Chairs",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-25",
+      "name": "ranchi-agarwal-fluted-tv-unit.jpg",
+      "url": "/images/ranchi-agarwal-fluted-tv-unit.jpg",
+      "folder": "Projects",
+      "size": "135 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Mr. Agarwal Home Ranchi Fluted Wooden TV Wall & Curved Console",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-26",
+      "name": "ranchi-agarwal-ceiling-lighting.jpg",
+      "url": "/images/ranchi-agarwal-ceiling-lighting.jpg",
+      "folder": "Projects",
+      "size": "120 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Mr. Agarwal Home Ranchi Gypsum False Ceiling & Warm Cove LEDs",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-27",
+      "name": "ranchi-agarwal-modular-crockery.jpg",
+      "url": "/images/ranchi-agarwal-modular-crockery.jpg",
+      "folder": "Projects",
+      "size": "73 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Mr. Agarwal Home Ranchi Modular Crockery Unit & Illuminated Bar",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-28",
+      "name": "gurugram-manish-living-mirror-wall.jpg",
+      "url": "/images/gurugram-manish-living-mirror-wall.jpg",
+      "folder": "Projects",
+      "size": "96 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Mr. Manish Singh Park View City Gurugram Living Room Grid Mirror Wall & Marble Floor",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-29",
+      "name": "gurugram-manish-grid-mirror-feature.jpg",
+      "url": "/images/gurugram-manish-grid-mirror-feature.jpg",
+      "folder": "Projects",
+      "size": "131 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Mr. Manish Singh Park View City Bronze Tinted Grid Mirror Accent Wall Feature",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-30",
+      "name": "gurugram-manish-fluted-wall-console.jpg",
+      "url": "/images/gurugram-manish-fluted-wall-console.jpg",
+      "folder": "Projects",
+      "size": "72 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Mr. Manish Singh Fluted Accent Wall Floating Vanity Desk & Sconce",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-31",
+      "name": "gurugram-manish-glass-partitions.jpg",
+      "url": "/images/gurugram-manish-glass-partitions.jpg",
+      "folder": "Projects",
+      "size": "104 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Mr. Manish Singh Fluted Architectural Glass Partition Doors & Black Metal Frame",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-32",
+      "name": "kitchen-delhi-ncr-modern-lshape.jpg",
+      "url": "/images/kitchen-delhi-ncr-modern-lshape.jpg",
+      "folder": "Projects",
+      "size": "101 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Modular Kitchen L-Shaped Layout Quartz Counter & Wooden Louvers Delhi NCR",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-33",
+      "name": "kitchen-delhi-ncr-high-gloss-black-marble.jpg",
+      "url": "/images/kitchen-delhi-ncr-high-gloss-black-marble.jpg",
+      "folder": "Projects",
+      "size": "112 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Modern High Gloss Acrylic Modular Kitchen with Black Marble Splash Delhi NCR",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-34",
+      "name": "kitchen-delhi-ncr-craftsman-installation.jpg",
+      "url": "/images/kitchen-delhi-ncr-craftsman-installation.jpg",
+      "folder": "Projects",
+      "size": "101 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Modular Kitchen Hardware Installation On-Site Craftsmanship Delhi NCR",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-35",
+      "name": "kitchen-delhi-ncr-profile-lighting-sink.jpg",
+      "url": "/images/kitchen-delhi-ncr-profile-lighting-sink.jpg",
+      "folder": "Projects",
+      "size": "88 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Modular Kitchen Under-Cabinet LED Profile Lights & Undermount Sink Delhi NCR",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-36",
+      "name": "kitchen-delhi-ncr-cherry-ivory-dual-tone.jpg",
+      "url": "/images/kitchen-delhi-ncr-cherry-ivory-dual-tone.jpg",
+      "folder": "Projects",
+      "size": "98 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Dual Tone Maroon & Ivory Modular Kitchen Soft-Close Hardware Delhi NCR",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-37",
+      "name": "sushant-lok-vdeliver-site-execution.jpg",
+      "url": "/images/sushant-lok-vdeliver-site-execution.jpg",
+      "folder": "Projects",
+      "size": "181 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Shri Ram Complex Sushant Lok Phase 1 Civil & Interior Execution",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-38",
+      "name": "sushant-lok-vdeliver-stone-cutting-masonry.jpg",
+      "url": "/images/sushant-lok-vdeliver-stone-cutting-masonry.jpg",
+      "folder": "Projects",
+      "size": "175 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Granite & Marble On-Site Core Cutting Masonry Work Gurugram",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-39",
+      "name": "sushant-lok-vdeliver-grand-hall-cove.jpg",
+      "url": "/images/sushant-lok-vdeliver-grand-hall-cove.jpg",
+      "folder": "Projects",
+      "size": "177 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Grand Interior Hallway Cove Lighting & Column Cladding Shri Ram Complex",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-40",
+      "name": "sushant-lok-vdeliver-corridor-framing-flooring.jpg",
+      "url": "/images/sushant-lok-vdeliver-corridor-framing-flooring.jpg",
+      "folder": "Projects",
+      "size": "177 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Corridor Timber Partition Framing & Geometric Marble Flooring Execution",
+      "dateAdded": "2024-10-06"
+    },
+    {
+      "id": "m-41",
+      "name": "sushant-lok-vdeliver-ornate-panelling-joinery.jpg",
+      "url": "/images/sushant-lok-vdeliver-ornate-panelling-joinery.jpg",
+      "folder": "Projects",
+      "size": "195 KB",
+      "dimensions": "1024 × 768",
+      "type": "JPEG",
+      "altText": "Architectural Wood Panelling Gold Leaf Arched Mirrors & Custom Vanities",
+      "dateAdded": "2024-10-06"
+    }
+  ]
+}
