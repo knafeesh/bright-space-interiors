@@ -211,9 +211,9 @@ export default function DesignIdeasHubPage() {
               href={`/design-ideas/${category.slug}`}
               style={{
                 background: "#FFFFFF",
-                borderRadius: "14px",
+                borderRadius: "16px",
                 overflow: "hidden",
-                border: "1px solid rgba(184, 151, 90, 0.22)",
+                border: "1px solid rgba(184, 151, 90, 0.16)",
                 boxShadow: "0 4px 16px rgba(28, 24, 22, 0.05)",
                 textDecoration: "none",
                 color: "inherit",
@@ -223,11 +223,12 @@ export default function DesignIdeasHubPage() {
               }}
               className="hub-category-card"
             >
+              {/* One Category Image - Clean, no text overlay */}
               <div
                 style={{
                   position: "relative",
                   width: "100%",
-                  aspectRatio: "16 / 10",
+                  aspectRatio: "16 / 10.5",
                   overflow: "hidden",
                   background: "var(--ivory-dark, #ECE6DE)",
                 }}
@@ -241,86 +242,34 @@ export default function DesignIdeasHubPage() {
                     height: "100%",
                     objectFit: "cover",
                     display: "block",
+                    transition: "transform 0.4s ease",
                   }}
                 />
-                <span
-                  style={{
-                    position: "absolute",
-                    top: "12px",
-                    left: "12px",
-                    background: "rgba(28, 24, 22, 0.78)",
-                    backdropFilter: "blur(4px)",
-                    color: "var(--gold-light, #DFC59E)",
-                    padding: "4px 10px",
-                    borderRadius: "6px",
-                    fontSize: "10px",
-                    fontWeight: 600,
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    border: "1px solid rgba(184, 151, 90, 0.35)",
-                  }}
-                >
-                  {category.group}
-                </span>
               </div>
 
+              {/* One Category Title Directly Below the Image */}
               <div
                 style={{
-                  padding: "18px 20px",
+                  padding: "18px 22px 22px",
                   display: "flex",
-                  flexDirection: "column",
+                  alignItems: "center",
                   flexGrow: 1,
-                  justifyContent: "space-between",
+                  background: "#FFFFFF",
                 }}
               >
-                <div>
-                  <h2
-                    style={{
-                      fontFamily: "var(--font-serif, 'Playfair Display', serif)",
-                      fontSize: "19px",
-                      fontWeight: 600,
-                      color: "var(--charcoal, #1C1C1C)",
-                      margin: "0 0 6px",
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {category.name}
-                  </h2>
-                  <p
-                    style={{
-                      fontSize: "12.5px",
-                      color: "var(--charcoal-muted, #666059)",
-                      margin: "0 0 14px",
-                      lineHeight: 1.5,
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {category.heroSubtitle}
-                  </p>
-                </div>
-
-                <div
+                <h2
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingTop: "12px",
-                    borderTop: "1px solid rgba(220, 214, 204, 0.5)",
-                    fontSize: "11.5px",
-                    color: "var(--gold-dark, #8C7148)",
+                    fontFamily: "var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif)",
+                    fontSize: "clamp(16px, 1.35vw, 19px)",
                     fontWeight: 600,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
+                    color: "var(--charcoal, #1C1C1C)",
+                    margin: 0,
+                    lineHeight: 1.35,
+                    letterSpacing: "0.01em",
                   }}
                 >
-                  <span>{category.designs.length} Curated Designs</span>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                    View Gallery <ArrowRight size={13} />
-                  </span>
-                </div>
+                  {category.name}
+                </h2>
               </div>
             </Link>
           ))}

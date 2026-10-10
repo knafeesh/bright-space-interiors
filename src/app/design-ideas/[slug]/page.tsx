@@ -144,26 +144,6 @@ export default async function DesignCategoryPage({ params }: Props) {
             </span>
           </nav>
 
-          {/* Group Tag */}
-          <div style={{ marginBottom: "14px" }}>
-            <span
-              style={{
-                display: "inline-block",
-                padding: "4px 14px",
-                borderRadius: "20px",
-                background: "rgba(184, 151, 90, 0.22)",
-                border: "1px solid rgba(184, 151, 90, 0.45)",
-                color: "var(--gold-light, #DFC59E)",
-                fontSize: "11px",
-                fontWeight: 600,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-              }}
-            >
-              {category.group}
-            </span>
-          </div>
-
           {/* Category Hero Title */}
           <h1
             style={{
@@ -295,36 +275,28 @@ export default async function DesignCategoryPage({ params }: Props) {
         </div>
 
         {/* 2-Column Desktop, 1-Column Mobile Gallery Grid */}
-        <div
-          className="design-gallery-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 540px), 1fr))",
-            gap: "32px",
-            width: "100%",
-          }}
-        >
+        <div className="design-gallery-grid">
           {category.designs.map((design, index) => (
             <article
               key={design.id}
               className="design-gallery-card"
               style={{
                 background: "#FFFFFF",
-                borderRadius: "14px",
+                borderRadius: "16px",
                 overflow: "hidden",
                 boxShadow: "0 4px 20px rgba(28, 24, 22, 0.06)",
-                border: "1px solid rgba(184, 151, 90, 0.2)",
+                border: "1px solid rgba(184, 151, 90, 0.16)",
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
                 display: "flex",
                 flexDirection: "column",
               }}
             >
-              {/* Image Container with Fixed Proportions */}
+              {/* One Design Image - Clean, unobstructed, no text overlay */}
               <div
                 style={{
                   position: "relative",
                   width: "100%",
-                  aspectRatio: "16 / 10.5",
+                  aspectRatio: "16 / 11",
                   overflow: "hidden",
                   background: "var(--ivory-dark, #ECE6DE)",
                 }}
@@ -342,113 +314,31 @@ export default async function DesignCategoryPage({ params }: Props) {
                   }}
                   className="design-gallery-card__img"
                 />
-
-                {/* Tag Badge */}
-                {design.tag && (
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: "16px",
-                      left: "16px",
-                      background: "rgba(28, 24, 22, 0.78)",
-                      backdropFilter: "blur(4px)",
-                      color: "var(--gold-light, #DFC59E)",
-                      padding: "5px 12px",
-                      borderRadius: "6px",
-                      fontSize: "11px",
-                      fontWeight: 600,
-                      letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                      border: "1px solid rgba(184, 151, 90, 0.35)",
-                    }}
-                  >
-                    {design.tag}
-                  </span>
-                )}
               </div>
 
-              {/* Card Content Below Image */}
+              {/* One Design Title Directly Below the Image */}
               <div
                 style={{
-                  padding: "24px 26px 22px",
+                  padding: "18px 22px 22px",
                   display: "flex",
-                  flexDirection: "column",
+                  alignItems: "center",
                   flexGrow: 1,
-                  justifyContent: "space-between",
+                  background: "#FFFFFF",
                 }}
               >
-                <div>
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-serif, 'Playfair Display', serif)",
-                      fontSize: "clamp(18px, 1.5vw, 22px)",
-                      fontWeight: 600,
-                      color: "var(--charcoal, #1C1C1C)",
-                      lineHeight: 1.35,
-                      margin: "0 0 10px",
-                      letterSpacing: "0.015em",
-                    }}
-                  >
-                    {design.title}
-                  </h3>
-
-                  {design.description && (
-                    <p
-                      style={{
-                        fontSize: "14px",
-                        lineHeight: 1.6,
-                        color: "var(--charcoal-muted, #666059)",
-                        margin: "0 0 18px",
-                      }}
-                    >
-                      {design.description}
-                    </p>
-                  )}
-                </div>
-
-                {/* Card Action */}
-                <div
+                <h3
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingTop: "14px",
-                    borderTop: "1px solid rgba(220, 214, 204, 0.6)",
+                    fontFamily: "var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif)",
+                    fontSize: "clamp(16px, 1.4vw, 19px)",
+                    fontWeight: 600,
+                    color: "var(--charcoal, #1C1C1C)",
+                    lineHeight: 1.35,
+                    margin: 0,
+                    letterSpacing: "0.01em",
                   }}
                 >
-                  <a
-                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hello, I would like to enquire about the "${design.title}" in ${category.name}.`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      color: "var(--gold-dark, #8C7148)",
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                      textDecoration: "none",
-                      transition: "color 0.2s",
-                    }}
-                  >
-                    Enquire This Design <ArrowRight size={14} />
-                  </a>
-
-                  <Link
-                    href="/contact"
-                    style={{
-                      fontSize: "11.5px",
-                      color: "var(--charcoal-muted, #666059)",
-                      textDecoration: "none",
-                      letterSpacing: "0.08em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Get Quote
-                  </Link>
-                </div>
+                  {design.title}
+                </h3>
               </div>
             </article>
           ))}
@@ -600,19 +490,6 @@ export default async function DesignCategoryPage({ params }: Props) {
               className="related-category-link"
             >
               <div>
-                <span
-                  style={{
-                    display: "block",
-                    fontSize: "10px",
-                    color: "var(--gold-dark, #8C7148)",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    fontWeight: 600,
-                    marginBottom: "4px",
-                  }}
-                >
-                  {other.group}
-                </span>
                 <span
                   style={{
                     fontFamily: "var(--font-serif, 'Playfair Display', serif)",
