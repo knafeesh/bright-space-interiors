@@ -128,9 +128,10 @@ export async function saveFullStoreToDb(store: CmsStore): Promise<boolean> {
 
   // 4. Revalidate public website pages
   try {
-    revalidatePath("/portfolio");
-    revalidatePath("/");
-    revalidatePath("/services");
+    revalidatePath("/portfolio", "page");
+    revalidatePath("/portfolio/[slug]", "page");
+    revalidatePath("/", "page");
+    revalidatePath("/services", "page");
   } catch (err) {
     console.warn("[portfolio-db] revalidatePath warning:", err);
   }
@@ -218,9 +219,10 @@ export async function updateProjectInDb(
 
   // Revalidate specific project detail page
   try {
-    revalidatePath(`/portfolio/${finalProject.slug}`);
+    revalidatePath(`/portfolio/${finalProject.slug}`, "page");
+    revalidatePath("/portfolio/[slug]", "page");
     if (existing.slug !== finalProject.slug) {
-      revalidatePath(`/portfolio/${existing.slug}`);
+      revalidatePath(`/portfolio/${existing.slug}`, "page");
     }
   } catch {}
 

@@ -1,8 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
-import { useCmsProjects, Project } from "@/lib/cms";
+import { useCmsProjects, useCmsLoaded, Project } from "@/lib/cms";
 import CategoryCarousel from "@/components/ui/CategoryCarousel";
 import ProjectCard from "@/components/ui/ProjectCard";
 
@@ -10,8 +10,23 @@ const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hote
 
 export default function PortfolioClient({ initialProjects }: { initialProjects: Project[] }) {
   const cmsProjects = useCmsProjects();
-  // Use reactive cmsProjects if available, otherwise initial server projects
-  const projects = cmsProjects && cmsProjects.length > 0 ? cmsProjects : initialProjects;
+  const cmsLoaded = useCmsLoaded();
+
+  // Ground truth: server-provided initialProjects from the database
+  const [projects, setProjects] = useState<Project[]>(initialProjects || []);
+
+  useEffect(() => {
+    if (initialProjects && initialProjects.length > 0) {
+      setProjects(initialProjects);
+    }
+  }, [initialProjects]);
+
+  useEffect(() => {
+    if (cmsLoaded && cmsProjects && cmsProjects.length > 0) {
+      setProjects(cmsProjects);
+    }
+  }, [cmsLoaded, cmsProjects]);
+
   const [activeFilter, setActiveFilter] = useState("All");
 
   const filtered =

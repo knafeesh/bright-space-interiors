@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, MapPin, Maximize2, Calendar, Clock } from "lucide-react";
 import { useCmsProjects, useCmsLoaded, Project } from "@/lib/cms";
@@ -15,12 +15,27 @@ export default function ProjectDetailClient({ initialProject, slug }: Props) {
   const cmsProjects = useCmsProjects();
   const cmsLoaded = useCmsLoaded();
 
+  // Ground truth: server-provided initialProject from the database
+  const [project, setProject] = useState<Project | undefined>(initialProject);
+
+  useEffect(() => {
+    if (initialProject) {
+      setProject(initialProject);
+    }
+  }, [initialProject]);
+
   const targetSlug = slug || initialProject?.slug;
-  // Find updated version in CMS store or use initial
-  const project =
-    cmsProjects.find(
-      (p) => (targetSlug && p.slug === targetSlug) || (initialProject && p.id === initialProject.id)
-    ) || initialProject;
+
+  useEffect(() => {
+    if (cmsLoaded && cmsProjects && cmsProjects.length > 0) {
+      const match = cmsProjects.find(
+        (p) => (targetSlug && p.slug === targetSlug) || (initialProject && p.id === initialProject.id)
+      );
+      if (match) {
+        setProject(match);
+      }
+    }
+  }, [cmsLoaded, cmsProjects, targetSlug, initialProject]);
 
   // Newly added projects only exist in the live CMS — wait for it before showing "not found"
   if (!project && !cmsLoaded) {
@@ -45,9 +60,10 @@ export default function ProjectDetailClient({ initialProject, slug }: Props) {
     );
   }
 
-  const currentIndex = cmsProjects.findIndex((p) => p.slug === project.slug);
-  const prevProject = cmsProjects[currentIndex - 1];
-  const nextProject = cmsProjects[currentIndex + 1];
+  const projectList = cmsProjects && cmsProjects.length > 0 ? cmsProjects : (initialProject ? [initialProject] : []);
+  const currentIndex = projectList.findIndex((p) => p.slug === project.slug);
+  const prevProject = projectList[currentIndex - 1];
+  const nextProject = projectList[currentIndex + 1];
 
   return (
     <>
