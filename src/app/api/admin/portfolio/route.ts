@@ -58,6 +58,7 @@ export async function GET(req: Request) {
       storageStatus: {
         isConfigured,
         firestoreReady: isConfigured && docExists,
+        storageType: isConfigured ? "firestore" : "ephemeral_serverless",
       }
     }, { headers: CORS_HEADERS });
   } catch (error) {
@@ -100,7 +101,11 @@ export async function PUT(req: Request) {
     return NextResponse.json(
       {
         success: true,
-        message: `Project "${result.project?.title}" saved successfully.`,
+        persisted: result.persisted,
+        storage: result.storage,
+        message: result.persisted
+          ? `Project "${result.project?.title}" saved permanently to ${result.storage}.`
+          : `Project "${result.project?.title}" saved in temporary serverless cache. Configure Firestore in Vercel to persist permanently across redeployments.`,
         project: result.project,
         projects: result.projects,
       },
@@ -140,6 +145,8 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         success: true,
+        persisted: result.persisted,
+        storage: result.storage,
         message: `Project "${result.project?.title}" added successfully.`,
         project: result.project,
         projects: result.projects,
@@ -182,6 +189,8 @@ export async function DELETE(req: Request) {
     return NextResponse.json(
       {
         success: true,
+        persisted: result.persisted,
+        storage: result.storage,
         message: "Project removed successfully.",
         projects: result.projects,
       },

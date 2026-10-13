@@ -101,6 +101,7 @@ export interface CmsStore {
   services: Service[];
   specialties: SpecialtyService[];
   media: MediaAsset[];
+  updatedAt?: number;
 }
 
 export function getDefaultCmsStore(): CmsStore {

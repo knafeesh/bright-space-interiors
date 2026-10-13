@@ -87,16 +87,27 @@ export async function getFullStoreFromDb(): Promise<CmsStore> {
   return initial;
 }
 
+export interface SaveResult {
+  success: boolean;
+  persisted: boolean;
+  storage: "firestore" | "local_disk" | "ephemeral_tmp" | "ephemeral_memory";
+  updatedAt: number;
+}
+
 /**
  * Persist the entire CMS store to Firestore, memory, /tmp, and local storage.
  * Revalidates Next.js pages across portfolio, services, and homepage.
  */
-export async function saveFullStoreToDb(store: CmsStore): Promise<boolean> {
-  memoryStore = store;
-  const payload = {
+export async function saveFullStoreToDb(store: CmsStore): Promise<SaveResult> {
+  const timestamp = Date.now();
+  const payload: CmsStore = {
     ...store,
-    updatedAt: Date.now(),
+    updatedAt: timestamp,
   };
+  memoryStore = payload;
+
+  let persisted = false;
+  let storage: "firestore" | "local_disk" | "ephemeral_tmp" | "ephemeral_memory" = "ephemeral_memory";
 
   // 1. Save to Firebase Firestore if configured
   if (isFirebaseConfigured()) {
@@ -105,6 +116,8 @@ export async function saveFullStoreToDb(store: CmsStore): Promise<boolean> {
         .collection(CMS_COLLECTION)
         .doc(CMS_DOC)
         .set(payload, { merge: true });
+      persisted = true;
+      storage = "firestore";
     } catch (err) {
       console.error("[portfolio-db] Firestore write failed:", err);
     }
@@ -114,16 +127,23 @@ export async function saveFullStoreToDb(store: CmsStore): Promise<boolean> {
   try {
     fs.mkdirSync(path.dirname(TMP_STORE_PATH), { recursive: true });
     fs.writeFileSync(TMP_STORE_PATH, JSON.stringify(payload, null, 2), "utf-8");
+    if (!persisted) {
+      storage = "ephemeral_tmp";
+    }
   } catch (err) {
     console.warn("[portfolio-db] Failed writing to /tmp:", err);
   }
 
-  // 3. Save to local project directory
+  // 3. Save to local project directory (active in dev/build environments)
   try {
     fs.mkdirSync(path.dirname(LOCAL_STORE_PATH), { recursive: true });
     fs.writeFileSync(LOCAL_STORE_PATH, JSON.stringify(payload, null, 2), "utf-8");
+    if (!persisted) {
+      persisted = true;
+      storage = "local_disk";
+    }
   } catch {
-    // Normal on read-only serverless filesystem
+    // Read-only on production serverless filesystem
   }
 
   // 4. Revalidate public website pages
@@ -136,7 +156,7 @@ export async function saveFullStoreToDb(store: CmsStore): Promise<boolean> {
     console.warn("[portfolio-db] revalidatePath warning:", err);
   }
 
-  return true;
+  return { success: true, persisted, storage, updatedAt: timestamp };
 }
 
 /**
@@ -170,7 +190,14 @@ export async function getProjectFromDbById(id: number): Promise<Project | null> 
  */
 export async function updateProjectInDb(
   updated: Partial<Project> & { id?: number; slug?: string }
-): Promise<{ success: boolean; project?: Project; projects?: Project[]; error?: string }> {
+): Promise<{
+  success: boolean;
+  project?: Project;
+  projects?: Project[];
+  error?: string;
+  persisted?: boolean;
+  storage?: string;
+}> {
   const store = await getFullStoreFromDb();
 
   // Find existing project by ID first, then by slug
@@ -185,12 +212,17 @@ export async function updateProjectInDb(
   const existing = store.projects[index];
 
   // Map every editable field and preserve unchanged fields
+  const finalCategory =
+    updated.category !== undefined && updated.category.trim() !== ""
+      ? updated.category.trim()
+      : existing.category;
+
   const finalProject: Project = {
     ...existing,
     id: existing.id,
     slug: updated.slug?.trim() || existing.slug,
     title: updated.title?.trim() !== undefined && updated.title.trim() !== "" ? updated.title.trim() : existing.title,
-    category: updated.category || existing.category,
+    category: finalCategory,
     location: updated.location !== undefined ? updated.location.trim() : existing.location,
     area: updated.area !== undefined ? updated.area.trim() : existing.area,
     year: updated.year !== undefined ? updated.year.trim() : existing.year,
@@ -212,7 +244,7 @@ export async function updateProjectInDb(
   const nextProjects = [...store.projects];
   nextProjects[index] = finalProject;
 
-  await saveFullStoreToDb({
+  const saveRes = await saveFullStoreToDb({
     ...store,
     projects: nextProjects,
   });
@@ -228,6 +260,8 @@ export async function updateProjectInDb(
 
   return {
     success: true,
+    persisted: saveRes.persisted,
+    storage: saveRes.storage,
     project: finalProject,
     projects: nextProjects,
   };
@@ -238,7 +272,14 @@ export async function updateProjectInDb(
  */
 export async function addProjectToDb(
   newProject: Project
-): Promise<{ success: boolean; project?: Project; projects?: Project[]; error?: string }> {
+): Promise<{
+  success: boolean;
+  project?: Project;
+  projects?: Project[];
+  error?: string;
+  persisted?: boolean;
+  storage?: string;
+}> {
   const store = await getFullStoreFromDb();
 
   const projectWithId: Project = {
@@ -248,7 +289,7 @@ export async function addProjectToDb(
   };
 
   const nextProjects = [projectWithId, ...store.projects];
-  await saveFullStoreToDb({
+  const saveRes = await saveFullStoreToDb({
     ...store,
     projects: nextProjects,
   });
@@ -259,6 +300,8 @@ export async function addProjectToDb(
 
   return {
     success: true,
+    persisted: saveRes.persisted,
+    storage: saveRes.storage,
     project: projectWithId,
     projects: nextProjects,
   };
@@ -269,7 +312,13 @@ export async function addProjectToDb(
  */
 export async function deleteProjectFromDb(
   id: number
-): Promise<{ success: boolean; projects?: Project[]; error?: string }> {
+): Promise<{
+  success: boolean;
+  projects?: Project[];
+  error?: string;
+  persisted?: boolean;
+  storage?: string;
+}> {
   const store = await getFullStoreFromDb();
   const target = store.projects.find((p) => p.id === id);
 
@@ -278,7 +327,7 @@ export async function deleteProjectFromDb(
   }
 
   const nextProjects = store.projects.filter((p) => p.id !== id);
-  await saveFullStoreToDb({
+  const saveRes = await saveFullStoreToDb({
     ...store,
     projects: nextProjects,
   });
@@ -289,6 +338,8 @@ export async function deleteProjectFromDb(
 
   return {
     success: true,
+    persisted: saveRes.persisted,
+    storage: saveRes.storage,
     projects: nextProjects,
   };
 }

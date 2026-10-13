@@ -29,7 +29,8 @@
         "Custom Carpet Reception Desk",
         "Double-Glazed Facade"
       ],
-      "bgGradient": "linear-gradient(135deg, #1C1917 0%, #2A231E 100%)"
+      "bgGradient": "linear-gradient(135deg, #1C1917 0%, #2A231E 100%)",
+      "status": "Completed"
     },
     {
       "id": 102,
@@ -988,5 +989,6 @@
       "altText": "Architectural Wood Panelling Gold Leaf Arched Mirrors & Custom Vanities",
       "dateAdded": "2024-10-06"
     }
-  ]
+  ],
+  "updatedAt": 1791903813938
 }

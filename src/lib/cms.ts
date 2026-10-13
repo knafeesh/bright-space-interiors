@@ -51,13 +51,18 @@ let saveQueue: Promise<unknown> = Promise.resolve();
 export function saveCmsStore(store: CmsStore): Promise<boolean> {
   if (typeof window === "undefined") return Promise.resolve(false);
 
+  const payload: CmsStore = {
+    ...store,
+    updatedAt: store.updatedAt || Date.now(),
+  };
+
   // Optimistic local update so the admin UI reacts instantly
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch (err) {
     console.warn("Failed to cache CMS store locally", err);
   }
-  window.dispatchEvent(new CustomEvent(CMS_UPDATE_EVENT, { detail: store }));
+  window.dispatchEvent(new CustomEvent(CMS_UPDATE_EVENT, { detail: payload }));
   emitSaveStatus({ state: "saving" });
 
   const run = async (): Promise<boolean> => {
@@ -65,7 +70,7 @@ export function saveCmsStore(store: CmsStore): Promise<boolean> {
       const res = await fetch("/api/content", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(store),
+        body: JSON.stringify(payload),
         cache: "no-store",
         credentials: "same-origin",
       });
@@ -116,6 +121,17 @@ function fetchServerStore(): Promise<CmsStore | null> {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && Array.isArray(data.projects)) {
+          const local = loadCmsStore();
+          const localTime = local.updatedAt || 0;
+          const serverTime = data.updatedAt || 0;
+
+          // Crucial: Never let an unconfigured or cold serverless instance that fell back
+          // to default hardcoded seed data overwrite newer edits saved in the admin's browser.
+          if (localTime > serverTime && localTime > 0) {
+            console.info("[cms] Local edits are newer than server response. Retaining local store.");
+            return local;
+          }
+
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
           } catch {}
@@ -213,7 +229,11 @@ export async function cmsUpdateProject(updated: Project): Promise<boolean> {
       const data = await res.json();
       if (data.success && Array.isArray(data.projects)) {
         const current = loadCmsStore();
-        const updatedStore = { ...current, projects: data.projects };
+        const updatedStore: CmsStore = {
+          ...current,
+          projects: data.projects,
+          updatedAt: Date.now(),
+        };
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
         } catch {}
@@ -227,7 +247,7 @@ export async function cmsUpdateProject(updated: Project): Promise<boolean> {
 
   const current = loadCmsStore();
   const nextProjects = current.projects.map((p) => (p.id === updated.id ? updated : p));
-  return saveCmsStore({ ...current, projects: nextProjects });
+  return saveCmsStore({ ...current, projects: nextProjects, updatedAt: Date.now() });
 }
 
 export async function cmsDeleteProject(projectId: number): Promise<boolean> {
@@ -241,7 +261,11 @@ export async function cmsDeleteProject(projectId: number): Promise<boolean> {
       const data = await res.json();
       if (data.success && Array.isArray(data.projects)) {
         const current = loadCmsStore();
-        const updatedStore = { ...current, projects: data.projects };
+        const updatedStore: CmsStore = {
+          ...current,
+          projects: data.projects,
+          updatedAt: Date.now(),
+        };
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
         } catch {}
@@ -255,7 +279,7 @@ export async function cmsDeleteProject(projectId: number): Promise<boolean> {
 
   const current = loadCmsStore();
   const nextProjects = current.projects.filter((p) => p.id !== projectId);
-  return saveCmsStore({ ...current, projects: nextProjects });
+  return saveCmsStore({ ...current, projects: nextProjects, updatedAt: Date.now() });
 }
 
 export async function cmsAddProject(newProject: Project): Promise<boolean> {
@@ -271,7 +295,11 @@ export async function cmsAddProject(newProject: Project): Promise<boolean> {
       const data = await res.json();
       if (data.success && Array.isArray(data.projects)) {
         const current = loadCmsStore();
-        const updatedStore = { ...current, projects: data.projects };
+        const updatedStore: CmsStore = {
+          ...current,
+          projects: data.projects,
+          updatedAt: Date.now(),
+        };
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
         } catch {}
@@ -284,7 +312,7 @@ export async function cmsAddProject(newProject: Project): Promise<boolean> {
   }
 
   const current = loadCmsStore();
-  return saveCmsStore({ ...current, projects: [newProject, ...current.projects] });
+  return saveCmsStore({ ...current, projects: [newProject, ...current.projects], updatedAt: Date.now() });
 }
 
 // Services

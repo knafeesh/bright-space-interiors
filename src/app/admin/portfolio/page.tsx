@@ -1,12 +1,14 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   useCmsProjects,
+  loadCmsStore,
   cmsUpdateProject,
   cmsDeleteProject,
   cmsAddProject,
   Project,
+  CmsStore,
 } from "@/lib/cms";
 import {
   Plus,
@@ -22,6 +24,7 @@ import {
   Upload,
   AlertCircle,
   Loader2,
+  Download,
 } from "lucide-react";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 
@@ -29,6 +32,18 @@ export default function PortfolioManagerPage() {
   const projects = useCmsProjects();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
+  const [storageStatus, setStorageStatus] = useState<{ isConfigured: boolean; firestoreReady: boolean; storageType?: string } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/portfolio", { cache: "no-store", credentials: "same-origin" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.storageStatus) {
+          setStorageStatus(data.storageStatus);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
@@ -114,7 +129,20 @@ export default function PortfolioManagerPage() {
           setSaving(false);
           return;
         }
-        await cmsDeleteProject(id);
+
+        const current = loadCmsStore();
+        const nextProjects = Array.isArray(data.projects)
+          ? data.projects
+          : current.projects.filter((p) => p.id !== id);
+        const updatedStore: CmsStore = {
+          ...current,
+          projects: nextProjects,
+          updatedAt: Date.now(),
+        };
+        try {
+          localStorage.setItem("bright_space_cms_data", JSON.stringify(updatedStore));
+        } catch {}
+        window.dispatchEvent(new CustomEvent("bright_space_cms_updated", { detail: updatedStore }));
         notifySuccess(`Project "${title}" deleted and removed from live website.`);
       } catch {
         const ok = await cmsDeleteProject(id);
@@ -167,7 +195,7 @@ export default function PortfolioManagerPage() {
       id: editingProject.id,
       slug: editingProject.slug,
       title: editTitle.trim() || editingProject.title,
-      category: editCategory || editingProject.category,
+      category: editCategory ? editCategory.trim() : editingProject.category,
       location: editLocation.trim(),
       area: editArea.trim(),
       year: editYear.trim() || editingProject.year,
@@ -205,11 +233,23 @@ export default function PortfolioManagerPage() {
         return;
       }
 
-      // 2. Sync client-side reactive CMS store
-      await cmsUpdateProject(data.project || updated);
+      // 2. Sync client-side reactive CMS store directly without redundant second request
+      const current = loadCmsStore();
+      const updatedProjects = Array.isArray(data.projects)
+        ? data.projects
+        : current.projects.map((p) => (p.id === updated.id ? (data.project || updated) : p));
+      const updatedStore: CmsStore = {
+        ...current,
+        projects: updatedProjects,
+        updatedAt: Date.now(),
+      };
+      try {
+        localStorage.setItem("bright_space_cms_data", JSON.stringify(updatedStore));
+      } catch {}
+      window.dispatchEvent(new CustomEvent("bright_space_cms_updated", { detail: updatedStore }));
       setSaving(false);
       setEditingProject(null);
-      notifySuccess(`Changes saved to "${updated.title}" and published live on website!`);
+      notifySuccess(data.message || `Changes saved to "${updated.title}" and published live on website!`);
     } catch {
       // Fallback update
       const ok = await cmsUpdateProject(updated);
@@ -253,7 +293,7 @@ export default function PortfolioManagerPage() {
       id: Date.now(),
       slug: cleanSlug,
       title: formTitle.trim(),
-      category: formCategory,
+      category: formCategory ? formCategory.trim() : "Residential",
       location: formLocation.trim() || "Delhi NCR",
       area: formArea.trim() || "2,500 sq ft",
       year: formYear.trim() || new Date().getFullYear().toString(),
@@ -290,11 +330,23 @@ export default function PortfolioManagerPage() {
         return;
       }
 
-      await cmsAddProject(data.project || newProj);
+      const current = loadCmsStore();
+      const nextProjects = Array.isArray(data.projects)
+        ? data.projects
+        : [data.project || newProj, ...current.projects];
+      const updatedStore: CmsStore = {
+        ...current,
+        projects: nextProjects,
+        updatedAt: Date.now(),
+      };
+      try {
+        localStorage.setItem("bright_space_cms_data", JSON.stringify(updatedStore));
+      } catch {}
+      window.dispatchEvent(new CustomEvent("bright_space_cms_updated", { detail: updatedStore }));
       setSaving(false);
       setShowAddModal(false);
       resetAddForm();
-      notifySuccess(`New project "${newProj.title}" added to portfolio and published live!`);
+      notifySuccess(data.message || `New project "${newProj.title}" added to portfolio and published live!`);
     } catch {
       const ok = await cmsAddProject(newProj);
       setSaving(false);
@@ -306,6 +358,18 @@ export default function PortfolioManagerPage() {
         notifyError(`Could not publish "${newProj.title}". Please check connection.`);
       }
     }
+  };
+
+  const handleExportCmsStore = () => {
+    const store = loadCmsStore();
+    const blob = new Blob([JSON.stringify(store, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `bright_space_cms_store_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    notifySuccess("Exported latest cms-store.json backup!");
   };
 
   const resetAddForm = () => {
@@ -382,7 +446,16 @@ export default function PortfolioManagerPage() {
             Add, edit, or delete projects and gallery photos. All edits update live on the public website. ({projects.length} live projects)
           </p>
         </div>
-        <div style={{ display: "flex", gap: "12px" }}>
+        <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+          <button
+            onClick={handleExportCmsStore}
+            className="admin-btn admin-btn--outline"
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+            title="Download complete cms-store.json backup"
+            id="portfolio-export-data"
+          >
+            <Download size={14} /> Export Store JSON
+          </button>
           <Link href="/portfolio" target="_blank" className="admin-btn admin-btn--outline" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
             <ExternalLink size={14} /> View Public Portfolio
           </Link>
@@ -395,6 +468,53 @@ export default function PortfolioManagerPage() {
           </button>
         </div>
       </div>
+
+      {/* Database Persistence Status Banner */}
+      {storageStatus && !storageStatus.isConfigured && (
+        <div
+          style={{
+            background: "#FFFBEB",
+            border: "1px solid #FCD34D",
+            borderRadius: "10px",
+            padding: "14px 18px",
+            marginBottom: "24px",
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "12px",
+          }}
+        >
+          <AlertCircle size={20} color="#D97706" style={{ flexShrink: 0, marginTop: "2px" }} />
+          <div style={{ flex: 1, fontSize: "13px", color: "#92400E", lineHeight: 1.5 }}>
+            <div style={{ fontWeight: 700, marginBottom: "2px" }}>
+              Permanent Cloud Storage Notice: Running in Serverless Cache Mode
+            </div>
+            <div>
+              Your edits update immediately and are protected in your browser. To make all edits permanently persist across server cold starts and redeployments, add your Firebase credentials in Vercel Project Settings (<code>FIREBASE_PROJECT_ID</code>, <code>FIREBASE_CLIENT_EMAIL</code>, <code>FIREBASE_PRIVATE_KEY</code>). You can also click <strong>&quot;Export Store JSON&quot;</strong> to save a permanent backup at any time.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {storageStatus && storageStatus.isConfigured && (
+        <div
+          style={{
+            background: "#ECFDF5",
+            border: "1px solid #A7F3D0",
+            borderRadius: "10px",
+            padding: "10px 16px",
+            marginBottom: "24px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            fontSize: "12px",
+            color: "#065F46",
+            fontWeight: 600,
+          }}
+        >
+          <Check size={16} color="#059669" />
+          <span>Cloud Database (Firestore) Active: All project updates persist permanently in production.</span>
+        </div>
+      )}
 
       {/* Filter & Search Bar */}
       <div className="admin-table-wrap" style={{ padding: "16px 20px", marginBottom: "24px" }}>
