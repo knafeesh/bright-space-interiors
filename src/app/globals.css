@@ -4436,6 +4436,50 @@ p {
 /* ═══════════════════════════════════════════
    SERVICES CAROUSEL (Shared Component)
 ═══════════════════════════════════════════ */
+.services-carousel-section {
+  padding: 90px 0 80px;
+  background: var(--ivory, #F8F4EC);
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.services-carousel-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Header Row (Home Page) */
+.services-carousel-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.services-carousel-all-link {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-dark, #9A7A45);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(184, 151, 90, 0.4);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.services-carousel-all-link:hover {
+  color: var(--gold, #B8975A);
+  border-color: var(--gold, #B8975A);
+}
+
 .services-carousel-wrapper {
   width: 100%;
   position: relative;
@@ -4466,7 +4510,7 @@ p {
   display: none;
 }
 
-/* Desktop: exactly 3 full cards */
+/* Desktop: exactly 3 full cards (>= 1024px) */
 .services-carousel-slide {
   flex: 0 0 calc((100% - 48px) / 3);
   width: calc((100% - 48px) / 3);
@@ -4517,36 +4561,39 @@ p {
   }
 }
 
+/* Dark gradient: transparent to ~75% black, covering lower 45-50% */
 .services-carousel-card-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(20, 16, 14, 0.90) 0%,
-    rgba(20, 16, 14, 0.45) 45%,
-    rgba(20, 16, 14, 0.05) 75%,
-    transparent 100%
+    rgba(18, 14, 12, 0.85) 0%,
+    rgba(18, 14, 12, 0.75) 25%,
+    rgba(18, 14, 12, 0.35) 45%,
+    transparent 55%
   );
   pointer-events: none;
 }
 
 .services-carousel-card-title {
   position: absolute;
-  left: 20px;
-  bottom: 22px;
+  left: 24px;
+  bottom: 24px;
   right: 72px;
   font-family: var(--font-serif);
-  font-size: clamp(22px, 2.2vw, 28px);
+  font-size: clamp(24px, 2.5vw, 32px);
   font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   line-height: 1.15;
   color: #FFFFFF;
   margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.75);
   pointer-events: none;
+  word-break: break-word;
 }
 
+/* Circular up-right arrow icon (44x44px, thin white outline) */
 .services-carousel-arrow-btn {
   position: absolute;
   right: 16px;
@@ -4554,10 +4601,10 @@ p {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   color: #FFFFFF;
   display: flex;
   align-items: center;
@@ -4567,7 +4614,52 @@ p {
   pointer-events: none;
 }
 
-/* Details block below each card */
+/* Navigation Controls: "<" and ">" Buttons */
+.services-carousel-nav {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.services-carousel-nav-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--charcoal, #1C1C1C);
+  background: transparent;
+  color: var(--charcoal, #1C1C1C);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  outline: none;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.services-carousel-nav-btn:focus-visible {
+  outline: 2px solid var(--gold, #B8975A);
+  outline-offset: 2px;
+}
+
+.services-carousel-nav-btn:disabled,
+.services-carousel-nav-btn[aria-disabled="true"] {
+  opacity: 0.3 !important;
+  cursor: default !important;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .services-carousel-nav-btn:not(:disabled):hover {
+    border-color: var(--gold, #B8975A);
+    color: var(--gold, #B8975A);
+  }
+}
+
+/* Details block below each card (Services Hub Page) */
 .services-carousel-details {
   margin-top: 16px;
   display: flex;
@@ -4595,7 +4687,7 @@ p {
   margin: 0;
 }
 
-/* Thin Progress Bar below carousel */
+/* Thin Progress Bar below carousel (when controls === "progress") */
 .services-carousel-progress-wrap {
   display: flex;
   justify-content: center;
@@ -4649,6 +4741,22 @@ p {
 
 /* Mobile (< 640px): exactly 1 full card */
 @media (max-width: 639px) {
+  .services-carousel-section {
+    padding: 60px 0 56px;
+  }
+
+  .services-carousel-container {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  .services-carousel-header {
+    margin-bottom: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
   .services-carousel-track {
     gap: 16px;
     padding-left: 0;
@@ -4673,6 +4781,12 @@ p {
     height: 44px;
     right: 16px;
     bottom: 16px;
+  }
+
+  .services-carousel-nav {
+    justify-content: center;
+    margin-top: 16px;
+    gap: 10px;
   }
 
   .services-carousel-details {
@@ -4700,6 +4814,7 @@ p {
     transition: none !important;
   }
 }
+
 
 
 

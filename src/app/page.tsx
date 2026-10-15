@@ -9,7 +9,7 @@ import ProjectCard from "@/components/ui/ProjectCard";
 import ClientListSection from "@/components/ui/ClientListSection";
 import DesignIdeasSection from "@/components/ui/DesignIdeasSection";
 import DesignToMoveInSection from "@/components/ui/DesignToMoveInSection";
-import ServicesAccordion from "@/components/ui/ServicesAccordion";
+import ServicesCarousel from "@/components/ui/ServicesCarousel";
 import DesignPhilosophyShowcase from "@/components/ui/DesignPhilosophyShowcase";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
@@ -392,8 +392,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════ SERVICES ACCORDION (WHAT WE DO) ══════════════ */}
-      <ServicesAccordion />
+      {/* ══════════════ OUR SERVICES CAROUSEL (WHAT WE DO) ══════════════ */}
+      <ServicesCarousel />
 
       {/* ══════════════ RECENT PROJECTS ══════════════ */}
       <section className="projects-section" aria-label="Recent projects">

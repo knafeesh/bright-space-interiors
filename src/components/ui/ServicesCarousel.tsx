@@ -3,14 +3,78 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { NAV_SERVICES, NavService } from "@/lib/data";
+
+// ── Shared Services Carousel Items ──────────────────────────────────────────
+// Keep the image paths in this array so they can be easily modified later.
+export interface ServiceCarouselItem {
+  title: string;
+  slug: string;
+  image: string;
+  href: string;
+  description: string;
+}
+
+export const SERVICE_CAROUSEL_ITEMS: ServiceCarouselItem[] = [
+  {
+    title: "Residential Interior",
+    slug: "residential",
+    image: "/images/gurugram-manish-living-mirror-wall.jpg",
+    href: "/services/residential",
+    description:
+      "Full-home interiors for apartments, villas and builder floors, from floor plan to move-in.",
+  },
+  {
+    title: "Modular Kitchen & Wardrobes",
+    slug: "modular-kitchen-wardrobes",
+    image: "/images/kitchen-delhi-ncr-modern-lshape.jpg",
+    href: "/services#specialty",
+    description:
+      "Custom-fit kitchens and storage built around your layout and budget.",
+  },
+  {
+    title: "Commercial Interior",
+    slug: "commercial",
+    image: "/images/office-gurugram-open-floor.jpg",
+    href: "/services/commercial",
+    description:
+      "Offices, salons and retail spaces shaped around your brand and daily workflow.",
+  },
+  {
+    title: "Civil & Renovation",
+    slug: "civil-renovation",
+    image: "/images/sushant-lok-vdeliver-grand-hall-cove.jpg",
+    href: "/services#specialty",
+    description:
+      "Masonry, flooring, waterproofing and painting to make an older space feel new.",
+  },
+  {
+    title: "Turnkey Projects",
+    slug: "turnkey",
+    image: "/images/salon-rawls-mainhall.jpg",
+    href: "/services/turnkey",
+    description:
+      "Design, civil and interiors under one team and one contract.",
+  },
+  {
+    title: "Design & 3D Visualisation",
+    slug: "design-execution",
+    image: "/images/design-philosophy/philosophy-3.jpg",
+    href: "/services/design-execution",
+    description:
+      "Detailed drawings and realistic 3D views, so you see the result before work begins.",
+  },
+];
 
 interface ServicesCarouselProps {
   showDetails?: boolean;
+  controls?: "arrows" | "progress";
+  showHeader?: boolean;
 }
 
 export default function ServicesCarousel({
   showDetails = false,
+  controls = "arrows",
+  showHeader = true,
 }: ServicesCarouselProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
@@ -21,51 +85,82 @@ export default function ServicesCarousel({
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
 
-  // Scroll progress state (0 to 1) and visible card ratio for thumb width
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [thumbWidthRatio, setThumbWidthRatio] = useState(0.5); // Default desktop 3/6
+  // Scroll boundary state for "<" and ">" buttons
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(true);
 
-  // Calculate thumb width ratio and update progress based on container size
-  const updateMetrics = useCallback(() => {
+  // Progress metrics state for progress bar (when controls === "progress")
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [thumbWidthRatio, setThumbWidthRatio] = useState(0.5);
+
+  const updateScrollState = useCallback(() => {
     const track = trackRef.current;
     if (!track) return;
 
-    const scrollWidth = track.scrollWidth;
-    const clientWidth = track.clientWidth;
-    const maxScroll = scrollWidth - clientWidth;
+    const scrollLeft = track.scrollLeft;
+    const maxScroll = track.scrollWidth - track.clientWidth;
 
-    if (maxScroll > 0) {
-      const progress = track.scrollLeft / maxScroll;
-      setScrollProgress(Math.min(1, Math.max(0, progress)));
-    } else {
-      setScrollProgress(0);
-    }
+    // Boundary check with 2px tolerance
+    setCanScrollPrev(scrollLeft > 2);
+    setCanScrollNext(scrollLeft < maxScroll - 2);
 
-    // Ratio of visible cards to total cards (determines thumb width)
-    if (scrollWidth > 0) {
-      const ratio = clientWidth / scrollWidth;
-      setThumbWidthRatio(Math.min(1, Math.max(0.16, ratio)));
+    // Update progress bar metrics if enabled
+    if (controls === "progress") {
+      if (maxScroll > 0) {
+        setScrollProgress(Math.min(1, Math.max(0, scrollLeft / maxScroll)));
+      } else {
+        setScrollProgress(0);
+      }
+      if (track.scrollWidth > 0) {
+        const ratio = track.clientWidth / track.scrollWidth;
+        setThumbWidthRatio(Math.min(1, Math.max(0.16, ratio)));
+      }
     }
-  }, []);
+  }, [controls]);
 
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
 
-    updateMetrics();
+    updateScrollState();
 
     const handleScroll = () => {
-      updateMetrics();
+      updateScrollState();
     };
 
     track.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", updateMetrics);
+    window.addEventListener("resize", updateScrollState);
 
     return () => {
       track.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", updateMetrics);
+      window.removeEventListener("resize", updateScrollState);
     };
-  }, [updateMetrics]);
+  }, [updateScrollState]);
+
+  // Button navigation: scroll by exactly one card (card width + gap)
+  const scrollByCard = (direction: "prev" | "next") => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const slide = track.querySelector<HTMLDivElement>(
+      ".services-carousel-slide"
+    );
+    if (!slide) return;
+
+    const slideWidth = slide.offsetWidth;
+    const computedGap =
+      parseInt(window.getComputedStyle(track).gap || "24", 10) || 24;
+    const step = slideWidth + computedGap;
+
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    track.scrollBy({
+      left: direction === "next" ? step : -step,
+      behavior: prefersReduced ? "auto" : "smooth",
+    });
+  };
 
   // Click on progress bar jumps directly to that position
   const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -149,7 +244,10 @@ export default function ServicesCarousel({
   };
 
   // Handle card click: smooth scroll to #specialty if on /services, prevent click if user dragged
-  const handleCardClick = (e: React.MouseEvent, service: NavService) => {
+  const handleCardClick = (
+    e: React.MouseEvent,
+    service: ServiceCarouselItem
+  ) => {
     if (hasMovedRef.current) {
       e.preventDefault();
       return;
@@ -171,102 +269,192 @@ export default function ServicesCarousel({
   };
 
   return (
-    <div
-      className="services-carousel-wrapper"
-      role="region"
-      aria-label="Core Services Carousel"
+    <section
+      className="services-carousel-section"
+      aria-label="Our services"
     >
-      {/* ── Carousel Track ── */}
-      <div
-        ref={trackRef}
-        className="services-carousel-track"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUpOrLeave}
-        onMouseLeave={handleMouseUpOrLeave}
-      >
-        {NAV_SERVICES.map((service, index) => (
-          <div
-            key={service.slug}
-            className="services-carousel-slide"
-            id={`service-slide-${service.slug}`}
-          >
-            {/* ── Portrait Photo Card (Aspect Ratio 3:4) ── */}
-            <Link
-              href={service.href}
-              className="services-carousel-card"
-              aria-label={`${service.title} - View details and portfolio`}
-              onClick={(e) => handleCardClick(e, service)}
-            >
-              <img
-                src={service.image}
-                alt={`${service.title} interior design by Bright Space Interiors`}
-                loading={index === 0 ? "eager" : "lazy"}
-                width={600}
-                height={800}
-                className="services-carousel-card-img"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).style.opacity = "0";
-                }}
-              />
-
-              {/* Dark Gradient Overlay */}
-              <div className="services-carousel-card-overlay" />
-
-              {/* White uppercase light-weight title bottom-left */}
-              <span className="services-carousel-card-title">
-                {service.title}
+      <div className="container services-carousel-container">
+        {/* ── Section Header Row (Home Page) ── */}
+        {showHeader && (
+          <div className="services-carousel-header">
+            <div>
+              <span className="eyebrow" style={{ display: "block", marginBottom: "8px" }}>
+                What we do
               </span>
+              <h2
+                style={{
+                  fontFamily: "var(--font-serif)",
+                  fontSize: "clamp(28px, 3.5vw, 42px)",
+                  fontWeight: 500,
+                  letterSpacing: "0.03em",
+                  margin: 0,
+                  color: "var(--charcoal)",
+                  lineHeight: 1.15,
+                }}
+              >
+                Interiors from concept
+                <br />
+                to handover
+              </h2>
+            </div>
+            <Link
+              href="/services"
+              id="home-services-all-link"
+              className="services-carousel-all-link"
+            >
+              All services <ArrowUpRight size={14} aria-hidden="true" style={{ marginLeft: "4px" }} />
+            </Link>
+          </div>
+        )}
 
-              {/* Circular up-right arrow bottom-right */}
-              <div
-                className="services-carousel-arrow-btn"
+        {/* ── Carousel Track ── */}
+        <div
+          ref={trackRef}
+          className="services-carousel-track"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUpOrLeave}
+          onMouseLeave={handleMouseUpOrLeave}
+        >
+          {SERVICE_CAROUSEL_ITEMS.map((service, index) => (
+            <div
+              key={service.slug}
+              className="services-carousel-slide"
+              id={`service-slide-${service.slug}`}
+            >
+              {/* ── Portrait Photo Card (Aspect Ratio 3:4) ── */}
+              <Link
+                href={service.href}
+                className="services-carousel-card"
+                aria-label={`${service.title} - View service details`}
+                onClick={(e) => handleCardClick(e, service)}
+              >
+                <img
+                  src={service.image}
+                  alt={`${service.title} interior design by Bright Space Interiors`}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  width={600}
+                  height={800}
+                  className="services-carousel-card-img"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.opacity = "0";
+                  }}
+                />
+
+                {/* Dark Gradient Overlay (transparent to 75% black, covering lower 45-50%) */}
+                <div className="services-carousel-card-overlay" />
+
+                {/* Service title: bottom-left, large, white, uppercase, light weight */}
+                <span className="services-carousel-card-title">
+                  {service.title}
+                </span>
+
+                {/* Circular up-right arrow bottom-right (44x44px, thin white outline) */}
+                <div
+                  className="services-carousel-arrow-btn"
+                  aria-hidden="true"
+                >
+                  <ArrowUpRight size={20} strokeWidth={1.75} />
+                </div>
+              </Link>
+
+              {/* ── Details Block Below Each Card (when showDetails is true) ── */}
+              {showDetails && (
+                <div className="services-carousel-details">
+                  <h3 className="services-carousel-detail-title">
+                    {service.title}
+                  </h3>
+                  <p className="services-carousel-detail-desc">
+                    {service.description}
+                  </p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* ── Navigation Controls: "<" and ">" Buttons ── */}
+        {controls === "arrows" && (
+          <div className="services-carousel-nav">
+            <button
+              type="button"
+              className="services-carousel-nav-btn"
+              onClick={() => scrollByCard("prev")}
+              disabled={!canScrollPrev}
+              aria-label="Previous service"
+              id="services-carousel-prev"
+            >
+              {/* Simple chevron left inline SVG */}
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 aria-hidden="true"
               >
-                <ArrowUpRight size={20} strokeWidth={2} />
-              </div>
-            </Link>
-
-            {/* ── Details Block Below Each Card (when showDetails is true) ── */}
-            {showDetails && (
-              <div className="services-carousel-details">
-                <h3 className="services-carousel-detail-title">
-                  {service.title}
-                </h3>
-                <p className="services-carousel-detail-desc">
-                  {service.description}
-                </p>
-              </div>
-            )}
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="services-carousel-nav-btn"
+              onClick={() => scrollByCard("next")}
+              disabled={!canScrollNext}
+              aria-label="Next service"
+              id="services-carousel-next"
+            >
+              {/* Simple chevron right inline SVG */}
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
           </div>
-        ))}
-      </div>
+        )}
 
-      {/* ── Interactive Progress Bar ── */}
-      <div className="services-carousel-progress-wrap">
-        <div
-          ref={progressBarRef}
-          className="services-carousel-progress-bar"
-          onClick={handleProgressBarClick}
-          onKeyDown={handleProgressKeyDown}
-          role="slider"
-          aria-label="Services carousel navigation slider"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(scrollProgress * 100)}
-          tabIndex={0}
-        >
-          <div
-            className="services-carousel-progress-thumb"
-            style={{
-              width: `${thumbWidthRatio * 100}%`,
-              transform: `translateX(${
-                scrollProgress * ((1 - thumbWidthRatio) / thumbWidthRatio) * 100
-              }%)`,
-            }}
-          />
-        </div>
+        {/* ── Progress Bar Slider (when controls === "progress") ── */}
+        {controls === "progress" && (
+          <div className="services-carousel-progress-wrap">
+            <div
+              ref={progressBarRef}
+              className="services-carousel-progress-bar"
+              onClick={handleProgressBarClick}
+              onKeyDown={handleProgressKeyDown}
+              role="slider"
+              aria-label="Services carousel navigation slider"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(scrollProgress * 100)}
+              tabIndex={0}
+            >
+              <div
+                className="services-carousel-progress-thumb"
+                style={{
+                  width: `${thumbWidthRatio * 100}%`,
+                  transform: `translateX(${
+                    scrollProgress *
+                    ((1 - thumbWidthRatio) / thumbWidthRatio) *
+                    100
+                  }%)`,
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 }
