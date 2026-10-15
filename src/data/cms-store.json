@@ -4,7 +4,7 @@
       "id": 101,
       "slug": "rawls-salon-luxury",
       "title": "Rawls Salon — Flagship Turnkey Luxury Salon",
-      "category": "Salon",
+      "category": "COMMERCIAL",
       "location": "Delhi NCR",
       "area": "5,000 sq ft",
       "year": "2024",
@@ -30,13 +30,17 @@
         "Double-Glazed Facade"
       ],
       "bgGradient": "linear-gradient(135deg, #1C1917 0%, #2A231E 100%)",
-      "status": "Completed"
+      "status": "Completed",
+      "categories": [
+        "COMMERCIAL",
+        "TURNKEY"
+      ]
     },
     {
       "id": 102,
       "slug": "gurugram-corporate-office",
       "title": "Gurugram Corporate Office — Modern Turnkey Workspace",
-      "category": "Office",
+      "category": "COMMERCIAL",
       "location": "Cyber City, Gurugram",
       "area": "6,500 sq ft",
       "year": "2024",
@@ -63,13 +67,17 @@
         "Acoustic Fabric Screens",
         "Industrial Baffle Ceilings"
       ],
-      "bgGradient": "linear-gradient(135deg, #161D26 0%, #202A36 100%)"
+      "bgGradient": "linear-gradient(135deg, #161D26 0%, #202A36 100%)",
+      "categories": [
+        "COMMERCIAL",
+        "TURNKEY"
+      ]
     },
     {
       "id": 9,
       "slug": "shri-ram-complex-v-deliver-sushant-lok",
       "title": "Shri Ram Complex — Civil, Interior & Waterproofing",
-      "category": "Commercial",
+      "category": "COMMERCIAL",
       "location": "Shri Ram Complex, Sushant Lok Phase 1, Gurugram",
       "area": "2,500 sq ft (Carpet Area)",
       "year": "2021",
@@ -96,13 +104,17 @@
         "Architectural Wood Panelling & Custom Joinery",
         "Ornate Gold-Leaf Mirror Framing"
       ],
-      "bgGradient": "linear-gradient(135deg, #1C2030 0%, #202535 100%)"
+      "bgGradient": "linear-gradient(135deg, #1C2030 0%, #202535 100%)",
+      "categories": [
+        "COMMERCIAL",
+        "CIVIL & RENOVATION"
+      ]
     },
     {
       "id": 6,
       "slug": "turnkey-modular-kitchens-delhi-ncr",
       "title": "Bespoke Modular Kitchens — Delhi NCR",
-      "category": "Turnkey",
+      "category": "MODULAR KITCHEN",
       "location": "Amar Colony, Old Rajendra Nagar, Saket, Faridabad, Gurugram, Noida (Delhi NCR)",
       "area": "Multi-Site Turnkey Kitchens",
       "year": "2024",
@@ -129,13 +141,17 @@
         "Blum Soft-Close Hydraulic Hardware",
         "BWP Marine Grade Plywood"
       ],
-      "bgGradient": "linear-gradient(135deg, #1C2226 0%, #29241C 100%)"
+      "bgGradient": "linear-gradient(135deg, #1C2226 0%, #29241C 100%)",
+      "categories": [
+        "MODULAR KITCHEN",
+        "TURNKEY"
+      ]
     },
     {
       "id": 7,
       "slug": "mr-manish-singh-home-gurugram",
       "title": "Mr. Manish Singh's Home — Civil & Interior Work",
-      "category": "Residential",
+      "category": "RESIDENTIAL",
       "location": "Park View City, Sector 48, Gurugram",
       "area": "1,300 sq ft (Carpet Area)",
       "year": "2024",
@@ -161,13 +177,17 @@
         "Architectural Glass Partitions",
         "Floating Console & Desk Joinery"
       ],
-      "bgGradient": "linear-gradient(135deg, #201E26 0%, #2A2433 100%)"
+      "bgGradient": "linear-gradient(135deg, #201E26 0%, #2A2433 100%)",
+      "categories": [
+        "RESIDENTIAL",
+        "CIVIL & RENOVATION"
+      ]
     },
     {
       "id": 1,
       "slug": "the-hair-palace-london",
       "title": "The Hair Palace London — Salon & Academy",
-      "category": "Salon",
+      "category": "COMMERCIAL",
       "location": "Delhi NCR",
       "area": "4,500 sq ft",
       "year": "2024",
@@ -192,13 +212,16 @@
         "Travertine Marble",
         "Acoustic Drywall"
       ],
-      "bgGradient": "linear-gradient(135deg, #1C1C1C 0%, #2A2521 100%)"
+      "bgGradient": "linear-gradient(135deg, #1C1C1C 0%, #2A2521 100%)",
+      "categories": [
+        "COMMERCIAL"
+      ]
     },
     {
       "id": 2,
       "slug": "hair-palace-salon-lounge",
       "title": "L'Oréal & Kérastase Retail Lounge",
-      "category": "Salon",
+      "category": "COMMERCIAL",
       "location": "Delhi NCR",
       "area": "2,200 sq ft",
       "year": "2024",
@@ -222,13 +245,16 @@
         "Back-Lit Acrylic",
         "High-CRI LED"
       ],
-      "bgGradient": "linear-gradient(135deg, #2E2418 0%, #3D3025 100%)"
+      "bgGradient": "linear-gradient(135deg, #2E2418 0%, #3D3025 100%)",
+      "categories": [
+        "COMMERCIAL"
+      ]
     },
     {
       "id": 3,
       "slug": "hair-palace-vip-pedispa",
       "title": "Executive Waiting Suite & Pedispa",
-      "category": "Salon",
+      "category": "COMMERCIAL",
       "location": "Delhi NCR",
       "area": "1,800 sq ft",
       "year": "2024",
@@ -252,13 +278,16 @@
         "Bleached Pine Planks",
         "Hand-Knotted Carpet"
       ],
-      "bgGradient": "linear-gradient(135deg, #24201A 0%, #2E261E 100%)"
+      "bgGradient": "linear-gradient(135deg, #24201A 0%, #2E261E 100%)",
+      "categories": [
+        "COMMERCIAL"
+      ]
     },
     {
       "id": 4,
       "slug": "hair-palace-royal-styling",
       "title": "Royal Styling Stations & Private Treatment Suites",
-      "category": "Salon",
+      "category": "COMMERCIAL",
       "location": "Delhi NCR",
       "area": "2,000 sq ft",
       "year": "2024",
@@ -282,13 +311,16 @@
         "Checkerboard Marble",
         "Hydraulic Leather Chairs"
       ],
-      "bgGradient": "linear-gradient(135deg, #2E251A 0%, #3D3220 100%)"
+      "bgGradient": "linear-gradient(135deg, #2E251A 0%, #3D3220 100%)",
+      "categories": [
+        "COMMERCIAL"
+      ]
     },
     {
       "id": 5,
       "slug": "bespoke-turnkey-modular-kitchen",
       "title": "Saket Dual-Tone Modular Kitchen",
-      "category": "Turnkey",
+      "category": "MODULAR KITCHEN",
       "location": "Saket, South Delhi",
       "area": "1,200 sq ft",
       "year": "2024",
@@ -312,13 +344,17 @@
         "Calacatta Quartz",
         "Tandem Soft-Close"
       ],
-      "bgGradient": "linear-gradient(135deg, #1C2226 0%, #26221C 100%)"
+      "bgGradient": "linear-gradient(135deg, #1C2226 0%, #26221C 100%)",
+      "categories": [
+        "MODULAR KITCHEN",
+        "TURNKEY"
+      ]
     },
     {
       "id": 8,
       "slug": "contemporary-turnkey-kitchen",
       "title": "Contemporary Cherry & Cream Turnkey Kitchen",
-      "category": "Turnkey",
+      "category": "MODULAR KITCHEN",
       "location": "Sushant Lok, Gurugram",
       "area": "1,100 sq ft",
       "year": "2024",
@@ -342,13 +378,17 @@
         "Quartz Worktops",
         "Stainless Steel Sink"
       ],
-      "bgGradient": "linear-gradient(135deg, #2A1C1C 0%, #352020 100%)"
+      "bgGradient": "linear-gradient(135deg, #2A1C1C 0%, #352020 100%)",
+      "categories": [
+        "MODULAR KITCHEN",
+        "TURNKEY"
+      ]
     },
     {
       "id": 10,
       "slug": "agarwal-residence-ranchi",
       "title": "Agarwal Family Turnkey Residence",
-      "category": "Residential",
+      "category": "RESIDENTIAL",
       "location": "Ranchi",
       "area": "1,350 sq ft",
       "year": "2024",
@@ -372,7 +412,11 @@
         "Vintage Brass",
         "Italian Marble"
       ],
-      "bgGradient": "linear-gradient(135deg, #24201A 0%, #2E261E 100%)"
+      "bgGradient": "linear-gradient(135deg, #24201A 0%, #2E261E 100%)",
+      "categories": [
+        "RESIDENTIAL",
+        "TURNKEY"
+      ]
     }
   ],
   "services": [

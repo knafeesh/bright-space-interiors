@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Link from "next/link";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { TESTIMONIALS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects } from "@/lib/cms";
-import CategoryCarousel from "@/components/ui/CategoryCarousel";
+import ProjectFilterBar from "@/components/ui/ProjectFilterBar";
 import ProjectCard from "@/components/ui/ProjectCard";
 import ClientListSection from "@/components/ui/ClientListSection";
 import DesignIdeasSection from "@/components/ui/DesignIdeasSection";
@@ -78,7 +78,7 @@ function useFadeIn() {
 
 
 
-const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
+
 
 const BRAND_STATS = [
   {
@@ -177,14 +177,31 @@ const BRAND_STATS = [
 ];
 
 export default function HomePage() {
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeFilter, setActiveFilter] = useState("ALL");
+  const [isFading, setIsFading] = useState(false);
   const sectionRef = useFadeIn();
   const cmsProjects = useCmsProjects();
 
-  const filteredProjects =
-    activeFilter === "All"
-      ? cmsProjects.filter((p) => p.featured)
-      : cmsProjects.filter((p) => p.category.toLowerCase() === activeFilter.toLowerCase());
+  const handleFilterChange = (cat: string) => {
+    if (cat === activeFilter) return;
+    setIsFading(true);
+    setTimeout(() => {
+      setActiveFilter(cat);
+      setIsFading(false);
+    }, 150);
+  };
+
+  const filteredProjects = useMemo(() => {
+    if (activeFilter === "ALL") {
+      return cmsProjects;
+    }
+    return cmsProjects.filter((p) => {
+      const cats = (
+        p.categories && p.categories.length > 0 ? p.categories : [p.category || ""]
+      ).map((c) => c.toUpperCase());
+      return cats.includes(activeFilter.toUpperCase());
+    });
+  }, [cmsProjects, activeFilter]);
 
   return (
     <>
@@ -409,25 +426,14 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="filter-bar" role="group" aria-label="Project filters">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                className={`filter-chip${activeFilter === cat ? " filter-chip--active" : ""}`}
-                onClick={() => setActiveFilter(cat)}
-                id={`filter-${cat.toLowerCase().replace(" ", "-")}`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+          <ProjectFilterBar
+            projects={cmsProjects}
+            activeFilter={activeFilter}
+            onFilterChange={handleFilterChange}
+            idPrefix="home-filter"
+          />
 
-          {/* Automatic Image Carousel for Office, Salon, Hotel */}
-          {["office", "salon", "hotel"].includes(activeFilter.toLowerCase()) && (
-            <CategoryCarousel category={activeFilter} />
-          )}
-
-          <div className="projects-grid">
+          <div className={`projects-grid${isFading ? " projects-grid--fading" : ""}`}>
             {filteredProjects.slice(0, 6).map((project) => (
               <ProjectCard key={project.id} project={project} idPrefix="project-card" />
             ))}

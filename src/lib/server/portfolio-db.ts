@@ -223,6 +223,10 @@ export async function updateProjectInDb(
     slug: updated.slug?.trim() || existing.slug,
     title: updated.title?.trim() !== undefined && updated.title.trim() !== "" ? updated.title.trim() : existing.title,
     category: finalCategory,
+    categories:
+      Array.isArray(updated.categories) && updated.categories.length > 0
+        ? updated.categories
+        : (existing.categories || [finalCategory]),
     location: updated.location !== undefined ? updated.location.trim() : existing.location,
     area: updated.area !== undefined ? updated.area.trim() : existing.area,
     year: updated.year !== undefined ? updated.year.trim() : existing.year,

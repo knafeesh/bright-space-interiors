@@ -83,7 +83,16 @@ export default function PortfolioManagerPage() {
   const [editFeatured, setEditFeatured] = useState(false);
   const [newGalleryUrl, setNewGalleryUrl] = useState("");
 
-  const categories = ["All", "Residential", "Commercial", "Turnkey", "Office", "Salon"];
+  const categories = [
+    "All",
+    "Residential",
+    "Modular Kitchen",
+    "Wardrobes",
+    "Commercial",
+    "Civil & Renovation",
+    "Turnkey",
+    "Design & Visualisation",
+  ];
 
   const filteredProjects = projects.filter((p) => {
     const matchCategory =
@@ -294,6 +303,7 @@ export default function PortfolioManagerPage() {
       slug: cleanSlug,
       title: formTitle.trim(),
       category: formCategory ? formCategory.trim() : "Residential",
+      categories: [formCategory ? formCategory.trim().toUpperCase() : "RESIDENTIAL"],
       location: formLocation.trim() || "Delhi NCR",
       area: formArea.trim() || "2,500 sq ft",
       year: formYear.trim() || new Date().getFullYear().toString(),
@@ -768,11 +778,12 @@ export default function PortfolioManagerPage() {
                     style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
                   >
                     <option value="Residential">Residential</option>
+                    <option value="Modular Kitchen">Modular Kitchen</option>
+                    <option value="Wardrobes">Wardrobes</option>
                     <option value="Commercial">Commercial</option>
+                    <option value="Civil & Renovation">Civil & Renovation</option>
                     <option value="Turnkey">Turnkey</option>
-                    <option value="Salon">Salon</option>
-                    <option value="Hotel">Hotel</option>
-                    <option value="Office">Office</option>
+                    <option value="Design & Visualisation">Design & Visualisation</option>
                   </select>
                 </div>
               </div>
@@ -1118,11 +1129,12 @@ export default function PortfolioManagerPage() {
                     style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
                   >
                     <option value="Residential">Residential</option>
+                    <option value="Modular Kitchen">Modular Kitchen</option>
+                    <option value="Wardrobes">Wardrobes</option>
                     <option value="Commercial">Commercial</option>
+                    <option value="Civil & Renovation">Civil & Renovation</option>
                     <option value="Turnkey">Turnkey</option>
-                    <option value="Salon">Salon</option>
-                    <option value="Hotel">Hotel</option>
-                    <option value="Office">Office</option>
+                    <option value="Design & Visualisation">Design & Visualisation</option>
                   </select>
                 </div>
                 <div>

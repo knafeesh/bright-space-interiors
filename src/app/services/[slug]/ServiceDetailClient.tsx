@@ -57,11 +57,17 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
   if (!service) notFound();
 
   const relatedProjects = (cmsProjects.length > 0 ? cmsProjects : PROJECTS).filter(
-    (p) =>
-      p.category.toLowerCase() === slug.toLowerCase() ||
-      (slug === "residential" && p.category.toLowerCase() === "residential") ||
-      (slug === "commercial" && ["commercial", "office", "salon", "hotel"].includes(p.category.toLowerCase())) ||
-      (slug === "turnkey" && p.category.toLowerCase() === "turnkey")
+    (p) => {
+      const cats = (p.categories && p.categories.length > 0 ? p.categories : [p.category || ""]).map((c) =>
+        c.toLowerCase()
+      );
+      return (
+        cats.includes(slug.toLowerCase()) ||
+        (slug === "residential" && cats.includes("residential")) ||
+        (slug === "commercial" && cats.includes("commercial")) ||
+        (slug === "turnkey" && cats.includes("turnkey"))
+      );
+    }
   ).slice(0, 3);
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);

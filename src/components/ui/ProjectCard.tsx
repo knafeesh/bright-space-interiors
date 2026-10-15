@@ -144,6 +144,12 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
     setActiveImgIdx(idx);
   };
 
+  const categoriesList =
+    Array.isArray(project.categories) && project.categories.length > 0
+      ? project.categories
+      : [project.category || ""];
+  const categoryLabel = categoriesList.map((c) => c.toUpperCase()).join(" · ");
+
   return (
     <div
       className="project-card"
@@ -184,22 +190,26 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
             top: "10px",
             left: "10px",
             zIndex: 3,
-            background: "rgba(20, 18, 16, 0.82)",
+            background: "rgba(20, 18, 16, 0.85)",
             WebkitBackdropFilter: "blur(6px)",
             backdropFilter: "blur(6px)",
             border: "1px solid rgba(212, 184, 122, 0.5)",
             color: "#E5D2A4",
-            padding: "3.5px 10px",
-            borderRadius: "50px",
+            padding: "4px 12px",
+            borderRadius: "999px",
             fontFamily: "var(--font-sans)",
             fontSize: "9.5px",
             fontWeight: 700,
-            letterSpacing: "0.12em",
+            letterSpacing: "0.08em",
             textTransform: "uppercase",
             pointerEvents: "none",
+            maxWidth: "calc(100% - 20px)",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
         >
-          {project.category}
+          {categoryLabel}
         </div>
 
         {/* Horizontal Sliding Track */}
@@ -284,7 +294,16 @@ export default function ProjectCard({ project, idPrefix = "project-card" }: Proj
 
       {/* Info Details */}
       <div className="project-card__info" style={{ paddingTop: "14px" }}>
-        <div className="project-card__category">{project.category}</div>
+        <div
+          className="project-card__category"
+          style={{
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            fontFamily: "var(--font-sans)",
+          }}
+        >
+          {categoryLabel}
+        </div>
         <div
           className="project-card__title"
           style={{

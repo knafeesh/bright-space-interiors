@@ -88,10 +88,21 @@ export default function ProjectDetailClient({ initialProject, slug }: Props) {
             <Link href="/">Home</Link> /{" "}
             <Link href="/portfolio">Portfolio</Link> / {project.title}
           </div>
-          <span className="eyebrow" style={{ color: "var(--gold-light)", display: "block", marginBottom: "12px" }}>
-            {project.category}
-          </span>
-          <h1 className="page-hero__title">{project.title}</h1>
+          <h1 className="page-hero__title" style={{ marginBottom: "14px" }}>
+            {project.title}
+          </h1>
+
+          {/* Small uppercase category tags directly under title */}
+          <div className="project-detail__category-tags">
+            {((project.categories && project.categories.length > 0)
+              ? project.categories
+              : [project.category || ""]
+            ).map((cat) => (
+              <span key={cat} className="project-detail__category-tag">
+                {cat.toUpperCase()}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -101,7 +112,15 @@ export default function ProjectDetailClient({ initialProject, slug }: Props) {
           {/* Meta Bar */}
           <div className="project-detail__meta-bar">
             {[
-              { label: "Type", value: project.category, Icon: null },
+              {
+                label: "Type",
+                value: (
+                  (project.categories && project.categories.length > 0)
+                    ? project.categories
+                    : [project.category || ""]
+                ).map((c) => c.toUpperCase()).join(" · "),
+                Icon: null,
+              },
               { label: "Location", value: project.location, Icon: MapPin },
               { label: "Area", value: project.area, Icon: Maximize2 },
               { label: "Year", value: project.year, Icon: Calendar },
@@ -114,49 +133,45 @@ export default function ProjectDetailClient({ initialProject, slug }: Props) {
             ))}
           </div>
 
-          {/* Content */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "80px" }}>
-            <div>
-              <span className="eyebrow">The Brief</span>
-              <h2 style={{ marginTop: "16px", marginBottom: "20px", fontSize: "clamp(28px, 3vw, 44px)" }}>
-                {project.challenge || project.description}
-              </h2>
-              <div className="title-line" />
+          {/* Materials Used */}
+          {project.materials && project.materials.length > 0 && (
+            <div className="project-detail__materials" style={{ marginBottom: "36px" }}>
+              <div
+                style={{
+                  fontSize: "10px",
+                  fontWeight: 600,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "var(--gold)",
+                  marginBottom: "12px",
+                }}
+              >
+                Materials Used
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {project.materials.map((mat) => (
+                  <span
+                    key={mat}
+                    style={{
+                      padding: "6px 16px",
+                      border: "1px solid var(--border)",
+                      borderRadius: "999px",
+                      fontSize: "12px",
+                      color: "var(--text-secondary)",
+                      letterSpacing: "0.05em",
+                      background: "rgba(255, 255, 255, 0.75)",
+                    }}
+                  >
+                    {mat}
+                  </span>
+                ))}
+              </div>
             </div>
-            <div style={{ paddingTop: "20px" }}>
-              <h4 style={{ marginBottom: "16px" }}>Our Solution</h4>
-              <p style={{ fontSize: "16px", lineHeight: 1.9 }}>{project.solution || project.description}</p>
-
-              {/* Materials */}
-              {project.materials && project.materials.length > 0 && (
-                <div style={{ marginTop: "32px" }}>
-                  <div style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "16px" }}>
-                    Materials Used
-                  </div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                    {project.materials.map((mat) => (
-                      <span
-                        key={mat}
-                        style={{
-                          padding: "6px 16px",
-                          border: "1px solid var(--border)",
-                          fontSize: "12px",
-                          color: "var(--text-secondary)",
-                          letterSpacing: "0.05em",
-                        }}
-                      >
-                        {mat}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          )}
 
           {/* Gallery */}
           {project.gallery && project.gallery.length > 0 && (
-            <div className="project-gallery" style={{ marginTop: "60px" }}>
+            <div className="project-gallery" style={{ marginTop: "0" }}>
               <div className="project-gallery__main" style={{ gridColumn: project.gallery.length > 1 ? "span 8" : "span 12" }}>
                 <div
                   style={{

@@ -5,6 +5,7 @@ export interface Project {
   slug: string;
   title: string;
   category: string;
+  categories?: string[];
   location: string;
   area: string;
   year: string;

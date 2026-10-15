@@ -1,12 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { useCmsProjects, useCmsLoaded, Project } from "@/lib/cms";
-import CategoryCarousel from "@/components/ui/CategoryCarousel";
+import ProjectFilterBar from "@/components/ui/ProjectFilterBar";
 import ProjectCard from "@/components/ui/ProjectCard";
-
-const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
 
 export default function PortfolioClient({ initialProjects }: { initialProjects: Project[] }) {
   const cmsProjects = useCmsProjects();
@@ -27,12 +25,29 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
     }
   }, [cmsLoaded, cmsProjects]);
 
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeFilter, setActiveFilter] = useState("ALL");
+  const [isFading, setIsFading] = useState(false);
 
-  const filtered =
-    activeFilter === "All"
-      ? projects
-      : projects.filter((p) => p.category.toLowerCase() === activeFilter.toLowerCase());
+  const handleFilterChange = (cat: string) => {
+    if (cat === activeFilter) return;
+    setIsFading(true);
+    setTimeout(() => {
+      setActiveFilter(cat);
+      setIsFading(false);
+    }, 150);
+  };
+
+  const filtered = useMemo(() => {
+    if (activeFilter === "ALL") {
+      return projects;
+    }
+    return projects.filter((p) => {
+      const cats = (
+        p.categories && p.categories.length > 0 ? p.categories : [p.category || ""]
+      ).map((c) => c.toUpperCase());
+      return cats.includes(activeFilter.toUpperCase());
+    });
+  }, [projects, activeFilter]);
 
   return (
     <>
@@ -75,26 +90,15 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
           </div>
 
           {/* Filters */}
-          <div className="filter-bar" role="group" aria-label="Portfolio filters">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                className={`filter-chip${activeFilter === cat ? " filter-chip--active" : ""}`}
-                onClick={() => setActiveFilter(cat)}
-                id={`portfolio-filter-${cat.toLowerCase().replace(/\s+/g, "-")}`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Automatic Image Carousel for Office, Salon, Hotel */}
-          {["office", "salon", "hotel"].includes(activeFilter.toLowerCase()) && (
-            <CategoryCarousel category={activeFilter} />
-          )}
+          <ProjectFilterBar
+            projects={projects}
+            activeFilter={activeFilter}
+            onFilterChange={handleFilterChange}
+            idPrefix="portfolio-filter"
+          />
 
           {/* Grid */}
-          <div className="portfolio-grid">
+          <div className={`portfolio-grid${isFading ? " portfolio-grid--fading" : ""}`}>
             {filtered.map((project) => (
               <ProjectCard key={project.id} project={project} idPrefix="portfolio-card" />
             ))}
@@ -105,7 +109,7 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
               <p>No projects found in this category.</p>
               <button
                 className="btn btn--outline"
-                onClick={() => setActiveFilter("All")}
+                onClick={() => handleFilterChange("ALL")}
                 style={{ marginTop: "20px" }}
               >
                 Show All Projects
