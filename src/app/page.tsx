@@ -10,7 +10,7 @@ import ClientListSection from "@/components/ui/ClientListSection";
 import DesignIdeasSection from "@/components/ui/DesignIdeasSection";
 import DesignToMoveInSection from "@/components/ui/DesignToMoveInSection";
 import ServicesAccordion from "@/components/ui/ServicesAccordion";
-import DesignPhilosophyCurvedStage from "@/components/ui/DesignPhilosophyCurvedStage";
+import DesignPhilosophyShowcase from "@/components/ui/DesignPhilosophyShowcase";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
 function AnimatedCounter({
@@ -366,8 +366,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Curved String Showcase */}
-          <DesignPhilosophyCurvedStage />
+          {/* Design Philosophy Showcase */}
+          <DesignPhilosophyShowcase />
         </div>
       </section>
 
