@@ -2918,9 +2918,10 @@ p {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   pointer-events: none;
+  -webkit-user-select: none;
   user-select: none;
   line-height: 1.3;
 }
