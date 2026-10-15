@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { useCmsSpecialties } from "@/lib/cms";
 import { NAV_SERVICES, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
+import ServicesCarousel from "@/components/ui/ServicesCarousel";
 
 export default function ServicesClient() {
   const specialties = useCmsSpecialties();
@@ -35,112 +36,18 @@ export default function ServicesClient() {
         </div>
       </section>
 
-      {/* Services Hub */}
-      <section className="services-hub section" aria-label="Services overview">
-        <div className="container">
-          <div className="section-title--center">
-            <span className="eyebrow">Our Expertise</span>
-            <h2 style={{ textAlign: "center" }}>
-              Six Ways We Can<br />Transform Your Space
+      {/* Services Hub Carousel */}
+      <section className="services-hub section" aria-label="Services overview" style={{ paddingBottom: "72px" }}>
+        <div className="container" style={{ padding: "0 16px" }}>
+          <div className="section-title--center" style={{ marginBottom: "40px" }}>
+            <span className="eyebrow">What we do</span>
+            <h2 style={{ textAlign: "center", marginTop: "12px", marginBottom: "18px" }}>
+              Our 6 core services
             </h2>
             <div className="title-line--center title-line" />
-            <p style={{ textAlign: "center" }}>
-              Whether you are a homeowner, business owner, or developer — we
-              have a service model designed precisely for you.
-            </p>
           </div>
-        </div>
 
-        <div
-          style={{
-            maxWidth: 1280,
-            margin: "48px auto 0",
-            padding: "0 24px",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "24px",
-          }}
-        >
-          {NAV_SERVICES.map((service) => (
-            <Link
-              key={service.slug}
-              href={service.href}
-              className="service-compact-card"
-              id={`service-hub-${service.slug}`}
-              style={{
-                textDecoration: "none",
-                color: "inherit",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                textAlign: "center",
-              }}
-            >
-              {/* Landscape Image with Badge */}
-              <div
-                className="service-compact-card__image-wrap"
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  aspectRatio: "16 / 10",
-                  borderRadius: "9px",
-                  overflow: "hidden",
-                  background: "#1A1715",
-                }}
-              >
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="service-compact-card__img"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center",
-                    display: "block",
-                  }}
-                />
-                <div className="service-compact-card__img-gradient" />
-                <div className="service-compact-card__badge">
-                  {service.title}
-                </div>
-              </div>
-
-              {/* Text Below Image */}
-              <div
-                className="service-compact-card__content"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  flexGrow: 1,
-                  justifyContent: "space-between",
-                  padding: "14px 6px 0",
-                  textAlign: "center",
-                }}
-              >
-                <div>
-                  <p
-                    className="service-compact-card__desc"
-                    style={{
-                      fontSize: "13px",
-                      lineHeight: 1.55,
-                      color: "#4E4E4E",
-                      margin: "0 0 14px",
-                    }}
-                  >
-                    {service.description}
-                  </p>
-                </div>
-
-                {/* Preserved Outlined Button: Explore Service */}
-                <div style={{ display: "flex", justifyContent: "center", marginTop: "auto", paddingTop: "8px" }}>
-                  <span className="service-compact-card__btn">
-                    Explore Service <ArrowRight size={12} style={{ marginLeft: "5px" }} />
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
+          <ServicesCarousel showDetails={true} />
         </div>
       </section>
 
