@@ -10,6 +10,7 @@ import ClientListSection from "@/components/ui/ClientListSection";
 import DesignIdeasSection from "@/components/ui/DesignIdeasSection";
 import DesignToMoveInSection from "@/components/ui/DesignToMoveInSection";
 import ServicesAccordion from "@/components/ui/ServicesAccordion";
+import DesignPhilosophyCurvedStage from "@/components/ui/DesignPhilosophyCurvedStage";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
 function AnimatedCounter({
@@ -78,28 +79,6 @@ function useFadeIn() {
 
 
 const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
-const DESIGN_PHILOSOPHY_IMAGES = [
-  {
-    src: "/images/design-philosophy/philosophy-1.jpg",
-    alt: "Luxury foyer with marble staircase and golden lighting",
-  },
-  {
-    src: "/images/design-philosophy/philosophy-2.jpg",
-    alt: "Luxury modular kitchen with cream and gold finishes",
-  },
-  {
-    src: "/images/design-philosophy/philosophy-3.jpg",
-    alt: "Luxury living room with geometric TV wall and elegant furniture",
-  },
-  {
-    src: "/images/design-philosophy/philosophy-4.jpg",
-    alt: "Luxury master bedroom with warm lighting and a walk-in wardrobe",
-  },
-  {
-    src: "/images/design-philosophy/philosophy-5.jpg",
-    alt: "Luxury foyer and living area with an illuminated staircase",
-  },
-];
 
 const BRAND_STATS = [
   {
@@ -387,42 +366,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* 5 Luxury Showcase Images Stack */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "clamp(24px, 3.5vw, 40px)",
-              width: "100%",
-              maxWidth: "1080px",
-              margin: "0 auto",
-            }}
-          >
-            {DESIGN_PHILOSOPHY_IMAGES.map((img, idx) => (
-              <div
-                key={idx}
-                style={{
-                  width: "100%",
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                  boxShadow: "0 10px 32px rgba(28, 24, 22, 0.08)",
-                  border: "1px solid rgba(184, 151, 98, 0.18)",
-                  background: "#161311",
-                }}
-              >
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    display: "block",
-                  }}
-                  loading={idx === 0 ? "eager" : "lazy"}
-                />
-              </div>
-            ))}
-          </div>
+          {/* Curved String Showcase */}
+          <DesignPhilosophyCurvedStage />
         </div>
       </section>
 

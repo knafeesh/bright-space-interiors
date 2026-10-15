@@ -4240,3 +4240,23 @@ p {
     transition: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════
+   DESIGN PHILOSOPHY CURVED STAGE
+═══════════════════════════════════════════ */
+.curved-stage-container:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.curved-stage-play-btn:focus-visible {
+  outline: 2px solid var(--gold) !important;
+  outline-offset: 2px;
+}
+
+.curved-stage-play-btn:hover {
+  border-color: var(--gold) !important;
+  color: var(--gold-dark) !important;
+  transform: scale(1.06);
+}
+
