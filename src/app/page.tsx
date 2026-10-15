@@ -1,29 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  ArrowRight,
-  ChevronRight,
-  CookingPot,
-  Lightbulb,
-  Sofa,
-  BedDouble,
-  Bath,
-  PaintRoller,
-  Tv,
-  DoorOpen,
-  Monitor,
-  Boxes,
-  BookOpen,
-  Frame,
-} from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import { TESTIMONIALS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
-import { useCmsProjects, useCmsServices } from "@/lib/cms";
+import { useCmsProjects } from "@/lib/cms";
 import CategoryCarousel from "@/components/ui/CategoryCarousel";
 import ProjectCard from "@/components/ui/ProjectCard";
 import ClientListSection from "@/components/ui/ClientListSection";
 import DesignIdeasSection from "@/components/ui/DesignIdeasSection";
 import DesignToMoveInSection from "@/components/ui/DesignToMoveInSection";
+import ServicesAccordion from "@/components/ui/ServicesAccordion";
 
 // ─── Animated Counter ───────────────────────────────────────────────────────
 function AnimatedCounter({
@@ -92,255 +78,6 @@ function useFadeIn() {
 
 
 const CATEGORIES = ["All", "Residential", "Commercial", "Office", "Salon", "Hotel", "Turnkey"];
-interface InteriorSolutionItem {
-  name: string;
-  href?: string;
-  icon: React.ReactNode;
-}
-
-const INTERIOR_SOLUTIONS: InteriorSolutionItem[] = [
-  {
-    name: "Modular Kitchen",
-    href: "/services/turnkey",
-    icon: <CookingPot size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "Modular Wardrobe",
-    href: "/services/turnkey",
-    icon: (
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <rect x="3" y="2" width="18" height="20" rx="2" />
-        <path d="M12 2v20" />
-        <path d="M9 10v3" />
-        <path d="M15 10v3" />
-      </svg>
-    ),
-  },
-  {
-    name: "Lighting",
-    href: "/services/turnkey",
-    icon: <Lightbulb size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "Furniture",
-    href: "/services/residential",
-    icon: <Sofa size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "Kids Bedroom",
-    href: "/services/residential",
-    icon: <BedDouble size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "Bathroom",
-    href: "/services/residential",
-    icon: <Bath size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "Bathroom Renovation",
-    href: "/services/residential",
-    icon: (
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M7 3h10v6H7z" />
-        <path d="M5 9h14a1 1 0 0 1 1 1v2a7 7 0 0 1-7 7 7 7 0 0 1-7-7v-2a1 1 0 0 1 1-1z" />
-        <path d="M9 19v2" />
-        <path d="M15 19v2" />
-      </svg>
-    ),
-  },
-  {
-    name: "Renovation",
-    href: "/services/turnkey",
-    icon: (
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="m14.7 6.3 5 5-2.8 2.8-5-5z" />
-        <path d="m9.3 11.7-5 5 2.8 2.8 5-5z" />
-        <path d="m16 8 2-2a2.83 2.83 0 0 0-4-4l-2 2" />
-        <path d="m8 16-2 2a2.83 2.83 0 0 1-4-4l2-2" />
-      </svg>
-    ),
-  },
-  {
-    name: "Wall Paint",
-    href: "/services/turnkey",
-    icon: <PaintRoller size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "TV Console",
-    href: "/services/residential",
-    icon: <Tv size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "Doors",
-    href: "/services/turnkey",
-    icon: <DoorOpen size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "Workspace",
-    href: "/services/commercial",
-    icon: <Monitor size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "Storage",
-    href: "/services/turnkey",
-    icon: <Boxes size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "Temple",
-    href: "/services/residential",
-    icon: (
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M12 2v2" />
-        <path d="M12 4c-2 1.5-4 3.5-4 5h8c0-1.5-2-3.5-4-5Z" />
-        <path d="M5 9h14v2H5z" />
-        <path d="M6 11v8" />
-        <path d="M10 11v8" />
-        <path d="M14 11v8" />
-        <path d="M18 11v8" />
-        <path d="M4 19h16v3H4z" />
-      </svg>
-    ),
-  },
-  {
-    name: "Study Area",
-    href: "/services/residential",
-    icon: <BookOpen size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "Foyer Design",
-    href: "/services/residential",
-    icon: (
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="m14 7 3 3" />
-        <path d="m9.5 11.5 5-5a2.12 2.12 0 0 1 3 3l-5 5-4.5 1 1-4.5z" />
-        <path d="M4 20h16" />
-      </svg>
-    ),
-  },
-  {
-    name: "Wall Art",
-    href: "/services/residential",
-    icon: <Frame size={36} strokeWidth={1.5} />,
-  },
-  {
-    name: "Smart Home",
-    href: "/services/turnkey",
-    icon: (
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-        <path d="M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
-        <path d="M9.5 15.5a4 4 0 0 1 5 0" />
-        <path d="M8 18a6 6 0 0 1 8 0" />
-      </svg>
-    ),
-  },
-];
-
-
-// Service image map (verified real project photos)
-const SERVICE_IMAGES: Record<string, string> = {
-  residential: "/images/real-bedroom-headboard.jpg",
-  commercial: "/images/office-gurugram-open-floor.jpg",
-  turnkey: "/images/real-kitchen-saket.jpg",
-  "design-execution": "/images/sushant-lok-vdeliver-site-execution.jpg",
-  design: "/images/sushant-lok-vdeliver-site-execution.jpg",
-};
-
-const HOME_SERVICES = [
-  {
-    title: "Residential Interior",
-    slug: "residential",
-    image: "/images/real-bedroom-headboard.jpg",
-    description:
-      "Beautifully crafted residential spaces designed around your lifestyle, comfort, and personality.",
-    href: "/services/residential",
-  },
-  {
-    title: "Commercial Interior",
-    slug: "commercial",
-    image: "/images/office-gurugram-open-floor.jpg",
-    description:
-      "Professional commercial spaces designed to reflect your brand, functionality, and business needs.",
-    href: "/services/commercial",
-  },
-  {
-    title: "Turnkey Projects",
-    slug: "turnkey",
-    image: "/images/real-kitchen-saket.jpg",
-    description:
-      "Complete interior solutions from concept and design to execution, finishing, and final handover.",
-    href: "/services/turnkey",
-  },
-  {
-    title: "Design & Execution",
-    slug: "design-execution",
-    image: "/images/sushant-lok-vdeliver-site-execution.jpg",
-    description:
-      "From detailed design concepts to precise execution, we bring every interior vision to life.",
-    href: "/services/design-execution",
-  },
-];
-
 const DESIGN_PHILOSOPHY_IMAGES = [
   {
     src: "/images/design-philosophy/philosophy-1.jpg",
@@ -464,7 +201,6 @@ export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState("All");
   const sectionRef = useFadeIn();
   const cmsProjects = useCmsProjects();
-  const cmsServices = useCmsServices();
 
   const filteredProjects =
     activeFilter === "All"
@@ -690,32 +426,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════ INTERIOR SOLUTIONS SECTION ══════════════ */}
-      <section
-        className="interior-solutions"
-        id="interior-solutions"
-        aria-label="Interior Solutions"
-      >
-        <div className="interior-solutions__container">
-          <div className="interior-solutions__header">
-            <h2 className="interior-solutions__title">Interior Solutions</h2>
-            <div className="title-line--center title-line" style={{ marginTop: "14px" }} />
-          </div>
-
-          <div className="interior-solutions__grid">
-            {INTERIOR_SOLUTIONS.map((item) => (
-              <div
-                key={item.name}
-                className="interior-solutions__card"
-                id={`interior-solution-${item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-              >
-                <div className="interior-solutions__icon">{item.icon}</div>
-                <span className="interior-solutions__name">{item.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* ══════════════ BRAND STATISTICS SECTION ══════════════ */}
       <section className="brand-stats-section" aria-label="Key statistics" ref={sectionRef}>
@@ -736,69 +447,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════ SERVICES PREVIEW ══════════════ */}
-      <section className="services-preview" aria-label="Services">
-        <div className="container">
-          <div className="services-preview__header">
-            <div className="section-title">
-              <span className="eyebrow">What We Do</span>
-              <h2>Our Services</h2>
-              <div className="title-line" />
-            </div>
-            <Link href="/services" className="btn btn--ghost" id="services-all">
-              All Services <ChevronRight size={14} />
-            </Link>
-          </div>
-          <div className="services-compact-grid">
-            {HOME_SERVICES.map((service) => {
-              const cmsMatch = cmsServices.find(
-                (s) => s.slug === service.slug || (service.slug === "design-execution" && s.slug === "design")
-              );
-              const imgSrc = cmsMatch?.image || SERVICE_IMAGES[service.slug] || service.image;
-
-              return (
-                <div
-                  key={service.slug}
-                  id={`service-card-${service.slug}`}
-                  className="service-compact-card"
-                >
-                  {/* Landscape Image with Small Title Overlay Badge */}
-                  <Link
-                    href={service.href}
-                    className="service-compact-card__image-wrap"
-                    aria-label={`View ${service.title}`}
-                  >
-                    <img
-                      src={imgSrc}
-                      alt={service.title}
-                      className="service-compact-card__img"
-                      loading="lazy"
-                    />
-                    <div className="service-compact-card__img-gradient" />
-                    <div className="service-compact-card__badge">
-                      {service.title}
-                    </div>
-                  </Link>
-
-                  {/* Short Clean Description & Centered Read More Button */}
-                  <div className="service-compact-card__content">
-                    <p className="service-compact-card__desc">
-                      {service.description}
-                    </p>
-                    <Link
-                      href={service.href}
-                      id={`service-btn-${service.slug}`}
-                      className="service-compact-card__btn"
-                    >
-                      Read More
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      {/* ══════════════ SERVICES ACCORDION (WHAT WE DO) ══════════════ */}
+      <ServicesAccordion />
 
       {/* ══════════════ RECENT PROJECTS ══════════════ */}
       <section className="projects-section" aria-label="Recent projects">

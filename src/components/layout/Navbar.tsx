@@ -4,11 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X, ChevronDown, ChevronRight, ArrowRight } from "lucide-react";
 import { DESIGN_CATEGORIES } from "@/lib/design-ideas-data";
+import { NAV_SERVICES } from "@/lib/data";
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
-  { href: "/services", label: "Services" },
+  { href: "/services", label: "Services", isServicesDropdown: true },
   { href: "/design-ideas", label: "Design Ideas", isDropdown: true },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/process", label: "Process" },
@@ -19,6 +20,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const pathname = usePathname();
 
   const isHome = pathname === "/";
@@ -44,6 +46,7 @@ export default function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
     setMobileDropdownOpen(false);
+    setMobileServicesOpen(false);
   }, [pathname]);
 
   const navClass = [
@@ -82,6 +85,85 @@ export default function Navbar() {
               link.href === "/"
                 ? pathname === "/"
                 : pathname.startsWith(link.href);
+
+            if (link.isServicesDropdown) {
+              return (
+                <li key={link.href} className="nav-dropdown">
+                  <Link
+                    href={link.href}
+                    className={`navbar__link${isActive ? " navbar__link--active" : ""}`}
+                    style={{
+                      textTransform: "uppercase",
+                      letterSpacing: "0.14em",
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <span>{link.label}</span>
+                    <ChevronDown size={13} style={{ opacity: 0.7 }} />
+                  </Link>
+
+                  {/* Desktop Services Dropdown */}
+                  <div
+                    className="nav-dropdown__menu"
+                    role="menu"
+                    style={{
+                      width: "480px",
+                      padding: "20px 24px 18px",
+                    }}
+                  >
+                    <div className="nav-dropdown__header" style={{ marginBottom: "14px", paddingBottom: "10px" }}>
+                      <div>
+                        <span className="nav-dropdown__eyebrow">What We Do</span>
+                        <h4 className="nav-dropdown__title" style={{ fontSize: "16px" }}>Our 6 Core Services</h4>
+                      </div>
+                      <Link href="/services" className="nav-dropdown__all-link">
+                        All Services <ArrowRight size={13} />
+                      </Link>
+                    </div>
+
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: "10px 16px",
+                      }}
+                    >
+                      {NAV_SERVICES.map((s, idx) => (
+                        <Link
+                          key={s.slug}
+                          href={s.href}
+                          className="nav-dropdown__item"
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            padding: "6px 4px",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: "10px",
+                              fontFamily: "var(--font-serif)",
+                              color: "var(--gold)",
+                              minWidth: "16px",
+                            }}
+                          >
+                            0{idx + 1}
+                          </span>
+                          <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--charcoal)" }}>
+                            {s.title}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </li>
+              );
+            }
 
             if (link.isDropdown) {
               return (
@@ -238,6 +320,102 @@ export default function Navbar() {
 
         <nav className="mobile-nav__menu" aria-label="Mobile links">
           {navLinks.map((link) => {
+            if (link.isServicesDropdown) {
+              return (
+                <div key={link.href} style={{ width: "100%" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      width: "100%",
+                    }}
+                  >
+                    <Link
+                      href={link.href}
+                      className={`mobile-nav__link${pathname.startsWith(link.href) ? " mobile-nav__link--active" : ""}`}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                      aria-label="Toggle Services menu"
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "var(--gold, #B8975A)",
+                        padding: "8px 12px",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <ChevronDown
+                        size={22}
+                        style={{
+                          transform: mobileServicesOpen ? "rotate(180deg)" : "rotate(0deg)",
+                          transition: "transform 0.24s ease",
+                        }}
+                      />
+                    </button>
+                  </div>
+
+                  {mobileServicesOpen && (
+                    <div
+                      style={{
+                        paddingLeft: "16px",
+                        paddingTop: "10px",
+                        paddingBottom: "10px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "12px",
+                        borderLeft: "2px solid rgba(184, 151, 90, 0.3)",
+                        marginTop: "8px",
+                      }}
+                    >
+                      <Link
+                        href="/services"
+                        onClick={() => setMobileOpen(false)}
+                        style={{
+                          fontSize: "14px",
+                          color: "var(--gold-dark, #8C7148)",
+                          fontWeight: 700,
+                          textDecoration: "none",
+                          letterSpacing: "0.05em",
+                          textTransform: "uppercase",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        • View All Services &rarr;
+                      </Link>
+                      {NAV_SERVICES.map((s, idx) => (
+                        <Link
+                          key={s.slug}
+                          href={s.href}
+                          onClick={() => setMobileOpen(false)}
+                          style={{
+                            fontSize: "15px",
+                            color: pathname === s.href ? "var(--gold, #B8975A)" : "#333333",
+                            textDecoration: "none",
+                            lineHeight: 1.3,
+                            fontFamily: "var(--font-sans)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <span style={{ fontSize: "11px", color: "var(--gold)" }}>0{idx + 1}</span>
+                          <span>{s.title}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
             if (link.isDropdown) {
               return (
                 <div key={link.href} style={{ width: "100%" }}>

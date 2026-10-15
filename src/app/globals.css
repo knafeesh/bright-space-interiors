@@ -4195,3 +4195,48 @@ p {
 .related-category-card:hover img {
   transform: scale(1.05);
 }
+
+/* ═══════════════════════════════════════════
+   SERVICES ACCORDION (homepage)
+═══════════════════════════════════════════ */
+.services-accordion-grid {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 380px);
+  gap: 56px;
+  align-items: start;
+}
+
+/* Row button focus ring */
+.svc-row-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Mobile: single column, photo on top */
+@media (max-width: 767px) {
+  .services-accordion-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  /* Move photo column to top on mobile */
+  .services-accordion-photo-col {
+    order: -1;
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .services-accordion-grid {
+    grid-template-columns: 1fr 280px;
+    gap: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svc-row-btn span,
+  .svc-row-btn svg {
+    transition: none !important;
+  }
+}

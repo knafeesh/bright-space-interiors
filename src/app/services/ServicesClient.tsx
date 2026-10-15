@@ -1,11 +1,10 @@
 "use client";
 import Link from "next/link";
 import { ArrowRight, ChevronRight } from "lucide-react";
-import { useCmsServices, useCmsSpecialties } from "@/lib/cms";
-import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
+import { useCmsSpecialties } from "@/lib/cms";
+import { NAV_SERVICES, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 
 export default function ServicesClient() {
-  const services = useCmsServices();
   const specialties = useCmsSpecialties();
 
   return (
@@ -42,7 +41,7 @@ export default function ServicesClient() {
           <div className="section-title--center">
             <span className="eyebrow">Our Expertise</span>
             <h2 style={{ textAlign: "center" }}>
-              Four Ways We Can<br />Transform Your Space
+              Six Ways We Can<br />Transform Your Space
             </h2>
             <div className="title-line--center title-line" />
             <p style={{ textAlign: "center" }}>
@@ -62,10 +61,10 @@ export default function ServicesClient() {
             gap: "24px",
           }}
         >
-          {services.map((service) => (
+          {NAV_SERVICES.map((service) => (
             <Link
               key={service.slug}
-              href={`/services/${service.slug}`}
+              href={service.href}
               className="service-compact-card"
               id={`service-hub-${service.slug}`}
               style={{
@@ -90,7 +89,7 @@ export default function ServicesClient() {
                 }}
               >
                 <img
-                  src={service.image || "/images/real-bedroom-headboard.jpg"}
+                  src={service.image}
                   alt={service.title}
                   className="service-compact-card__img"
                   style={{
@@ -131,34 +130,6 @@ export default function ServicesClient() {
                   >
                     {service.description}
                   </p>
-
-                  {/* Sub-services Pills */}
-                  <div
-                    style={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: "5px",
-                      justifyContent: "center",
-                      marginBottom: "16px",
-                    }}
-                  >
-                    {service.subServices.slice(0, 3).map((sub) => (
-                      <span
-                        key={sub}
-                        style={{
-                          fontSize: "10.5px",
-                          background: "rgba(184, 151, 90, 0.08)",
-                          border: "1px solid rgba(184, 151, 90, 0.22)",
-                          padding: "2.5px 8px",
-                          borderRadius: "4px",
-                          color: "#7E6334",
-                          fontWeight: 500,
-                        }}
-                      >
-                        {sub}
-                      </span>
-                    ))}
-                  </div>
                 </div>
 
                 {/* Preserved Outlined Button: Explore Service */}
@@ -232,7 +203,7 @@ export default function ServicesClient() {
       </section>
 
       {/* Specialty Execution & Fitouts */}
-      <section className="section" style={{ background: "var(--cream)" }} aria-label="Specialty fitouts">
+      <section className="section" id="specialty" style={{ background: "var(--cream)" }} aria-label="Specialty fitouts">
         <div className="container">
           <div className="section-title--center">
             <span className="eyebrow">Comprehensive Execution</span>

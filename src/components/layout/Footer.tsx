@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { MapPin, Phone, Mail } from "lucide-react";
-import { ADDRESS, PHONE_NUMBER, ALT_PHONE_NUMBER, EMAIL, INSTAGRAM_URL, YOUTUBE_URL } from "@/lib/data";
+import {
+  ADDRESS,
+  PHONE_NUMBER,
+  ALT_PHONE_NUMBER,
+  EMAIL,
+  INSTAGRAM_URL,
+  YOUTUBE_URL,
+  NAV_SERVICES,
+} from "@/lib/data";
 
 function InstagramIcon({ size = 15 }: { size?: number }) {
   return (
@@ -37,12 +45,7 @@ const quickLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-const serviceLinks = [
-  { href: "/services/residential", label: "Residential Interior" },
-  { href: "/services/commercial", label: "Commercial Interior" },
-  { href: "/services/turnkey", label: "Turnkey Projects" },
-  { href: "/services/design-execution", label: "Design & Execution" },
-];
+
 
 export default function Footer() {
   return (
@@ -133,10 +136,10 @@ export default function Footer() {
         <div>
           <div className="footer__col-title">Services</div>
           <ul className="footer__links">
-            {serviceLinks.map((link) => (
-              <li key={link.href}>
+            {NAV_SERVICES.map((link) => (
+              <li key={link.slug}>
                 <Link href={link.href} className="footer__link">
-                  {link.label}
+                  {link.title}
                 </Link>
               </li>
             ))}

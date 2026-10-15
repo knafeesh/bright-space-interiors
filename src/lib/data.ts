@@ -13,6 +13,87 @@ export const TAGLINE = "Spaces designed to feel like you.";
 export const WHATSAPP_MESSAGE =
   "Hello The Bright Space Interiors, I saw your work and I’m interested in your interior design services. I would like to discuss my project and get a consultation.";
 
+// ─── Canonical six-service list ─────────────────────────────────────────────
+// Single source of truth: homepage accordion, /services hub, footer.
+export interface NavService {
+  slug: string;
+  title: string;
+  description: string;
+  image: string;
+  caption: string;
+  href: string;
+  whatsappMsg: string;
+}
+
+export const NAV_SERVICES: NavService[] = [
+  {
+    slug: "residential",
+    title: "Residential Interior",
+    description:
+      "Full-home interiors for apartments, villas and builder floors, from floor plan to move-in.",
+    image: "/images/gurugram-manish-living-mirror-wall.jpg",
+    caption: "Park View City home, Gurugram \u00b7 1,300 sq ft",
+    href: "/services/residential",
+    whatsappMsg:
+      "Hello Bright Space Interiors, I'm interested in Residential Interior. I would like to discuss my project and get a consultation.",
+  },
+  {
+    slug: "modular-kitchen-wardrobes",
+    title: "Modular Kitchen & Wardrobes",
+    description:
+      "Custom-fit kitchens and storage built around your layout and budget.",
+    image: "/images/kitchen-delhi-ncr-modern-lshape.jpg",
+    caption: "Bespoke modular kitchens, Delhi NCR",
+    href: "/services#specialty",
+    whatsappMsg:
+      "Hello Bright Space Interiors, I'm interested in Modular Kitchen & Wardrobes. I would like to discuss my project and get a consultation.",
+  },
+  {
+    slug: "commercial",
+    title: "Commercial Interior",
+    description:
+      "Offices, salons and retail spaces shaped around your brand and daily workflow.",
+    image: "/images/office-gurugram-open-floor.jpg",
+    caption: "Corporate office, Cyber City, Gurugram \u00b7 6,500 sq ft",
+    href: "/services/commercial",
+    whatsappMsg:
+      "Hello Bright Space Interiors, I'm interested in Commercial Interior. I would like to discuss my project and get a consultation.",
+  },
+  {
+    slug: "civil-renovation",
+    title: "Civil & Renovation",
+    description:
+      "Masonry, flooring, waterproofing and painting to make an older space feel new.",
+    image: "/images/sushant-lok-vdeliver-grand-hall-cove.jpg",
+    caption: "Shri Ram Complex, Sushant Lok, Gurugram \u00b7 2,500 sq ft",
+    href: "/services#specialty",
+    whatsappMsg:
+      "Hello Bright Space Interiors, I'm interested in Civil & Renovation. I would like to discuss my project and get a consultation.",
+  },
+  {
+    slug: "turnkey",
+    title: "Turnkey Projects",
+    description:
+      "Design, civil and interiors under one team and one contract.",
+    image: "/images/salon-rawls-mainhall.jpg",
+    caption: "Rawls Salon, Delhi NCR \u00b7 5,000 sq ft",
+    href: "/services/turnkey",
+    whatsappMsg:
+      "Hello Bright Space Interiors, I'm interested in Turnkey Projects. I would like to discuss my project and get a consultation.",
+  },
+  {
+    slug: "design-execution",
+    title: "Design & 3D Visualisation",
+    description:
+      "Detailed drawings and realistic 3D views, so you see the result before work begins.",
+    image: "/images/design-philosophy/philosophy-3.jpg",
+    caption: "Concept design, living room",
+    href: "/services/design-execution",
+    whatsappMsg:
+      "Hello Bright Space Interiors, I'm interested in Design & 3D Visualisation. I would like to discuss my project and get a consultation.",
+  },
+];
+
 export const SERVICES = [
   {
     slug: "residential",
@@ -103,7 +184,7 @@ export const SERVICES = [
   },
   {
     slug: "design-execution",
-    title: "Design & Execution",
+    title: "Design & 3D Visualisation",
     subtitle: "Concept to Completion",
     image: "/images/salon-rawls-styling-suites.jpg",
     description:
@@ -152,31 +233,31 @@ export const SPECIALTY_SERVICES = [
   {
     name: "Flooring",
     tagline: "Luxury Stone & Hardwood",
-    image: "/images/real-salon-styling.jpg",
+    image: "/images/sushant-lok-vdeliver-corridor-framing-flooring.jpg",
     description: "Precision-laid Italian marble book-matching, herringbone hardwood, vitrified large slabs, and seamless microtopping.",
   },
   {
     name: "Electrical Work",
     tagline: "Safe, Concealed & Smart",
-    image: "/images/real-bedroom-fluted.jpg",
+    image: "/images/ranchi-agarwal-ceiling-lighting.jpg",
     description: "Full circuit load design, concealed fire-resistant wiring, smart home automation integration, and designer switchplates.",
   },
   {
     name: "Civil Work",
     tagline: "Structural Reconfiguration",
-    image: "/images/specialty-civil.jpg",
+    image: "/images/sushant-lok-vdeliver-stone-cutting-masonry.jpg",
     description: "Masonry alterations, partition demolition/creation, plumbing lines, screeding, and high-performance waterproofing.",
   },
   {
     name: "False Ceiling",
     tagline: "Acoustics & Aesthetics",
-    image: "/images/real-salon-mainhall.jpg",
+    image: "/images/sushant-lok-vdeliver-grand-hall-cove.jpg",
     description: "Saint-Gobain gypsum boards, multi-level floating designs, cove lighting channels, and wooden acoustic baffles.",
   },
   {
     name: "Wall Design & Painting",
     tagline: "Textures & Bespoke Finishes",
-    image: "/images/real-bedroom-fluted.jpg",
+    image: "/images/sushant-lok-vdeliver-ornate-panelling-joinery.jpg",
     description: "Limewash, micro-cement, Venetian plaster textures, fluted wall panels, and high-durability luxury matte emulsions.",
   },
 ];
