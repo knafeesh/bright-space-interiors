@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ADDRESS, EMAIL, PHONE_NUMBER } from "@/lib/data";
 
-export const metadata: Metadata = {
-  title: "Terms & Conditions | The Bright Space Interiors",
-  description: "Terms and conditions for interior design, turnkey projects, and services provided by The Bright Space Interiors.",
-};
+import { constructMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = constructMetadata({
+  path: "/terms-conditions",
+  title: "Terms & Conditions",
+  description: "Terms and conditions for interior design, turnkey projects, and services provided by Bright Space Interiors.",
+});
 
 export default function TermsConditionsPage() {
   return (

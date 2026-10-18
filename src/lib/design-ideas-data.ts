@@ -16,6 +16,7 @@ export interface DesignCategory {
   metaTitle: string;
   metaDescription: string;
   designs: DesignCard[];
+  type?: "residential" | "commercial";
 }
 
 export const DESIGN_CATEGORIES: DesignCategory[] = [
@@ -23,11 +24,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "crockery-unit-designs",
     name: "Crockery Unit Designs",
     group: "Dining & Storage",
+    type: "residential",
     heroTitle: "Our Crockery Units Are Designed to Complement Your Interiors",
     heroSubtitle:
       "Transform your dining space with innovative crockery unit designs that bring together elegance, utility, and flawless craftsmanship.",
     heroImage: "/images/design-ideas/crockery-hero.jpg",
-    metaTitle: "Crockery Unit Designs | The Bright Space Interiors",
+    metaTitle: "Crockery Unit Designs ",
     metaDescription:
       "Explore bespoke crockery unit designs featuring glass display cabinets, ambient illumination, and premium finishes crafted for luxury dining spaces.",
     designs: [
@@ -79,11 +81,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "modular-kitchen-designs",
     name: "Modular Kitchen Designs",
     group: "Kitchen & Dining",
+    type: "residential",
     heroTitle: "Ergonomic Modular Kitchens Engineered for Modern Living",
     heroSubtitle:
       "Experience culinary excellence with custom modular kitchen layouts designed for optimal workflow, premium durability, and bespoke aesthetics.",
     heroImage: "/images/design-ideas/kitchen-hero.jpg",
-    metaTitle: "Modular Kitchen Designs | The Bright Space Interiors",
+    metaTitle: "Modular Kitchen Designs ",
     metaDescription:
       "Discover modern modular kitchen layouts including island, L-shaped, and parallel kitchens with luxury finishes and smart storage.",
     designs: [
@@ -135,11 +138,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "dining-room-designs",
     name: "Dining Room Designs",
     group: "Dining & Storage",
+    type: "residential",
     heroTitle: "Bespoke Dining Spaces That Bring Family and Guests Together",
     heroSubtitle:
       "From intimate family meals to grand celebration banquets, design your dining room with tailored furniture, lighting, and luxurious ambiance.",
     heroImage: "/images/design-ideas/dining-hero.jpg",
-    metaTitle: "Dining Room Designs | The Bright Space Interiors",
+    metaTitle: "Dining Room Designs ",
     metaDescription:
       "Discover luxury dining room interior concepts featuring marble tables, custom chandeliers, and ergonomic seating arrangements.",
     designs: [
@@ -191,11 +195,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "master-bedroom-designs",
     name: "Master Bedroom Designs",
     group: "Bedrooms & Suites",
+    type: "residential",
     heroTitle: "Sanctuaries of Serenity and Bespoke Comfort",
     heroSubtitle:
       "Retreat into a master bedroom tailored to your lifestyle, incorporating luxury panelling, customized headboards, and soothing ambient lighting.",
     heroImage: "/images/design-ideas/bedroom-hero.jpg",
-    metaTitle: "Master Bedroom Designs | The Bright Space Interiors",
+    metaTitle: "Master Bedroom Designs ",
     metaDescription:
       "Explore peaceful master bedroom design ideas with bespoke headboards, integrated wardrobes, and ambient accent lighting.",
     designs: [
@@ -247,11 +252,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "false-ceiling-designs",
     name: "False Ceiling Designs",
     group: "Architectural Elements",
+    type: "residential",
     heroTitle: "Architectural Ceiling Treatments with Integrated Illumination",
     heroSubtitle:
       "Elevate your home's interior volume with layered gypsum ceilings, perimeter cove lighting, and artistic wooden rafter details.",
     heroImage: "/images/design-ideas/ceiling-hero.jpg",
-    metaTitle: "False Ceiling Designs | The Bright Space Interiors",
+    metaTitle: "False Ceiling Designs ",
     metaDescription:
       "Discover modern false ceiling ideas featuring cove lighting, gypsum tiers, wooden rafters, and magnetic track lights.",
     designs: [
@@ -303,11 +309,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "wardrobe-designs",
     name: "Wardrobe Designs",
     group: "Bedrooms & Suites",
+    type: "residential",
     heroTitle: "Tailored Wardrobe Systems for Effortless Organization",
     heroSubtitle:
       "Custom storage solutions blending luxury finishes, intuitive organization, and space-saving mechanisms for your daily routine.",
     heroImage: "/images/design-ideas/wardrobe-hero.jpg",
-    metaTitle: "Wardrobe Designs | The Bright Space Interiors",
+    metaTitle: "Wardrobe Designs ",
     metaDescription:
       "Explore custom wardrobe designs including sliding doors, walk-in closets, tinted glass shutters, and sensor-lit accessories.",
     designs: [
@@ -359,11 +366,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "living-room-designs",
     name: "Living Room Designs",
     group: "Living & Lounge",
+    type: "residential",
     heroTitle: "Signature Living Rooms Designed to Impress and Comfort",
     heroSubtitle:
       "Create an unforgettable first impression with inviting conversation layouts, custom entertainment walls, and premium bespoke furniture.",
     heroImage: "/images/design-ideas/living-hero.jpg",
-    metaTitle: "Living Room Designs | The Bright Space Interiors",
+    metaTitle: "Living Room Designs ",
     metaDescription:
       "Discover inspiring living room designs crafted with luxury furniture layouts, accent walls, and balanced lighting schemes.",
     designs: [
@@ -415,11 +423,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "bathroom-designs",
     name: "Bathroom Designs",
     group: "Baths & Wellness",
+    type: "residential",
     heroTitle: "Spa-Inspired Bathrooms Tailored for Everyday Rejuvenation",
     heroSubtitle:
       "Transform functional bathrooms into serene wellness havens with marble finishes, backlit floating vanities, and walk-in rain showers.",
     heroImage: "/images/design-ideas/bathroom-hero.jpg",
-    metaTitle: "Bathroom Designs | The Bright Space Interiors",
+    metaTitle: "Bathroom Designs ",
     metaDescription:
       "Explore modern luxury bathroom designs with floating vanities, frameless glass shower enclosures, and designer tiles.",
     designs: [
@@ -471,11 +480,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "balcony-designs",
     name: "Balcony Designs",
     group: "Outdoor & Extended",
+    type: "residential",
     heroTitle: "Bespoke Balconies and Outdoor Retreats",
     heroSubtitle:
       "Transform compact urban balconies and sprawling terraces into verdant, relaxing open-air living extensions of your home.",
     heroImage: "/images/design-ideas/balcony-hero.jpg",
-    metaTitle: "Balcony Designs | The Bright Space Interiors",
+    metaTitle: "Balcony Designs ",
     metaDescription:
       "Discover creative balcony design ideas featuring vertical gardens, artificial turf, weatherproof seating, and cozy lighting.",
     designs: [
@@ -527,11 +537,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "cafe-interiors",
     name: "Cafe Interiors",
     group: "Commercial & Hospitality",
+    type: "commercial",
     heroTitle: "Captivating Cafe & Coffee Lounge Environments",
     heroSubtitle:
       "Design atmospheric hospitality spaces that attract coffee lovers, optimize table turns, and establish a memorable visual identity.",
     heroImage: "/images/design-ideas/cafe-hero.jpg",
-    metaTitle: "Cafe Interior Designs | The Bright Space Interiors",
+    metaTitle: "Cafe Interior Designs ",
     metaDescription:
       "Explore trendy cafe interior concepts including rustic coffee bars, industrial aesthetics, and instagrammable dining nooks.",
     designs: [
@@ -583,11 +594,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "salon-interiors",
     name: "Salon Interiors",
     group: "Commercial & Hospitality",
+    type: "commercial",
     heroTitle: "Glamorous Salon and Spa Spaces That Captivate Clients",
     heroSubtitle:
       "Create high-end beauty destinations with ergonomic styling stations, flattering shadowless illumination, and luxurious waiting lounges.",
     heroImage: "/images/design-ideas/salon-hero.jpg",
-    metaTitle: "Salon Interior Designs | The Bright Space Interiors",
+    metaTitle: "Salon Interior Designs ",
     metaDescription:
       "Discover salon interior designs with arched mirrors, luxury waiting lounges, pedispa suites, and shadowless lighting.",
     designs: [
@@ -639,11 +651,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "office-interiors",
     name: "Office Interiors",
     group: "Commercial & Hospitality",
+    type: "commercial",
     heroTitle: "Productive, Inspiring Workspaces for High-Performance Teams",
     heroSubtitle:
       "Design flexible, collaborative office environments that strengthen corporate culture, empower focused work, and impress visiting clients.",
     heroImage: "/images/design-ideas/office-hero.jpg",
-    metaTitle: "Office Interior Designs | The Bright Space Interiors",
+    metaTitle: "Office Interior Designs ",
     metaDescription:
       "Explore executive office designs, collaborative workstation layouts, high-tech boardrooms, and modern reception lobbies.",
     designs: [
@@ -695,11 +708,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "hotel-interiors",
     name: "Hotel Interiors",
     group: "Commercial & Hospitality",
+    type: "commercial",
     heroTitle: "Luxury Hospitality Spaces That Deliver Unforgettable Stays",
     heroSubtitle:
       "From striking lobby atriums to serene guestroom suites, craft world-class hospitality interiors that inspire return visits.",
     heroImage: "/images/design-ideas/hotel-hero.jpg",
-    metaTitle: "Hotel Interior Designs | The Bright Space Interiors",
+    metaTitle: "Hotel Interior Designs ",
     metaDescription:
       "Discover luxury hotel interior concepts for grand lobbies, executive suites, guestrooms, and fine dining lounges.",
     designs: [
@@ -751,11 +765,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "school-interiors",
     name: "School Interiors",
     group: "Commercial & Specialized",
+    type: "commercial",
     heroTitle: "Modern Learning Environments That Inspire Curiosity",
     heroSubtitle:
       "Create vibrant, safe, and collaborative educational spaces that foster creativity, engagement, and student well-being.",
     heroImage: "/images/design-ideas/school-hero.jpg",
-    metaTitle: "School & Educational Interiors | The Bright Space Interiors",
+    metaTitle: "School & Educational Interiors ",
     metaDescription:
       "Explore modern educational interiors for schools, classrooms, libraries, and science labs designed for active learning.",
     designs: [
@@ -807,11 +822,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "hospital-interiors",
     name: "Hospital Interiors",
     group: "Commercial & Specialized",
+    type: "commercial",
     heroTitle: "Healing Healthcare Spaces Combining Hygiene and Compassion",
     heroSubtitle:
       "Design medical clinics and hospital spaces prioritizing patient comfort, clinical hygiene, and seamless caregiver efficiency.",
     heroImage: "/images/design-ideas/hospital-hero.jpg",
-    metaTitle: "Hospital & Healthcare Interiors | The Bright Space Interiors",
+    metaTitle: "Hospital & Healthcare Interiors ",
     metaDescription:
       "Discover patient-centric healthcare interior designs for hospital lobbies, recovery suites, clinics, and consultation rooms.",
     designs: [
@@ -863,11 +879,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "gym-interiors",
     name: "Gym Interiors",
     group: "Commercial & Specialized",
+    type: "commercial",
     heroTitle: "Dynamic Fitness Studios and High-Energy Gym Spaces",
     heroSubtitle:
       "Energize workouts with state-of-the-art gym interiors featuring shock-absorbing rubber floors, bold LED accents, and high-impact zoning.",
     heroImage: "/images/design-ideas/gym-hero.jpg",
-    metaTitle: "Gym & Fitness Studio Interiors | The Bright Space Interiors",
+    metaTitle: "Gym & Fitness Studio Interiors ",
     metaDescription:
       "Explore fitness interior designs with high-impact LED lighting, rubber flooring, cardio zones, and boutique yoga studios.",
     designs: [
@@ -919,11 +936,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "home-wallpaper",
     name: "Home Wallpaper",
     group: "Finishes & Decor",
+    type: "residential",
     heroTitle: "Curated Designer Wallpapers That Define Character",
     heroSubtitle:
       "Add immediate personality, depth, and tactile luxury to any room with custom wall murals, textured coverings, and metallic prints.",
     heroImage: "/images/design-ideas/wallpaper-hero.jpg",
-    metaTitle: "Home Wallpaper Designs | The Bright Space Interiors",
+    metaTitle: "Home Wallpaper Designs ",
     metaDescription:
       "Discover designer wallpaper styles including metallic textures, botanical murals, geometric prints, and luxury heritage damasks.",
     designs: [
@@ -975,11 +993,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "home-bar",
     name: "Home Bar",
     group: "Dining & Storage",
+    type: "residential",
     heroTitle: "Sophisticated Home Bars for Seamless Entertaining",
     heroSubtitle:
       "Design an exclusive cocktail lounge in your home with backlit bottle displays, custom wine storage, and plush bar seating.",
     heroImage: "/images/design-ideas/bar-hero.jpg",
-    metaTitle: "Home Bar Designs | The Bright Space Interiors",
+    metaTitle: "Home Bar Designs ",
     metaDescription:
       "Explore bespoke home bar designs with backlit onyx counters, climate-controlled wine cellars, and speakeasy lounges.",
     designs: [
@@ -1031,11 +1050,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "pooja-room",
     name: "Pooja Room",
     group: "Spiritual & Traditional",
+    type: "residential",
     heroTitle: "Serene Pooja Units Crafted with Devotion and Sacred Beauty",
     heroSubtitle:
       "Create a tranquil sacred sanctuary at home with intricate jaali work, warm brass bells, backlighting, and pure marble craftsmanship.",
     heroImage: "/images/design-ideas/pooja-hero.jpg",
-    metaTitle: "Pooja Room Designs | The Bright Space Interiors",
+    metaTitle: "Pooja Room Designs ",
     metaDescription:
       "Discover serene pooja mandir designs with marble carving, CNC jaali backlights, teakwood frames, and brass accents.",
     designs: [
@@ -1087,11 +1107,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "space-saving",
     name: "Space Saving",
     group: "Innovative Solutions",
+    type: "residential",
     heroTitle: "Intelligent Space-Saving Designs That Double Your Living Area",
     heroSubtitle:
       "Maximize compact urban layouts with multifunctional convertible furniture, hidden storage, and clever folding mechanisms.",
     heroImage: "/images/design-ideas/spacesaving-hero.jpg",
-    metaTitle: "Space Saving Interior Designs | The Bright Space Interiors",
+    metaTitle: "Space Saving Interior Designs ",
     metaDescription:
       "Explore smart space-saving ideas including Murphy beds, hidden storage, modular furniture, and convertible tables.",
     designs: [
@@ -1143,11 +1164,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "staircase",
     name: "Staircase",
     group: "Architectural Elements",
+    type: "residential",
     heroTitle: "Architectural Staircase Designs That Make a Statement",
     heroSubtitle:
       "Elevate your home's multi-level circulation with floating cantilevered treads, sculptural railings, and ambient step lighting.",
     heroImage: "/images/design-ideas/staircase-hero.jpg",
-    metaTitle: "Staircase Designs | The Bright Space Interiors",
+    metaTitle: "Staircase Designs ",
     metaDescription:
       "Discover modern staircase designs with floating wooden treads, glass railings, spiral structures, and integrated step illumination.",
     designs: [
@@ -1199,11 +1221,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "study-room",
     name: "Study Room",
     group: "Work & Study",
+    type: "residential",
     heroTitle: "Focused Study Rooms and Executive Home Libraries",
     heroSubtitle:
       "Design quiet, productive study spaces equipped with custom bookshelves, ergonomic desks, and focused task lighting.",
     heroImage: "/images/design-ideas/study-hero.jpg",
-    metaTitle: "Study Room Designs | The Bright Space Interiors",
+    metaTitle: "Study Room Designs ",
     metaDescription:
       "Explore study room designs with custom bookshelves, floating workstations, reading nooks, and ergonomic setups.",
     designs: [
@@ -1255,11 +1278,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "tv-unit",
     name: "TV Unit",
     group: "Living & Lounge",
+    type: "residential",
     heroTitle: "Showstopper TV Units and Modern Media Walls",
     heroSubtitle:
       "Center your living space around a luxurious TV entertainment unit featuring fluted panels, marble backdrops, and floating consoles.",
     heroImage: "/images/design-ideas/tvunit-hero.jpg",
-    metaTitle: "TV Unit Designs | The Bright Space Interiors",
+    metaTitle: "TV Unit Designs ",
     metaDescription:
       "Discover modern TV unit designs with fluted panelling, marble slabs, floating consoles, and hidden cable management.",
     designs: [
@@ -1311,11 +1335,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "wall-decor",
     name: "Wall Decor",
     group: "Finishes & Decor",
+    type: "residential",
     heroTitle: "Curated Wall Decor and Architectural Panelling Features",
     heroSubtitle:
       "Transform plain walls into dimensional art with custom wood mouldings, mirror accents, metal installations, and fine art curations.",
     heroImage: "/images/design-ideas/walldecor-hero.jpg",
-    metaTitle: "Wall Decor Designs | The Bright Space Interiors",
+    metaTitle: "Wall Decor Designs ",
     metaDescription:
       "Explore creative wall decor ideas including fluted wall panels, metal art sculptures, bronze grid mirrors, and wainscoting.",
     designs: [
@@ -1367,11 +1392,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "wall-paint",
     name: "Wall Paint",
     group: "Finishes & Decor",
+    type: "residential",
     heroTitle: "Luxury Paint Finishes, Textures, and Color Palettes",
     heroSubtitle:
       "Define the mood of every room with artisan lime wash, Venetian stucco plaster, and curated designer color schemes.",
     heroImage: "/images/design-ideas/wallpaint-hero.jpg",
-    metaTitle: "Wall Paint Designs & Finishes | The Bright Space Interiors",
+    metaTitle: "Wall Paint Designs & Finishes ",
     metaDescription:
       "Discover premium wall paint techniques including Italian stucco, textured limewash, accent color blocking, and metallic luster.",
     designs: [
@@ -1423,11 +1449,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "window",
     name: "Window",
     group: "Architectural Elements",
+    type: "residential",
     heroTitle: "Window Treatments, Casements, and Natural Light Framing",
     heroSubtitle:
       "Frame outdoor vistas and control natural light with floor-to-ceiling picture glass, custom draperies, and architectural frames.",
     heroImage: "/images/design-ideas/window-hero.jpg",
-    metaTitle: "Window Designs & Treatments | The Bright Space Interiors",
+    metaTitle: "Window Designs & Treatments ",
     metaDescription:
       "Explore modern window ideas with floor-to-ceiling glass, black aluminium casements, bay window seating, and motorized drapes.",
     designs: [
@@ -1479,11 +1506,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "tile",
     name: "Tile",
     group: "Finishes & Decor",
+    type: "residential",
     heroTitle: "Designer Tiles, Marble Slabs, and Artisanal Mosaics",
     heroSubtitle:
       "Set the foundation of exquisite interiors with large-format porcelain slabs, handcrafted Moroccan zellige, and geometric mosaics.",
     heroImage: "/images/design-ideas/tile-hero.jpg",
-    metaTitle: "Tile Designs & Patterns | The Bright Space Interiors",
+    metaTitle: "Tile Designs & Patterns ",
     metaDescription:
       "Discover stunning tile design concepts including large-format porcelain, herringbone backsplashes, terrazzo floors, and mosaics.",
     designs: [
@@ -1535,11 +1563,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "front-elevation",
     name: "Front Elevation",
     group: "Architectural Elements",
+    type: "residential",
     heroTitle: "Stunning Front Elevation and Facade Architecture",
     heroSubtitle:
       "Create unforgettable exterior curb appeal with modern architectural massing, kinetic louvers, stone cladding, and facade illumination.",
     heroImage: "/images/design-ideas/elevation-hero.jpg",
-    metaTitle: "Front Elevation Designs | The Bright Space Interiors",
+    metaTitle: "Front Elevation Designs ",
     metaDescription:
       "Explore modern residential front elevation designs, villa facades, architectural cladding, and dramatic exterior lighting.",
     designs: [
@@ -1591,11 +1620,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "kitchen-interiors",
     name: "Kitchen Interiors",
     group: "Kitchen & Dining",
+    type: "residential",
     heroTitle: "Inspiring Kitchen Interiors Tailored for Every Chef",
     heroSubtitle:
       "Transform your kitchen into a luxurious culinary paradise with quartz surfaces, smart appliance towers, and bespoke cabinetry.",
     heroImage: "/images/design-ideas/kitcheninteriors-hero.jpg",
-    metaTitle: "Kitchen Interior Designs | The Bright Space Interiors",
+    metaTitle: "Kitchen Interior Designs ",
     metaDescription:
       "Discover kitchen interior ideas featuring handleless acrylic cabinets, island breakfast counters, and pantry tall-units.",
     designs: [
@@ -1647,11 +1677,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "kids-bedroom-designs",
     name: "Kids Bedroom Designs",
     group: "Bedrooms & Suites",
+    type: "residential",
     heroTitle: "Imaginative, Functional, and Safe Spaces for Children",
     heroSubtitle:
       "Design cheerful bedrooms that grow with your children, featuring smart bunk beds, interactive study zones, and durable finishes.",
     heroImage: "/images/design-ideas/kids-hero.jpg",
-    metaTitle: "Kids Bedroom Designs | The Bright Space Interiors",
+    metaTitle: "Kids Bedroom Designs ",
     metaDescription:
       "Explore creative kids bedroom designs with custom bunk beds, study corners, pastel themes, and safe rounded storage.",
     designs: [
@@ -1703,11 +1734,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "foyer-designs",
     name: "Foyer Designs",
     group: "Living & Lounge",
+    type: "residential",
     heroTitle: "Memorable Entryway Foyers That Set a Welcoming Tone",
     heroSubtitle:
       "Craft a breathtaking first impression with artistic console tables, sunburst mirrors, smart shoe cabinetry, and statement lighting.",
     heroImage: "/images/design-ideas/foyer-hero.jpg",
-    metaTitle: "Foyer & Entryway Designs | The Bright Space Interiors",
+    metaTitle: "Foyer & Entryway Designs ",
     metaDescription:
       "Discover entryway foyer designs featuring console tables, statement mirrors, shoe storage benches, and warm welcoming lighting.",
     designs: [
@@ -1759,11 +1791,12 @@ export const DESIGN_CATEGORIES: DesignCategory[] = [
     slug: "dressing-room-designs",
     name: "Dressing Room Designs",
     group: "Bedrooms & Suites",
+    type: "residential",
     heroTitle: "Boutique Dressing Rooms and Glamorous Walk-In Closets",
     heroSubtitle:
       "Experience the pinnacle of luxury dressing with custom accessory islands, illuminated vanity mirrors, and velvet seating.",
     heroImage: "/images/design-ideas/dressing-hero.jpg",
-    metaTitle: "Dressing Room Designs | The Bright Space Interiors",
+    metaTitle: "Dressing Room Designs ",
     metaDescription:
       "Explore bespoke dressing room designs with central jewelry islands, lighted vanities, glass wardrobes, and boutique organization.",
     designs: [
@@ -1837,3 +1870,39 @@ export const CATEGORY_GROUPS = [
   "Innovative Solutions",
   "Outdoor & Extended",
 ];
+
+export const COMMERCIAL_CATEGORY_SLUGS = new Set([
+  "cafe-interiors",
+  "salon-interiors",
+  "office-interiors",
+  "hotel-interiors",
+  "school-interiors",
+  "hospital-interiors",
+  "gym-interiors",
+]);
+
+export function isCommercialCategory(category: { type?: string; slug?: string; group?: string }): boolean {
+  if (category.type === "commercial") return true;
+  if (category.type === "residential") return false;
+  if (category.slug && COMMERCIAL_CATEGORY_SLUGS.has(category.slug)) return true;
+  if (category.group && category.group.toLowerCase().includes("commercial")) return true;
+  return false;
+}
+
+export function getCategoryIntroText(category: { name: string; type?: "residential" | "commercial"; slug?: string; group?: string }): string {
+  const isCommercial = isCommercialCategory(category);
+  const categoryName = category.name.toLowerCase();
+  if (isCommercial) {
+    return `Explore our signature portfolio of ${categoryName} designed for businesses across Delhi NCR.`;
+  }
+  return `Explore our signature portfolio of ${categoryName} tailored for modern luxury homes across Delhi NCR.`;
+}
+
+export function getCategoryConsultationHeading(category: { name: string; type?: "residential" | "commercial"; slug?: string; group?: string }): string {
+  const isCommercial = isCommercialCategory(category);
+  const categoryName = category.name.toLowerCase();
+  if (isCommercial) {
+    return `Planning ${categoryName}? Let's design it for your business.`;
+  }
+  return `Need a Customized ${category.name.replace(/ Designs$/, "")} for Your Home?`;
+}

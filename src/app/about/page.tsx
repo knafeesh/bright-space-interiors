@@ -3,11 +3,14 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { TEAM_MEMBERS, WHY_US_PILLARS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 
-export const metadata: Metadata = {
+import { constructMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = constructMetadata({
+  path: "/about",
   title: "About Us",
   description:
     "Learn the story behind Bright Space Interiors — our founding philosophy, team, and commitment to crafting luxury spaces with precision and heart.",
-};
+});
 
 const MILESTONES = [
   { year: "2012", event: "Studio Founded", desc: "Mohd Mushir founded Bright Space Interiors with a vision for quiet luxury.", side: "left" },

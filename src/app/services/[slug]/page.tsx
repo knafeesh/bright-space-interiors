@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SERVICES } from "@/lib/data";
 import ServiceDetailClient from "./ServiceDetailClient";
+import { constructMetadata } from "@/lib/metadata";
 
 export async function generateStaticParams() {
   return [
@@ -57,38 +58,12 @@ export async function generateMetadata({
     ogImage: service.image,
   };
 
-  const canonicalUrl = `/services/${slug}`;
-  const fullUrl = `https://www.brightspaceinterior.in/services/${slug}`;
-  const imgUrl = meta.ogImage.startsWith("http")
-    ? meta.ogImage
-    : `https://www.brightspaceinterior.in${meta.ogImage}`;
-
-  return {
+  return constructMetadata({
+    path: `/services/${slug}`,
     title: meta.title,
     description: meta.description,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    openGraph: {
-      title: `${meta.title} | Bright Space Interiors`,
-      description: meta.description,
-      url: fullUrl,
-      images: [
-        {
-          url: imgUrl,
-          width: 1200,
-          height: 630,
-          alt: service.title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${meta.title} | Bright Space Interiors`,
-      description: meta.description,
-      images: [imgUrl],
-    },
-  };
+    image: meta.ogImage,
+  });
 }
 
 export default async function ServiceDetailPage({

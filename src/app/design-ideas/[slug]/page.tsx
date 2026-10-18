@@ -3,9 +3,10 @@ import Link from "next/link";
 import { ChevronRight, ArrowRight, Sparkles, MessageCircle, Phone } from "lucide-react";
 import { Metadata } from "next";
 import {
-  getAllDesignCategories,
   getDesignCategoryBySlug,
   DESIGN_CATEGORIES,
+  getCategoryIntroText,
+  getCategoryConsultationHeading,
 } from "@/lib/design-ideas-data";
 import {
   getAllCategoriesFromDb,
@@ -13,6 +14,7 @@ import {
 } from "@/lib/server/design-ideas-db";
 import { WHATSAPP_NUMBER, PHONE_NUMBER } from "@/lib/data";
 import CategoryGallery from "@/components/ui/CategoryGallery";
+import { constructMetadata } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -26,19 +28,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const category = (await getCategoryFromDbBySlug(slug)) || getDesignCategoryBySlug(slug);
   if (!category) {
-    return {
-      title: "Design Ideas | The Bright Space Interiors",
-    };
+    return constructMetadata({
+      path: `/design-ideas/${slug}`,
+      title: "Design Ideas",
+    });
   }
-  return {
-    title: category.metaTitle,
+
+  const cleanTitle = (category.metaTitle || category.name)
+    .replace(/\s*\|\s*(The\s+)?Bright Space Interiors.*$/i, "")
+    .trim();
+
+  return constructMetadata({
+    path: `/design-ideas/${slug}`,
+    title: cleanTitle,
     description: category.metaDescription,
-    openGraph: {
-      title: category.metaTitle,
-      description: category.metaDescription,
-      images: [{ url: category.heroImage }],
-    },
-  };
+    image: category.heroImage,
+  });
 }
 
 export default async function DesignCategoryPage({ params }: Props) {
@@ -273,7 +278,7 @@ export default async function DesignCategoryPage({ params }: Props) {
               lineHeight: 1.6,
             }}
           >
-            Explore our signature portfolio of {category.name.toLowerCase()} tailored for modern luxury homes across Delhi NCR.
+            {getCategoryIntroText(category)}
           </p>
         </div>
 
@@ -319,7 +324,7 @@ export default async function DesignCategoryPage({ params }: Props) {
               letterSpacing: "0.02em",
             }}
           >
-            Need a Customized {category.name.replace(/ Designs$/, "")} for Your Home?
+            {getCategoryConsultationHeading(category)}
           </h2>
           <p
             style={{

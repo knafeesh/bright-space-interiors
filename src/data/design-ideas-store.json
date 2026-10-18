@@ -7,7 +7,7 @@
       "heroTitle": "Our Crockery Units Are Designed to Complement Your Interiors",
       "heroSubtitle": "Transform your dining space with innovative crockery unit designs that bring together elegance, utility, and flawless craftsmanship.",
       "heroImage": "/images/design-ideas/crockery-hero.jpg",
-      "metaTitle": "Crockery Unit Designs | The Bright Space Interiors",
+      "metaTitle": "Crockery Unit Designs",
       "metaDescription": "Explore bespoke crockery unit designs featuring glass display cabinets, ambient illumination, and premium finishes crafted for luxury dining spaces.",
       "designs": [
         {
@@ -52,7 +52,8 @@
           "tag": "Warm Wood",
           "description": "Natural walnut veneer paired with concealed warm 3000K LED illumination for cozy entertaining."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "modular-kitchen-designs",
@@ -61,7 +62,7 @@
       "heroTitle": "Ergonomic Modular Kitchens Engineered for Modern Living",
       "heroSubtitle": "Experience culinary excellence with custom modular kitchen layouts designed for optimal workflow, premium durability, and bespoke aesthetics.",
       "heroImage": "/images/design-ideas/kitchen-hero.jpg",
-      "metaTitle": "Modular Kitchen Designs | The Bright Space Interiors",
+      "metaTitle": "Modular Kitchen Designs",
       "metaDescription": "Discover modern modular kitchen layouts including island, L-shaped, and parallel kitchens with luxury finishes and smart storage.",
       "designs": [
         {
@@ -106,7 +107,8 @@
           "tag": "Chef Grade",
           "description": "Dual-counter parallel layout maximizing prep space with built-in pantry tall-units."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "dining-room-designs",
@@ -115,7 +117,7 @@
       "heroTitle": "Bespoke Dining Spaces That Bring Family and Guests Together",
       "heroSubtitle": "From intimate family meals to grand celebration banquets, design your dining room with tailored furniture, lighting, and luxurious ambiance.",
       "heroImage": "/images/design-ideas/dining-hero.jpg",
-      "metaTitle": "Dining Room Designs | The Bright Space Interiors",
+      "metaTitle": "Dining Room Designs",
       "metaDescription": "Discover luxury dining room interior concepts featuring marble tables, custom chandeliers, and ergonomic seating arrangements.",
       "designs": [
         {
@@ -160,7 +162,8 @@
           "tag": "Grand Scale",
           "description": "Ten-seater dining centerpiece with fluted wall panels and architectural cove illumination."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "master-bedroom-designs",
@@ -169,7 +172,7 @@
       "heroTitle": "Sanctuaries of Serenity and Bespoke Comfort",
       "heroSubtitle": "Retreat into a master bedroom tailored to your lifestyle, incorporating luxury panelling, customized headboards, and soothing ambient lighting.",
       "heroImage": "/images/design-ideas/bedroom-hero.jpg",
-      "metaTitle": "Master Bedroom Designs | The Bright Space Interiors",
+      "metaTitle": "Master Bedroom Designs",
       "metaDescription": "Explore peaceful master bedroom design ideas with bespoke headboards, integrated wardrobes, and ambient accent lighting.",
       "designs": [
         {
@@ -214,7 +217,8 @@
           "tag": "Organic Chic",
           "description": "Cane and rattan headboard accents with breathable organic fabrics and tranquil ambient tones."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "false-ceiling-designs",
@@ -223,7 +227,7 @@
       "heroTitle": "Architectural Ceiling Treatments with Integrated Illumination",
       "heroSubtitle": "Elevate your home's interior volume with layered gypsum ceilings, perimeter cove lighting, and artistic wooden rafter details.",
       "heroImage": "/images/design-ideas/ceiling-hero.jpg",
-      "metaTitle": "False Ceiling Designs | The Bright Space Interiors",
+      "metaTitle": "False Ceiling Designs",
       "metaDescription": "Discover modern false ceiling ideas featuring cove lighting, gypsum tiers, wooden rafters, and magnetic track lights.",
       "designs": [
         {
@@ -268,7 +272,8 @@
           "tag": "Contemporary",
           "description": "Suspended floating island ceiling element with soft halo edge illumination."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "wardrobe-designs",
@@ -277,7 +282,7 @@
       "heroTitle": "Tailored Wardrobe Systems for Effortless Organization",
       "heroSubtitle": "Custom storage solutions blending luxury finishes, intuitive organization, and space-saving mechanisms for your daily routine.",
       "heroImage": "/images/design-ideas/wardrobe-hero.jpg",
-      "metaTitle": "Wardrobe Designs | The Bright Space Interiors",
+      "metaTitle": "Wardrobe Designs",
       "metaDescription": "Explore custom wardrobe designs including sliding doors, walk-in closets, tinted glass shutters, and sensor-lit accessories.",
       "designs": [
         {
@@ -322,7 +327,8 @@
           "tag": "Illuminated",
           "description": "Concealed micro-LED profiles embedded into hanger rods and shoe display drawers."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "living-room-designs",
@@ -331,7 +337,7 @@
       "heroTitle": "Signature Living Rooms Designed to Impress and Comfort",
       "heroSubtitle": "Create an unforgettable first impression with inviting conversation layouts, custom entertainment walls, and premium bespoke furniture.",
       "heroImage": "/images/design-ideas/living-hero.jpg",
-      "metaTitle": "Living Room Designs | The Bright Space Interiors",
+      "metaTitle": "Living Room Designs",
       "metaDescription": "Discover inspiring living room designs crafted with luxury furniture layouts, accent walls, and balanced lighting schemes.",
       "designs": [
         {
@@ -376,7 +382,8 @@
           "tag": "Mid-Century",
           "description": "Tapered wooden legs, warm leather lounge chairs, and rich sculptural brass accessories."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "bathroom-designs",
@@ -385,7 +392,7 @@
       "heroTitle": "Spa-Inspired Bathrooms Tailored for Everyday Rejuvenation",
       "heroSubtitle": "Transform functional bathrooms into serene wellness havens with marble finishes, backlit floating vanities, and walk-in rain showers.",
       "heroImage": "/images/design-ideas/bathroom-hero.jpg",
-      "metaTitle": "Bathroom Designs | The Bright Space Interiors",
+      "metaTitle": "Bathroom Designs",
       "metaDescription": "Explore modern luxury bathroom designs with floating vanities, frameless glass shower enclosures, and designer tiles.",
       "designs": [
         {
@@ -430,7 +437,8 @@
           "tag": "Powder Room",
           "description": "Dramatic fluted pedestal basin with dark textured wallpaper and warm spotlight beam."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "balcony-designs",
@@ -439,7 +447,7 @@
       "heroTitle": "Bespoke Balconies and Outdoor Retreats",
       "heroSubtitle": "Transform compact urban balconies and sprawling terraces into verdant, relaxing open-air living extensions of your home.",
       "heroImage": "/images/design-ideas/balcony-hero.jpg",
-      "metaTitle": "Balcony Designs | The Bright Space Interiors",
+      "metaTitle": "Balcony Designs",
       "metaDescription": "Discover creative balcony design ideas featuring vertical gardens, artificial turf, weatherproof seating, and cozy lighting.",
       "designs": [
         {
@@ -484,7 +492,8 @@
           "tag": "Zen Retreat",
           "description": "Pebble stone border, Buddha water cascade, and natural bamboo privacy screening."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "cafe-interiors",
@@ -493,7 +502,7 @@
       "heroTitle": "Captivating Cafe & Coffee Lounge Environments",
       "heroSubtitle": "Design atmospheric hospitality spaces that attract coffee lovers, optimize table turns, and establish a memorable visual identity.",
       "heroImage": "/images/design-ideas/cafe-hero.jpg",
-      "metaTitle": "Cafe Interior Designs | The Bright Space Interiors",
+      "metaTitle": "Cafe Interior Designs",
       "metaDescription": "Explore trendy cafe interior concepts including rustic coffee bars, industrial aesthetics, and instagrammable dining nooks.",
       "designs": [
         {
@@ -538,7 +547,8 @@
           "tag": "Industrial",
           "description": "Polished concrete floor, visible ductwork, and oversized industrial steel window casements."
         }
-      ]
+      ],
+      "type": "commercial"
     },
     {
       "slug": "salon-interiors",
@@ -547,7 +557,7 @@
       "heroTitle": "Glamorous Salon and Spa Spaces That Captivate Clients",
       "heroSubtitle": "Create high-end beauty destinations with ergonomic styling stations, flattering shadowless illumination, and luxurious waiting lounges.",
       "heroImage": "/images/design-ideas/salon-hero.jpg",
-      "metaTitle": "Salon Interior Designs | The Bright Space Interiors",
+      "metaTitle": "Salon Interior Designs",
       "metaDescription": "Discover salon interior designs with arched mirrors, luxury waiting lounges, pedispa suites, and shadowless lighting.",
       "designs": [
         {
@@ -592,7 +602,8 @@
           "tag": "Spa Sanctuary",
           "description": "Natural bamboo screens, indoor cascading fountain, and soft warm earthen color tones."
         }
-      ]
+      ],
+      "type": "commercial"
     },
     {
       "slug": "office-interiors",
@@ -601,7 +612,7 @@
       "heroTitle": "Productive, Inspiring Workspaces for High-Performance Teams",
       "heroSubtitle": "Design flexible, collaborative office environments that strengthen corporate culture, empower focused work, and impress visiting clients.",
       "heroImage": "/images/design-ideas/office-hero.jpg",
-      "metaTitle": "Office Interior Designs | The Bright Space Interiors",
+      "metaTitle": "Office Interior Designs",
       "metaDescription": "Explore executive office designs, collaborative workstation layouts, high-tech boardrooms, and modern reception lobbies.",
       "designs": [
         {
@@ -646,7 +657,8 @@
           "tag": "Creative Studio",
           "description": "Exposed ceilings, writeable whiteboard walls, and relaxed informal beanbag brainstorming zones."
         }
-      ]
+      ],
+      "type": "commercial"
     },
     {
       "slug": "hotel-interiors",
@@ -655,7 +667,7 @@
       "heroTitle": "Luxury Hospitality Spaces That Deliver Unforgettable Stays",
       "heroSubtitle": "From striking lobby atriums to serene guestroom suites, craft world-class hospitality interiors that inspire return visits.",
       "heroImage": "/images/design-ideas/hotel-hero.jpg",
-      "metaTitle": "Hotel Interior Designs | The Bright Space Interiors",
+      "metaTitle": "Hotel Interior Designs",
       "metaDescription": "Discover luxury hotel interior concepts for grand lobbies, executive suites, guestrooms, and fine dining lounges.",
       "designs": [
         {
@@ -700,7 +712,8 @@
           "tag": "Restaurant",
           "description": "Subtly illuminated tables with acoustic ceiling baffles and dramatic sculptural wine display cellar."
         }
-      ]
+      ],
+      "type": "commercial"
     },
     {
       "slug": "school-interiors",
@@ -709,7 +722,7 @@
       "heroTitle": "Modern Learning Environments That Inspire Curiosity",
       "heroSubtitle": "Create vibrant, safe, and collaborative educational spaces that foster creativity, engagement, and student well-being.",
       "heroImage": "/images/design-ideas/school-hero.jpg",
-      "metaTitle": "School & Educational Interiors | The Bright Space Interiors",
+      "metaTitle": "School & Educational Interiors",
       "metaDescription": "Explore modern educational interiors for schools, classrooms, libraries, and science labs designed for active learning.",
       "designs": [
         {
@@ -754,7 +767,8 @@
           "tag": "Dining Hall",
           "description": "Durable bench seating arrangements, bright acoustic panels, and hygienic self-service counters."
         }
-      ]
+      ],
+      "type": "commercial"
     },
     {
       "slug": "hospital-interiors",
@@ -763,7 +777,7 @@
       "heroTitle": "Healing Healthcare Spaces Combining Hygiene and Compassion",
       "heroSubtitle": "Design medical clinics and hospital spaces prioritizing patient comfort, clinical hygiene, and seamless caregiver efficiency.",
       "heroImage": "/images/design-ideas/hospital-hero.jpg",
-      "metaTitle": "Hospital & Healthcare Interiors | The Bright Space Interiors",
+      "metaTitle": "Hospital & Healthcare Interiors",
       "metaDescription": "Discover patient-centric healthcare interior designs for hospital lobbies, recovery suites, clinics, and consultation rooms.",
       "designs": [
         {
@@ -808,7 +822,8 @@
           "tag": "Wellness Wing",
           "description": "Soft indirect lighting, tranquil soundproofing, and seamless anti-microbial wall cladding."
         }
-      ]
+      ],
+      "type": "commercial"
     },
     {
       "slug": "gym-interiors",
@@ -817,7 +832,7 @@
       "heroTitle": "Dynamic Fitness Studios and High-Energy Gym Spaces",
       "heroSubtitle": "Energize workouts with state-of-the-art gym interiors featuring shock-absorbing rubber floors, bold LED accents, and high-impact zoning.",
       "heroImage": "/images/design-ideas/gym-hero.jpg",
-      "metaTitle": "Gym & Fitness Studio Interiors | The Bright Space Interiors",
+      "metaTitle": "Gym & Fitness Studio Interiors",
       "metaDescription": "Explore fitness interior designs with high-impact LED lighting, rubber flooring, cardio zones, and boutique yoga studios.",
       "designs": [
         {
@@ -862,7 +877,8 @@
           "tag": "Personal Training",
           "description": "Dedicated VIP coaching suite equipped with functional fitness mirrors and acoustic insulation."
         }
-      ]
+      ],
+      "type": "commercial"
     },
     {
       "slug": "home-wallpaper",
@@ -871,7 +887,7 @@
       "heroTitle": "Curated Designer Wallpapers That Define Character",
       "heroSubtitle": "Add immediate personality, depth, and tactile luxury to any room with custom wall murals, textured coverings, and metallic prints.",
       "heroImage": "/images/design-ideas/wallpaper-hero.jpg",
-      "metaTitle": "Home Wallpaper Designs | The Bright Space Interiors",
+      "metaTitle": "Home Wallpaper Designs",
       "metaDescription": "Discover designer wallpaper styles including metallic textures, botanical murals, geometric prints, and luxury heritage damasks.",
       "designs": [
         {
@@ -916,7 +932,8 @@
           "tag": "Textured Neutral",
           "description": "Organic Belgian linen weave surface adding tactile richness while preserving quiet minimalist calm."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "home-bar",
@@ -925,7 +942,7 @@
       "heroTitle": "Sophisticated Home Bars for Seamless Entertaining",
       "heroSubtitle": "Design an exclusive cocktail lounge in your home with backlit bottle displays, custom wine storage, and plush bar seating.",
       "heroImage": "/images/design-ideas/bar-hero.jpg",
-      "metaTitle": "Home Bar Designs | The Bright Space Interiors",
+      "metaTitle": "Home Bar Designs",
       "metaDescription": "Explore bespoke home bar designs with backlit onyx counters, climate-controlled wine cellars, and speakeasy lounges.",
       "designs": [
         {
@@ -970,7 +987,8 @@
           "tag": "Art Deco",
           "description": "Sleek brass shelving suspended from the ceiling above a polished Nero Marquina marble counter."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "pooja-room",
@@ -979,7 +997,7 @@
       "heroTitle": "Serene Pooja Units Crafted with Devotion and Sacred Beauty",
       "heroSubtitle": "Create a tranquil sacred sanctuary at home with intricate jaali work, warm brass bells, backlighting, and pure marble craftsmanship.",
       "heroImage": "/images/design-ideas/pooja-hero.jpg",
-      "metaTitle": "Pooja Room Designs | The Bright Space Interiors",
+      "metaTitle": "Pooja Room Designs",
       "metaDescription": "Discover serene pooja mandir designs with marble carving, CNC jaali backlights, teakwood frames, and brass accents.",
       "designs": [
         {
@@ -1024,7 +1042,8 @@
           "tag": "Compact Nook",
           "description": "Wall-mounted floating pooja unit with integrated diya drawers and warm focused spotlights."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "space-saving",
@@ -1033,7 +1052,7 @@
       "heroTitle": "Intelligent Space-Saving Designs That Double Your Living Area",
       "heroSubtitle": "Maximize compact urban layouts with multifunctional convertible furniture, hidden storage, and clever folding mechanisms.",
       "heroImage": "/images/design-ideas/spacesaving-hero.jpg",
-      "metaTitle": "Space Saving Interior Designs | The Bright Space Interiors",
+      "metaTitle": "Space Saving Interior Designs",
       "metaDescription": "Explore smart space-saving ideas including Murphy beds, hidden storage, modular furniture, and convertible tables.",
       "designs": [
         {
@@ -1078,7 +1097,8 @@
           "tag": "Modular",
           "description": "Set of three graduated marble and oak coffee tables that slide together when space is needed."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "staircase",
@@ -1087,7 +1107,7 @@
       "heroTitle": "Architectural Staircase Designs That Make a Statement",
       "heroSubtitle": "Elevate your home's multi-level circulation with floating cantilevered treads, sculptural railings, and ambient step lighting.",
       "heroImage": "/images/design-ideas/staircase-hero.jpg",
-      "metaTitle": "Staircase Designs | The Bright Space Interiors",
+      "metaTitle": "Staircase Designs",
       "metaDescription": "Discover modern staircase designs with floating wooden treads, glass railings, spiral structures, and integrated step illumination.",
       "designs": [
         {
@@ -1132,7 +1152,8 @@
           "tag": "Industrial Chic",
           "description": "Central spine steel structure supporting warm oak steps for a clean loft aesthetic."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "study-room",
@@ -1141,7 +1162,7 @@
       "heroTitle": "Focused Study Rooms and Executive Home Libraries",
       "heroSubtitle": "Design quiet, productive study spaces equipped with custom bookshelves, ergonomic desks, and focused task lighting.",
       "heroImage": "/images/design-ideas/study-hero.jpg",
-      "metaTitle": "Study Room Designs | The Bright Space Interiors",
+      "metaTitle": "Study Room Designs",
       "metaDescription": "Explore study room designs with custom bookshelves, floating workstations, reading nooks, and ergonomic setups.",
       "designs": [
         {
@@ -1186,7 +1207,8 @@
           "tag": "Compact Focus",
           "description": "Acoustically insulated corner workstation with anti-glare overhead illumination and cable management."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "tv-unit",
@@ -1195,7 +1217,7 @@
       "heroTitle": "Showstopper TV Units and Modern Media Walls",
       "heroSubtitle": "Center your living space around a luxurious TV entertainment unit featuring fluted panels, marble backdrops, and floating consoles.",
       "heroImage": "/images/design-ideas/tvunit-hero.jpg",
-      "metaTitle": "TV Unit Designs | The Bright Space Interiors",
+      "metaTitle": "TV Unit Designs",
       "metaDescription": "Discover modern TV unit designs with fluted panelling, marble slabs, floating consoles, and hidden cable management.",
       "designs": [
         {
@@ -1240,7 +1262,8 @@
           "tag": "360 Swivel",
           "description": "Center pivot swivel unit allowing viewing from both the living lounge and dining space."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "wall-decor",
@@ -1249,7 +1272,7 @@
       "heroTitle": "Curated Wall Decor and Architectural Panelling Features",
       "heroSubtitle": "Transform plain walls into dimensional art with custom wood mouldings, mirror accents, metal installations, and fine art curations.",
       "heroImage": "/images/design-ideas/walldecor-hero.jpg",
-      "metaTitle": "Wall Decor Designs | The Bright Space Interiors",
+      "metaTitle": "Wall Decor Designs",
       "metaDescription": "Explore creative wall decor ideas including fluted wall panels, metal art sculptures, bronze grid mirrors, and wainscoting.",
       "designs": [
         {
@@ -1294,7 +1317,8 @@
           "tag": "Backlit Feature",
           "description": "Concealed LED light channels washing down behind spaced wooden slats for evening mood ambiance."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "wall-paint",
@@ -1303,7 +1327,7 @@
       "heroTitle": "Luxury Paint Finishes, Textures, and Color Palettes",
       "heroSubtitle": "Define the mood of every room with artisan lime wash, Venetian stucco plaster, and curated designer color schemes.",
       "heroImage": "/images/design-ideas/wallpaint-hero.jpg",
-      "metaTitle": "Wall Paint Designs & Finishes | The Bright Space Interiors",
+      "metaTitle": "Wall Paint Designs & Finishes",
       "metaDescription": "Discover premium wall paint techniques including Italian stucco, textured limewash, accent color blocking, and metallic luster.",
       "designs": [
         {
@@ -1348,7 +1372,8 @@
           "tag": "Metallic Luster",
           "description": "Micro-fine pearlescent glaze catching shifting ambient angles in foyer entryways."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "window",
@@ -1357,7 +1382,7 @@
       "heroTitle": "Window Treatments, Casements, and Natural Light Framing",
       "heroSubtitle": "Frame outdoor vistas and control natural light with floor-to-ceiling picture glass, custom draperies, and architectural frames.",
       "heroImage": "/images/design-ideas/window-hero.jpg",
-      "metaTitle": "Window Designs & Treatments | The Bright Space Interiors",
+      "metaTitle": "Window Designs & Treatments",
       "metaDescription": "Explore modern window ideas with floor-to-ceiling glass, black aluminium casements, bay window seating, and motorized drapes.",
       "designs": [
         {
@@ -1402,7 +1427,8 @@
           "tag": "Arched Heritage",
           "description": "Custom louvred plantation shutters set within an elegant architectural semicircular arch."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "tile",
@@ -1411,7 +1437,7 @@
       "heroTitle": "Designer Tiles, Marble Slabs, and Artisanal Mosaics",
       "heroSubtitle": "Set the foundation of exquisite interiors with large-format porcelain slabs, handcrafted Moroccan zellige, and geometric mosaics.",
       "heroImage": "/images/design-ideas/tile-hero.jpg",
-      "metaTitle": "Tile Designs & Patterns | The Bright Space Interiors",
+      "metaTitle": "Tile Designs & Patterns",
       "metaDescription": "Discover stunning tile design concepts including large-format porcelain, herringbone backsplashes, terrazzo floors, and mosaics.",
       "designs": [
         {
@@ -1456,7 +1482,8 @@
           "tag": "Wood Plank",
           "description": "Textured oak-embossed porcelain planks delivering natural warmth with zero moisture maintenance."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "front-elevation",
@@ -1465,7 +1492,7 @@
       "heroTitle": "Stunning Front Elevation and Facade Architecture",
       "heroSubtitle": "Create unforgettable exterior curb appeal with modern architectural massing, kinetic louvers, stone cladding, and facade illumination.",
       "heroImage": "/images/design-ideas/elevation-hero.jpg",
-      "metaTitle": "Front Elevation Designs | The Bright Space Interiors",
+      "metaTitle": "Front Elevation Designs",
       "metaDescription": "Explore modern residential front elevation designs, villa facades, architectural cladding, and dramatic exterior lighting.",
       "designs": [
         {
@@ -1510,7 +1537,8 @@
           "tag": "Stone Cladding",
           "description": "Natural dry-stacked slate stone walls accentuated by upward warm LED architectural grazers."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "kitchen-interiors",
@@ -1519,7 +1547,7 @@
       "heroTitle": "Inspiring Kitchen Interiors Tailored for Every Chef",
       "heroSubtitle": "Transform your kitchen into a luxurious culinary paradise with quartz surfaces, smart appliance towers, and bespoke cabinetry.",
       "heroImage": "/images/design-ideas/kitcheninteriors-hero.jpg",
-      "metaTitle": "Kitchen Interior Designs | The Bright Space Interiors",
+      "metaTitle": "Kitchen Interior Designs",
       "metaDescription": "Discover kitchen interior ideas featuring handleless acrylic cabinets, island breakfast counters, and pantry tall-units.",
       "designs": [
         {
@@ -1564,7 +1592,8 @@
           "tag": "U-Shaped",
           "description": "Optimized golden work triangle with corner carousel pullouts and tall spice storage racks."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "kids-bedroom-designs",
@@ -1573,7 +1602,7 @@
       "heroTitle": "Imaginative, Functional, and Safe Spaces for Children",
       "heroSubtitle": "Design cheerful bedrooms that grow with your children, featuring smart bunk beds, interactive study zones, and durable finishes.",
       "heroImage": "/images/design-ideas/kids-hero.jpg",
-      "metaTitle": "Kids Bedroom Designs | The Bright Space Interiors",
+      "metaTitle": "Kids Bedroom Designs",
       "metaDescription": "Explore creative kids bedroom designs with custom bunk beds, study corners, pastel themes, and safe rounded storage.",
       "designs": [
         {
@@ -1618,7 +1647,8 @@
           "tag": "Teen Loft",
           "description": "Elevated loft bed freeing the entire floor below for a modern gaming and study lounge."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "foyer-designs",
@@ -1627,7 +1657,7 @@
       "heroTitle": "Memorable Entryway Foyers That Set a Welcoming Tone",
       "heroSubtitle": "Craft a breathtaking first impression with artistic console tables, sunburst mirrors, smart shoe cabinetry, and statement lighting.",
       "heroImage": "/images/design-ideas/foyer-hero.jpg",
-      "metaTitle": "Foyer & Entryway Designs | The Bright Space Interiors",
+      "metaTitle": "Foyer & Entryway Designs",
       "metaDescription": "Discover entryway foyer designs featuring console tables, statement mirrors, shoe storage benches, and warm welcoming lighting.",
       "designs": [
         {
@@ -1672,7 +1702,8 @@
           "tag": "Art Gallery",
           "description": "Linear spotlight ceiling track illuminating curated framed paintings along the arrival passage."
         }
-      ]
+      ],
+      "type": "residential"
     },
     {
       "slug": "dressing-room-designs",
@@ -1681,7 +1712,7 @@
       "heroTitle": "Boutique Dressing Rooms and Glamorous Walk-In Closets",
       "heroSubtitle": "Experience the pinnacle of luxury dressing with custom accessory islands, illuminated vanity mirrors, and velvet seating.",
       "heroImage": "/images/design-ideas/dressing-hero.jpg",
-      "metaTitle": "Dressing Room Designs | The Bright Space Interiors",
+      "metaTitle": "Dressing Room Designs",
       "metaDescription": "Explore bespoke dressing room designs with central jewelry islands, lighted vanities, glass wardrobes, and boutique organization.",
       "designs": [
         {
@@ -1726,7 +1757,8 @@
           "tag": "Compact Nook",
           "description": "Clever corner dressing solution featuring vertical pullout mirrors and integrated cosmetic organizers."
         }
-      ]
+      ],
+      "type": "residential"
     }
   ],
   "updatedAt": 1791633323268

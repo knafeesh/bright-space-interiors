@@ -4,11 +4,14 @@ import { PROCESS_STEPS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import { ArrowRight } from "lucide-react";
 import DesignToMoveInSection from "@/components/ui/DesignToMoveInSection";
 
-export const metadata: Metadata = {
-  title: "From Design to Move-In | The Bright Space Interiors",
+import { constructMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = constructMetadata({
+  path: "/process",
+  title: "From Design to Move-In",
   description:
-    "Discover our seamless customer journey from initial design consultation to final installation and handover. The Bright Space Interiors guarantees precision, quality, and complete peace of mind.",
-};
+    "Discover our seamless customer journey from initial design consultation to final installation and handover. Bright Space Interiors guarantees precision, quality, and complete peace of mind.",
+});
 
 export default function ProcessPage() {
   return (

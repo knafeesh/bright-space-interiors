@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ADDRESS, EMAIL, PHONE_NUMBER } from "@/lib/data";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | The Bright Space Interiors",
-  description: "Privacy policy and client data handling guidelines for The Bright Space Interiors.",
-};
+import { constructMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = constructMetadata({
+  path: "/privacy-policy",
+  title: "Privacy Policy",
+  description: "Privacy policy and client data handling guidelines for Bright Space Interiors.",
+});
 
 export default function PrivacyPolicyPage() {
   return (
