@@ -47,18 +47,26 @@ export function constructMetadata({
     ? image
     : `${SITE_URL}${image.startsWith("/") ? "" : "/"}${image}`;
 
-  const formattedOgTitle = title
-    ? `${title} | ${BRAND_NAME}`
-    : `${BRAND_NAME} | Luxury Interior Design & Turnkey Execution`;
+  let finalTitle = "";
+  if (title) {
+    const cleanTitle = title
+      .replace(/\s*\|\s*(The\s+)?Bright Space Interiors.*$/i, "")
+      .trim();
+    finalTitle = cleanTitle ? `${cleanTitle} | ${BRAND_NAME}` : `${BRAND_NAME} | Luxury Interior Design & Turnkey Execution`;
+  } else {
+    finalTitle = `${BRAND_NAME} | Luxury Interior Design & Turnkey Execution`;
+  }
 
   return {
-    ...(title ? { title } : {}),
+    // absolute: page export carries the full "{Page} | Bright Space Interiors"
+    // string and the root layout template cannot append the brand a second time.
+    title: { absolute: finalTitle },
     ...(description ? { description } : {}),
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: formattedOgTitle,
+      title: finalTitle,
       ...(description ? { description } : {}),
       url: canonicalUrl,
       images: [
@@ -70,7 +78,7 @@ export function constructMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: formattedOgTitle,
+      title: finalTitle,
       ...(description ? { description } : {}),
       images: [fullImageUrl],
     },
