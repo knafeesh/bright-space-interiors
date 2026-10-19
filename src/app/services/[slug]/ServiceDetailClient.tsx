@@ -51,9 +51,10 @@ export default function ServiceDetailClient({ slug, initialService }: { slug: st
   const cmsServices = useCmsServices();
   const cmsProjects = useCmsProjects();
 
+  const cmsService = cmsServices.find((s) => s.slug === slug);
   const service =
+    cmsService ||
     initialService ||
-    cmsServices.find((s) => s.slug === slug) ||
     SERVICES.find((s) => s.slug === slug);
 
   if (!service) notFound();

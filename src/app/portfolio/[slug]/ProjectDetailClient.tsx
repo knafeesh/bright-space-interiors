@@ -23,13 +23,19 @@ export default function ProjectDetailClient({ initialProject, slug }: Props) {
   useEffect(() => {
     if (initialProject) {
       setProject(initialProject);
-    } else if (cmsLoaded && cmsProjects && cmsProjects.length > 0) {
-      const match = cmsProjects.find((p) => Boolean(targetSlug && p.slug === targetSlug));
+    }
+  }, [initialProject]);
+
+  useEffect(() => {
+    if (cmsLoaded && cmsProjects && cmsProjects.length > 0) {
+      const match = cmsProjects.find(
+        (p) => (targetSlug && p.slug === targetSlug) || (initialProject && p.id === initialProject.id)
+      );
       if (match) {
         setProject(match);
       }
     }
-  }, [initialProject, cmsLoaded, cmsProjects, targetSlug]);
+  }, [cmsLoaded, cmsProjects, targetSlug, initialProject]);
 
   // Newly added projects only exist in the live CMS — wait for it before showing "not found"
   if (!project && !cmsLoaded) {
