@@ -26,16 +26,39 @@ export default function ProjectDetailClient({ initialProject, slug }: Props) {
     }
   }, [initialProject]);
 
+  // Keep activeImage in sync: if activeImage was deleted or isn't in gallery, reset it
   useEffect(() => {
-    if (cmsLoaded && cmsProjects && cmsProjects.length > 0) {
-      const match = cmsProjects.find(
-        (p) => (targetSlug && p.slug === targetSlug) || (initialProject && p.id === initialProject.id)
-      );
+    if (activeImage && project?.gallery && !project.gallery.includes(activeImage)) {
+      setActiveImage(project.gallery[0] || project.image || null);
+    }
+  }, [activeImage, project]);
+
+  // Live real-time tab-to-tab sync when admin updates gallery or project details
+  useEffect(() => {
+    const handleLiveUpdate = (e: Event) => {
+      const detail = (e as CustomEvent<{ projects?: Project[] }>).detail;
+      if (detail && Array.isArray(detail.projects)) {
+        const match = detail.projects.find(
+          (p) => (targetSlug && p.slug === targetSlug) || (initialProject && p.id === initialProject.id)
+        );
+        if (match) {
+          setProject(match);
+        }
+      }
+    };
+    window.addEventListener("bright_space_cms_updated", handleLiveUpdate);
+    return () => window.removeEventListener("bright_space_cms_updated", handleLiveUpdate);
+  }, [targetSlug, initialProject]);
+
+  // Newly added projects that only exist in client CMS before server restart
+  useEffect(() => {
+    if (!initialProject && cmsLoaded && cmsProjects && cmsProjects.length > 0) {
+      const match = cmsProjects.find((p) => Boolean(targetSlug && p.slug === targetSlug));
       if (match) {
         setProject(match);
       }
     }
-  }, [cmsLoaded, cmsProjects, targetSlug, initialProject]);
+  }, [initialProject, cmsLoaded, cmsProjects, targetSlug]);
 
   // Newly added projects only exist in the live CMS — wait for it before showing "not found"
   if (!project && !cmsLoaded) {

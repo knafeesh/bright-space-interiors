@@ -115,6 +115,22 @@ export function invalidateCmsCache() {
   serverLoaded = false;
 }
 
+export function broadcastCmsProjects(projects: any[]) {
+  invalidateCmsCache();
+  if (typeof window !== "undefined") {
+    const current = loadCmsStore();
+    const updated: CmsStore = {
+      ...current,
+      projects: projects as Project[],
+      updatedAt: Date.now(),
+    };
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    } catch {}
+    window.dispatchEvent(new CustomEvent(CMS_UPDATE_EVENT, { detail: updated }));
+  }
+}
+
 function fetchServerStore(): Promise<CmsStore | null> {
   if (!serverFetch) {
     serverFetch = fetch(`/api/content?t=${Date.now()}`, { cache: "no-store", credentials: "same-origin" })

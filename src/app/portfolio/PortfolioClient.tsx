@@ -16,14 +16,22 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
   useEffect(() => {
     if (initialProjects && initialProjects.length > 0) {
       setProjects(initialProjects);
-    }
-  }, [initialProjects]);
-
-  useEffect(() => {
-    if (cmsLoaded && cmsProjects && cmsProjects.length > 0) {
+    } else if (cmsLoaded && cmsProjects && cmsProjects.length > 0) {
       setProjects(cmsProjects);
     }
-  }, [cmsLoaded, cmsProjects]);
+  }, [initialProjects, cmsLoaded, cmsProjects]);
+
+  // Real-time tab-to-tab sync when admin edits or deletes projects
+  useEffect(() => {
+    const handleLiveUpdate = (e: Event) => {
+      const detail = (e as CustomEvent<{ projects?: Project[] }>).detail;
+      if (detail && Array.isArray(detail.projects)) {
+        setProjects(detail.projects);
+      }
+    };
+    window.addEventListener("bright_space_cms_updated", handleLiveUpdate);
+    return () => window.removeEventListener("bright_space_cms_updated", handleLiveUpdate);
+  }, []);
 
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [isFading, setIsFading] = useState(false);

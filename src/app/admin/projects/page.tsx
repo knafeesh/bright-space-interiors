@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import type { ProjectItem } from "@/lib/site-types";
+import { broadcastCmsProjects } from "@/lib/cms";
 
 export default function ProjectsManagerPage() {
   const [projects, setProjects] = useState<ProjectItem[]>([]);
@@ -211,6 +212,7 @@ export default function ProjectsManagerPage() {
         setProjects(resData.projects);
         setShowAddModal(false);
         setEditingProject(null);
+        broadcastCmsProjects(resData.projects);
         notify(
           editingProject
             ? `Project "${payload.title}" updated and synced to Firestore!`
@@ -238,6 +240,7 @@ export default function ProjectsManagerPage() {
       if (res.ok && data.success) {
         setProjects(data.projects);
         setProjectToDelete(null);
+        broadcastCmsProjects(data.projects);
         notify(`Deleted "${p.title}". Public page removed and returns 404.`);
       } else {
         notifyError(data.error || "Failed to delete project.");
@@ -273,6 +276,7 @@ export default function ProjectsManagerPage() {
       });
       const data = await res.json();
       if (data.success) {
+        broadcastCmsProjects(updated);
         notify("Project order updated and saved to Firestore.");
       } else {
         notifyError("Failed to save reordered projects.");
@@ -305,6 +309,7 @@ export default function ProjectsManagerPage() {
       if (res.ok && data.success) {
         setProjects(data.projects);
         setGalleryProject(updatedPayload);
+        broadcastCmsProjects(data.projects);
         notify(`Gallery for "${targetProject.title}" saved to Firestore.`);
       } else {
         notifyError(data.error || "Failed to update project gallery.");
