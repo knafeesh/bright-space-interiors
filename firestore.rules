@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Public can only read published content from the site cms document and categories
+    match /site/{document=**} {
+      allow read: if true;
+      allow write: if false; // Writes must go through admin backend with service account
+    }
+
+    // Public contact forms write leads through the Next.js API with server validation
+    match /leads/{leadId} {
+      allow read, write: if false; // Only accessible via server-side Firebase Admin SDK
+    }
+
+    // Default deny all other client access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

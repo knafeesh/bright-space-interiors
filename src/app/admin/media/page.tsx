@@ -1,60 +1,54 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
-  Image as ImageIcon,
-  Search,
+  Images,
+  Upload,
   Trash2,
   Copy,
   Check,
-  Folder,
-  Eye,
-  FileText,
+  Search,
+  AlertCircle,
+  Loader2,
   Edit2,
   Plus,
   X,
-  AlertCircle,
-  Loader2,
+  Layers,
+  ArrowUp,
+  ArrowDown,
+  Sparkles,
+  ShieldAlert,
 } from "lucide-react";
 import ImageUploadField from "@/components/admin/ImageUploadField";
-import {
-  useCmsMedia,
-  cmsUpdateMedia,
-  cmsDeleteMedia,
-  cmsAddMedia,
-  MediaAsset,
-} from "@/lib/cms";
+import type { MediaAssetItem, PhilosophySlide } from "@/lib/site-types";
 
 export default function MediaLibraryPage() {
-  const media = useCmsMedia();
-  const [selectedFolder, setSelectedFolder] = useState<string>("All");
+  const [activeTab, setActiveTab] = useState<"library" | "carousel">("library");
+  const [mediaList, setMediaList] = useState<MediaAssetItem[]>([]);
+  const [carouselSlides, setCarouselSlides] = useState<PhilosophySlide[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [activeAsset, setActiveAsset] = useState<MediaAsset | null>(null);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+
+  // Feedback states
   const [toastMsg, setToastMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [blockedUsage, setBlockedUsage] = useState<{ url: string; list: string[] } | null>(null);
   const [saving, setSaving] = useState(false);
 
-  // Edit Modal State
-  const [editingAsset, setEditingAsset] = useState<MediaAsset | null>(null);
-  const [editName, setEditName] = useState("");
+  // Upload / Edit Modal
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadedUrl, setUploadedUrl] = useState("");
+  const [uploadedAlt, setUploadedAlt] = useState("");
+
+  const [editingAsset, setEditingAsset] = useState<MediaAssetItem | null>(null);
   const [editAlt, setEditAlt] = useState("");
-  const [editFolder, setEditFolder] = useState<MediaAsset["folder"]>("Projects");
-  const [editUrl, setEditUrl] = useState("");
 
-  // Add Media Modal State
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [addName, setAddName] = useState("");
-  const [addUrl, setAddUrl] = useState("");
-  const [addAlt, setAddAlt] = useState("");
-  const [addFolder, setAddFolder] = useState<MediaAsset["folder"]>("Projects");
-
-  const filtered = media.filter((m) => {
-    const matchesFolder = selectedFolder === "All" || m.folder === selectedFolder;
-    const matchesSearch =
-      m.name.toLowerCase().includes(search.toLowerCase()) ||
-      m.altText.toLowerCase().includes(search.toLowerCase());
-    return matchesFolder && matchesSearch;
-  });
+  // Carousel Modal
+  const [showCarouselModal, setShowCarouselModal] = useState(false);
+  const [carouselImage, setCarouselImage] = useState("/images/hero-luxury.jpg");
+  const [carouselAlt, setCarouselAlt] = useState("");
+  const [carouselCaption, setCarouselCaption] = useState("");
+  const [editingSlideId, setEditingSlideId] = useState<string | null>(null);
 
   const notify = (msg: string) => {
     setToastMsg(msg);
@@ -66,95 +60,208 @@ export default function MediaLibraryPage() {
     setTimeout(() => setErrorMsg(""), 5000);
   };
 
-  const handleCopyLink = (url: string, id: string) => {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.origin + url);
-      setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2000);
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [mediaRes, carouselRes] = await Promise.all([
+        fetch("/api/admin/media", { cache: "no-store" }),
+        fetch("/api/admin/philosophy", { cache: "no-store" }),
+      ]);
+      const mediaData = await mediaRes.json();
+      const carouselData = await carouselRes.json();
+
+      if (mediaData.success) setMediaList(mediaData.media || []);
+      if (carouselData.success) setCarouselSlides(carouselData.slides || []);
+    } catch {
+      notifyError("Failed to load media assets.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleOpenEdit = (asset: MediaAsset) => {
-    setEditingAsset(asset);
-    setEditName(asset.name || "");
-    setEditAlt(asset.altText || "");
-    setEditFolder(asset.folder || "Projects");
-    setEditUrl(asset.url || "");
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleCopy = (url: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(url);
+      setCopiedUrl(url);
+      setTimeout(() => setCopiedUrl(null), 2000);
+    }
   };
 
-  const handleSaveEdit = async (e: React.FormEvent) => {
+  const handleDeleteMedia = async (asset: MediaAssetItem) => {
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/media?id=${encodeURIComponent(asset.id)}&url=${encodeURIComponent(asset.url)}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setMediaList(data.media);
+        notify(`Image deleted and removed from storage.`);
+      } else if (data.usedIn && Array.isArray(data.usedIn) && data.usedIn.length > 0) {
+        // Blocked deletion due to active usage
+        setBlockedUsage({
+          url: asset.url,
+          list: data.usedIn,
+        });
+      } else {
+        notifyError(data.error || "Failed to delete image.");
+      }
+    } catch {
+      notifyError("Network error while deleting image.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeduplicate = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "deduplicate" }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMediaList(data.media);
+        notify("Media library deduplicated successfully.");
+      }
+    } catch {
+      notifyError("Failed to deduplicate.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveAssetEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingAsset) return;
 
-    const updated: MediaAsset = {
-      ...editingAsset,
-      name: editName.trim() || editingAsset.name,
-      altText: editAlt.trim() || editingAsset.altText,
-      folder: editFolder,
-      url: editUrl.trim() || editingAsset.url,
-    };
-
     setSaving(true);
-    const ok = await cmsUpdateMedia(updated);
-    setSaving(false);
-    if (ok) {
-      if (activeAsset?.id === updated.id) setActiveAsset(updated);
-      setEditingAsset(null);
-      notify(`Saved media "${updated.name}" and updated live on website!`);
-    } else {
-      notifyError(`Failed to save "${updated.name}". Please check connection.`);
-    }
-  };
-
-  const handleDelete = async (asset: MediaAsset) => {
-    if (
-      confirm(
-        `Are you sure you want to delete "${asset.name}"? If this image is used in any portfolio projects or service pages, it will be automatically removed from their galleries on the website.`
-      )
-    ) {
-      const ok = await cmsDeleteMedia(asset.id);
-      if (ok) {
-        if (activeAsset?.id === asset.id) setActiveAsset(null);
-        notify(`Deleted "${asset.name}" and updated all pages on the website.`);
-      } else {
-        notifyError(`Failed to delete "${asset.name}".`);
+    try {
+      const updated = { ...editingAsset, alt: editAlt.trim() };
+      const res = await fetch("/api/admin/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ asset: updated }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMediaList(data.media);
+        setEditingAsset(null);
+        notify("Image details updated.");
       }
+    } catch {
+      notifyError("Failed to update image details.");
+    } finally {
+      setSaving(false);
     }
   };
 
-  const handleAddMedia = async (e: React.FormEvent) => {
+  // --- Philosophy Carousel Handlers ---
+  const handleSaveCarouselSlide = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!addUrl.trim()) return;
-
-    const newAsset: MediaAsset = {
-      id: `m-${Date.now()}`,
-      name: addName.trim() || addUrl.split("/").pop() || "image.jpg",
-      url: addUrl.trim(),
-      folder: addFolder,
-      size: "180 KB",
-      dimensions: "1920 × 1080",
-      type: addUrl.endsWith(".png") ? "PNG" : addUrl.endsWith(".webp") ? "WebP" : "JPEG",
-      altText: addAlt.trim() || "The Bright Space Interiors Real Work",
-      dateAdded: new Date().toISOString().split("T")[0],
-    };
+    if (!carouselImage.trim()) {
+      notifyError("Image is required for carousel slide.");
+      return;
+    }
 
     setSaving(true);
-    const ok = await cmsAddMedia(newAsset);
-    setSaving(false);
-    if (ok) {
-      setShowAddModal(false);
-      setAddName("");
-      setAddUrl("");
-      setAddAlt("");
-      notify(`Added "${newAsset.name}" to media library and site!`);
-    } else {
-      notifyError(`Failed to add "${newAsset.name}".`);
+    try {
+      const payload: PhilosophySlide = {
+        id: editingSlideId || `slide-${Date.now()}`,
+        src: carouselImage.trim(),
+        alt: carouselAlt.trim() || "Bright Space Interior Design Philosophy",
+        caption: carouselCaption.trim(),
+        order: carouselSlides.length + 1,
+      };
+
+      const res = await fetch("/api/admin/philosophy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slide: payload }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCarouselSlides(data.slides);
+        setShowCarouselModal(false);
+        setEditingSlideId(null);
+        notify("Carousel slide saved and live on homepage!");
+      } else {
+        notifyError(data.error || "Failed to save slide.");
+      }
+    } catch {
+      notifyError("Network error.");
+    } finally {
+      setSaving(false);
     }
   };
+
+  const handleDeleteSlide = async (id: string) => {
+    if (!confirm("Are you sure you want to remove this slide from the homepage carousel?")) return;
+
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/philosophy?id=${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) {
+        setCarouselSlides(data.slides);
+        notify("Carousel slide removed.");
+      }
+    } catch {
+      notifyError("Failed to delete slide.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleReorderSlide = async (idx: number, direction: "up" | "down") => {
+    const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= carouselSlides.length) return;
+
+    const list = [...carouselSlides];
+    const [moved] = list.splice(idx, 1);
+    list.splice(targetIdx, 0, moved);
+
+    const reordered = list.map((sl, index) => ({
+      ...sl,
+      order: index + 1,
+    }));
+
+    setCarouselSlides(reordered);
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/philosophy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slides: reordered }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        notify("Carousel reordered and synced to homepage.");
+      }
+    } catch {
+      notifyError("Failed to reorder carousel.");
+      loadData();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const filteredMedia = mediaList.filter((m) => {
+    const nameMatch = (m.name || "").toLowerCase().includes(search.toLowerCase());
+    const altMatch = (m.alt || "").toLowerCase().includes(search.toLowerCase());
+    return nameMatch || altMatch;
+  });
 
   return (
-    <div style={{ padding: "0", fontFamily: "var(--font-sans, system-ui, sans-serif)" }}>
-      {/* Toast Feedback */}
+    <div>
+      {/* Toast notifications */}
       {toastMsg && (
         <div
           style={{
@@ -167,7 +274,7 @@ export default function MediaLibraryPage() {
             borderRadius: "8px",
             fontWeight: 600,
             fontSize: "13px",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
             zIndex: 9999,
             display: "flex",
             alignItems: "center",
@@ -191,7 +298,7 @@ export default function MediaLibraryPage() {
             borderRadius: "8px",
             fontWeight: 600,
             fontSize: "13px",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
             zIndex: 9999,
             display: "flex",
             alignItems: "center",
@@ -203,352 +310,522 @@ export default function MediaLibraryPage() {
         </div>
       )}
 
-      {/* Top Banner & Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "28px" }}>
-        {[
-          { label: "Total Assets", value: media.length, icon: ImageIcon, color: "#6366F1" },
-          { label: "Project Photos", value: media.filter((m) => m.folder === "Projects").length, icon: Folder, color: "#10B981" },
-          { label: "Services Media", value: media.filter((m) => m.folder === "Services").length, icon: FileText, color: "#F59E0B" },
-          { label: "Hero & Brand", value: media.filter((m) => m.folder === "Hero").length, icon: Eye, color: "#8B5CF6" },
-        ].map((s) => (
-          <div key={s.label} style={{ background: "#FFF", borderRadius: "14px", border: "1px solid #F3F4F6", padding: "20px 22px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: `${s.color}18`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <s.icon size={18} style={{ color: s.color }} />
-              </div>
-              <div>
-                <div style={{ fontSize: "24px", fontWeight: 800, color: "#111827", lineHeight: 1 }}>{s.value}</div>
-                <div style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "2px" }}>{s.label}</div>
-              </div>
+      {/* Blocked Deletion Modal */}
+      {blockedUsage && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal" style={{ maxWidth: "520px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px", color: "#EF4444" }}>
+              <ShieldAlert size={24} />
+              <h2 style={{ fontSize: "18px", margin: 0, fontWeight: 600 }}>Cannot Delete Image In Use</h2>
             </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Toolbar */}
-      <div style={{ background: "#FFF", borderRadius: "14px", border: "1px solid #F3F4F6", padding: "16px 20px", marginBottom: "20px", display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center", justifyContent: "space-between", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-        {/* Folders */}
-        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-          {["All", "Projects", "Services", "Hero", "Team", "Renders"].map((f) => (
-            <button
-              key={f}
-              onClick={() => setSelectedFolder(f)}
+            <p style={{ fontSize: "13px", color: "#D1D5DB", lineHeight: 1.5, marginBottom: "16px" }}>
+              This image cannot be deleted because it is currently actively displayed on the website in the following locations:
+            </p>
+
+            <div
               style={{
-                padding: "8px 14px",
+                background: "rgba(239, 68, 68, 0.08)",
+                border: "1px solid rgba(239, 68, 68, 0.2)",
                 borderRadius: "8px",
-                border: "1px solid",
-                borderColor: selectedFolder === f ? "#B8975A" : "#E5E7EB",
-                background: selectedFolder === f ? "rgba(184,151,90,0.12)" : "#FFF",
-                color: selectedFolder === f ? "#B8975A" : "#4B5563",
-                fontWeight: selectedFolder === f ? 700 : 500,
-                fontSize: "12px",
-                cursor: "pointer",
+                padding: "12px 16px",
+                marginBottom: "20px",
+                maxHeight: "180px",
+                overflowY: "auto",
               }}
             >
-              {f}
-            </button>
-          ))}
+              <ul style={{ margin: 0, paddingLeft: "20px", fontSize: "13px", color: "#FCA5A5" }}>
+                {blockedUsage.list.map((loc, i) => (
+                  <li key={i} style={{ marginBottom: "6px" }}>
+                    {loc}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <p style={{ fontSize: "12px", color: "#9CA3AF", marginBottom: "20px" }}>
+              To delete this image, first replace or remove it from the projects, services, or categories listed above.
+            </p>
+
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <button
+                onClick={() => setBlockedUsage(null)}
+                className="admin-btn admin-btn--gold"
+                style={{ padding: "8px 18px" }}
+              >
+                Understood
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "24px",
+          flexWrap: "wrap",
+          gap: "16px",
+        }}
+      >
+        <div>
+          <h1
+            style={{
+              fontFamily: "var(--font-serif, serif)",
+              fontSize: "28px",
+              fontWeight: 500,
+              color: "#F6F5F2",
+              margin: "0 0 4px 0",
+            }}
+          >
+            Gallery & Media Management
+          </h1>
+          <p style={{ fontSize: "13px", color: "#9CA3AF", margin: 0 }}>
+            Upload images (converted to WebP & saved in Firebase Storage) and manage the homepage Design Philosophy carousel.
+          </p>
         </div>
 
-        {/* Search & Upload */}
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          <div style={{ position: "relative", width: "240px" }}>
-            <Search size={14} style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "#9CA3AF" }} />
+        <div style={{ display: "flex", gap: "10px" }}>
+          {activeTab === "library" ? (
+            <>
+              <button
+                onClick={handleDeduplicate}
+                className="admin-btn admin-btn--outline"
+                style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                disabled={saving}
+              >
+                <Sparkles size={14} /> Remove Duplicates
+              </button>
+              <button
+                onClick={() => {
+                  setUploadedUrl("");
+                  setShowUploadModal(true);
+                }}
+                className="admin-btn admin-btn--gold"
+                style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+              >
+                <Upload size={16} /> Upload New Image
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => {
+                setEditingSlideId(null);
+                setCarouselImage("/images/hero-luxury.jpg");
+                setCarouselAlt("");
+                setCarouselCaption("");
+                setShowCarouselModal(true);
+              }}
+              className="admin-btn admin-btn--gold"
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+            >
+              <Plus size={16} /> Add Carousel Slide
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div
+        style={{
+          display: "flex",
+          gap: "8px",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+          marginBottom: "24px",
+        }}
+      >
+        <button
+          onClick={() => setActiveTab("library")}
+          style={{
+            background: "none",
+            border: "none",
+            borderBottom: activeTab === "library" ? "2px solid #C5A880" : "2px solid transparent",
+            color: activeTab === "library" ? "#DFBE99" : "#9CA3AF",
+            padding: "12px 18px",
+            fontSize: "14px",
+            fontWeight: 600,
+            cursor: "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <Images size={16} />
+          <span>Image Library ({mediaList.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("carousel")}
+          style={{
+            background: "none",
+            border: "none",
+            borderBottom: activeTab === "carousel" ? "2px solid #C5A880" : "2px solid transparent",
+            color: activeTab === "carousel" ? "#DFBE99" : "#9CA3AF",
+            padding: "12px 18px",
+            fontSize: "14px",
+            fontWeight: 600,
+            cursor: "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <Layers size={16} />
+          <span>Design Philosophy Carousel ({carouselSlides.length} Slides)</span>
+        </button>
+      </div>
+
+      {/* Tab 1: Image Library */}
+      {activeTab === "library" && (
+        <div>
+          {/* Search Bar */}
+          <div style={{ position: "relative", maxWidth: "440px", marginBottom: "20px" }}>
+            <Search
+              size={16}
+              style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#9CA3AF" }}
+            />
             <input
               type="text"
-              placeholder="Search filename or alt..."
+              placeholder="Search images by name or alt text..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ width: "100%", padding: "8px 10px 8px 32px", border: "1px solid #E5E7EB", borderRadius: "8px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
+              className="admin-input"
+              style={{ width: "100%", paddingLeft: "36px", height: "40px" }}
             />
           </div>
 
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="admin-btn admin-btn--primary"
-            style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "8px 16px", fontSize: "12px" }}
-          >
-            <Plus size={14} /> Add Media
-          </button>
-        </div>
-      </div>
-
-      {/* Main Grid + Inspector Sidebar */}
-      <div style={{ display: "grid", gridTemplateColumns: activeAsset ? "1fr 340px" : "1fr", gap: "20px", alignItems: "start" }}>
-        {/* Media Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "16px" }}>
-          {filtered.map((asset) => (
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "60px", color: "#9CA3AF" }}>
+              <Loader2 size={28} style={{ animation: "spin 1s linear infinite", margin: "0 auto 12px" }} />
+              <p>Loading media assets from Cloud Storage & Firestore...</p>
+            </div>
+          ) : filteredMedia.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "60px", color: "#9CA3AF" }}>
+              No images found. Click "Upload New Image" to add images.
+            </div>
+          ) : (
             <div
-              key={asset.id}
-              onClick={() => setActiveAsset(asset)}
               style={{
-                background: "#FFF",
-                borderRadius: "12px",
-                border: "1px solid",
-                borderColor: activeAsset?.id === asset.id ? "#B8975A" : "#F3F4F6",
-                boxShadow: activeAsset?.id === asset.id ? "0 0 0 2px #B8975A" : "0 2px 6px rgba(0,0,0,0.03)",
-                overflow: "hidden",
-                cursor: "pointer",
-                transition: "all 0.15s ease",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+                gap: "16px",
               }}
             >
-              <div style={{ position: "relative", height: "135px", background: "#1F2937", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <img
-                  src={asset.url}
-                  alt={asset.altText}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-                <span
+              {filteredMedia.map((asset) => (
+                <div
+                  key={asset.id}
                   style={{
-                    position: "absolute",
-                    top: "8px",
-                    left: "8px",
-                    background: "rgba(0,0,0,0.6)",
-                    color: "#FFF",
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    padding: "2px 6px",
-                    borderRadius: "4px",
-                    textTransform: "uppercase",
+                    background: "#161920",
+                    border: "1px solid rgba(255, 255, 255, 0.08)",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
                   }}
                 >
-                  {asset.type}
-                </span>
-              </div>
-              <div style={{ padding: "10px 12px" }}>
-                <div style={{ fontSize: "12px", fontWeight: 700, color: "#111827", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={asset.name}>
-                  {asset.name}
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px", fontSize: "11px", color: "#9CA3AF" }}>
-                  <span>{asset.folder}</span>
-                  <span>{asset.size}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+                  <div style={{ height: "140px", position: "relative", background: "#0D0F13" }}>
+                    <img
+                      src={asset.url}
+                      alt={asset.alt || asset.name}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                    {asset.type && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          top: "8px",
+                          right: "8px",
+                          background: "rgba(0,0,0,0.7)",
+                          padding: "2px 6px",
+                          borderRadius: "4px",
+                          fontSize: "10px",
+                          color: "#DFBE99",
+                          fontWeight: 600,
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {asset.type.replace("image/", "")}
+                      </span>
+                    )}
+                  </div>
 
-          {filtered.length === 0 && (
-            <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "60px 20px", background: "#FFF", borderRadius: "14px", border: "1px solid #F3F4F6", color: "#9CA3AF" }}>
-              <ImageIcon size={36} style={{ margin: "0 auto 12px", opacity: 0.4 }} />
-              <p style={{ margin: 0, fontSize: "14px" }}>No media assets found in this folder</p>
+                  <div style={{ padding: "12px" }}>
+                    <div
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        color: "#F3F4F6",
+                        marginBottom: "4px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      title={asset.name}
+                    >
+                      {asset.name}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "#9CA3AF",
+                        marginBottom: "10px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      alt: {asset.alt || "(none)"}
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <button
+                        onClick={() => handleCopy(asset.url)}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: copiedUrl === asset.url ? "#10B981" : "#C5A880",
+                          cursor: "pointer",
+                          fontSize: "11px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          padding: 0,
+                        }}
+                      >
+                        {copiedUrl === asset.url ? <Check size={12} /> : <Copy size={12} />}
+                        <span>{copiedUrl === asset.url ? "Copied" : "Copy URL"}</span>
+                      </button>
+
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <button
+                          onClick={() => {
+                            setEditingAsset(asset);
+                            setEditAlt(asset.alt || "");
+                          }}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "#9CA3AF",
+                            cursor: "pointer",
+                            padding: "4px",
+                          }}
+                          title="Edit Alt Text"
+                        >
+                          <Edit2 size={13} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteMedia(asset)}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "#EF4444",
+                            cursor: "pointer",
+                            padding: "4px",
+                          }}
+                          title="Delete Image"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
+      )}
 
-        {/* Selected Asset Details Panel */}
-        {activeAsset && (
-          <div style={{ background: "#FFF", borderRadius: "14px", border: "1px solid #F3F4F6", padding: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)", position: "sticky", top: "20px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 style={{ fontSize: "14px", fontWeight: 700, color: "#111827", margin: 0 }}>Asset Details</h3>
+      {/* Tab 2: Design Philosophy Carousel */}
+      {activeTab === "carousel" && (
+        <div>
+          <div style={{ marginBottom: "16px", color: "#9CA3AF", fontSize: "13px" }}>
+            These images rotate in the dynamic Design Philosophy section on the homepage. Reorder them using the arrows or add new slides.
+          </div>
+
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th style={{ width: "60px" }}>Order</th>
+                  <th style={{ width: "100px" }}>Slide Photo</th>
+                  <th>Image Alt Text</th>
+                  <th>Caption</th>
+                  <th style={{ textAlign: "right" }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {carouselSlides.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} style={{ textAlign: "center", padding: "40px", color: "#9CA3AF" }}>
+                      No carousel slides configured.
+                    </td>
+                  </tr>
+                ) : (
+                  carouselSlides.map((slide, idx) => (
+                    <tr key={slide.id}>
+                      <td>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                          <button
+                            onClick={() => handleReorderSlide(idx, "up")}
+                            disabled={idx === 0 || saving}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: idx === 0 ? "#4B5563" : "#C5A880",
+                              cursor: idx === 0 ? "not-allowed" : "pointer",
+                              padding: "2px",
+                            }}
+                          >
+                            <ArrowUp size={14} />
+                          </button>
+                          <button
+                            onClick={() => handleReorderSlide(idx, "down")}
+                            disabled={idx === carouselSlides.length - 1 || saving}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: idx === carouselSlides.length - 1 ? "#4B5563" : "#C5A880",
+                              cursor: idx === carouselSlides.length - 1 ? "not-allowed" : "pointer",
+                              padding: "2px",
+                            }}
+                          >
+                            <ArrowDown size={14} />
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        <img
+                          src={slide.src}
+                          alt={slide.alt}
+                          style={{
+                            width: "80px",
+                            height: "50px",
+                            objectFit: "cover",
+                            borderRadius: "6px",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                          }}
+                        />
+                      </td>
+                      <td style={{ fontSize: "13px", color: "#F3F4F6", fontWeight: 500 }}>
+                        {slide.alt}
+                      </td>
+                      <td style={{ fontSize: "12px", color: "#9CA3AF" }}>
+                        {slide.caption || "—"}
+                      </td>
+                      <td style={{ textAlign: "right" }}>
+                        <button
+                          onClick={() => handleDeleteSlide(slide.id)}
+                          className="admin-btn admin-btn--outline"
+                          style={{ padding: "6px 8px", color: "#EF4444" }}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Upload New Image */}
+      {showUploadModal && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal" style={{ maxWidth: "520px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h2 style={{ fontFamily: "var(--font-serif, serif)", fontSize: "20px", margin: 0, color: "#F3F4F6" }}>
+                Upload Image to Storage
+              </h2>
               <button
-                onClick={() => setActiveAsset(null)}
-                style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer", fontSize: "16px", padding: 0 }}
+                onClick={() => setShowUploadModal(false)}
+                style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer" }}
               >
-                ✕
+                <X size={20} />
               </button>
             </div>
 
-            <div style={{ width: "100%", height: "180px", borderRadius: "8px", overflow: "hidden", background: "#1F2937", marginBottom: "16px" }}>
-              <img
-                src={activeAsset.url}
-                alt={activeAsset.altText}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </div>
-
-            <div style={{ fontSize: "13px", fontWeight: 700, color: "#111827", marginBottom: "4px", wordBreak: "break-all" }}>
-              {activeAsset.name}
-            </div>
-            <div style={{ fontSize: "11px", color: "#9CA3AF", marginBottom: "16px" }}>
-              {activeAsset.altText}
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "12px", borderTop: "1px solid #F3F4F6", paddingTop: "12px", marginBottom: "16px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#9CA3AF" }}>Folder:</span>
-                <span style={{ fontWeight: 600, color: "#111827" }}>{activeAsset.folder}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#9CA3AF" }}>File Size:</span>
-                <span style={{ fontWeight: 600, color: "#111827" }}>{activeAsset.size}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#9CA3AF" }}>Dimensions:</span>
-                <span style={{ fontWeight: 600, color: "#111827" }}>{activeAsset.dimensions}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#9CA3AF" }}>Added:</span>
-                <span style={{ fontWeight: 600, color: "#111827" }}>{activeAsset.dateAdded}</span>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <button
-                onClick={() => handleCopyLink(activeAsset.url, activeAsset.id)}
-                style={{
-                  width: "100%",
-                  padding: "9px 12px",
-                  borderRadius: "8px",
-                  border: "1px solid #E5E7EB",
-                  background: "#FFF",
-                  color: "#374151",
-                  fontSize: "12px",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "6px",
-                }}
-              >
-                {copiedId === activeAsset.id ? <Check size={14} style={{ color: "#10B981" }} /> : <Copy size={14} />}
-                {copiedId === activeAsset.id ? "URL Copied!" : "Copy Image Link"}
-              </button>
-
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button
-                  onClick={() => handleOpenEdit(activeAsset)}
-                  style={{
-                    flex: 1,
-                    padding: "9px 12px",
-                    borderRadius: "8px",
-                    border: "1px solid #E5E7EB",
-                    background: "#FFF",
-                    color: "#374151",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "6px",
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div>
+                <label className="admin-label">Choose Image File</label>
+                <ImageUploadField
+                  value={uploadedUrl}
+                  onChange={(url) => {
+                    setUploadedUrl(url);
+                    loadData();
                   }}
-                >
-                  <Edit2 size={13} /> Edit
-                </button>
+                  label="Select Image to Upload"
+                />
+              </div>
 
+              {uploadedUrl && (
+                <div style={{ padding: "12px", background: "rgba(16, 185, 129, 0.1)", borderRadius: "8px" }}>
+                  <div style={{ fontSize: "12px", color: "#10B981", fontWeight: 600, marginBottom: "4px" }}>
+                    ✓ Uploaded & Registered
+                  </div>
+                  <div style={{ fontSize: "11px", color: "#D1D5DB", wordBreak: "break-all" }}>
+                    {uploadedUrl}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "12px" }}>
                 <button
-                  onClick={() => handleDelete(activeAsset)}
-                  style={{
-                    flex: 1,
-                    padding: "9px 12px",
-                    borderRadius: "8px",
-                    border: "none",
-                    background: "#FEE2E2",
-                    color: "#DC2626",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "6px",
-                  }}
+                  onClick={() => setShowUploadModal(false)}
+                  className="admin-btn admin-btn--gold"
                 >
-                  <Trash2 size={13} /> Delete
+                  Done
                 </button>
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* EDIT ASSET MODAL */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* Modal: Edit Alt Text */}
       {editingAsset && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.55)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "20px",
-          }}
-          onClick={() => setEditingAsset(null)}
-        >
-          <div
-            className="admin-table-wrap"
-            style={{ width: "100%", maxWidth: "500px", padding: "28px", margin: 0 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
-              <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "22px", fontWeight: 600, color: "var(--charcoal)", margin: 0 }}>
-                Edit Media Asset
+        <div className="admin-modal-overlay">
+          <div className="admin-modal" style={{ maxWidth: "480px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h2 style={{ fontFamily: "var(--font-serif, serif)", fontSize: "18px", margin: 0, color: "#F3F4F6" }}>
+                Edit Image Alt Text
               </h2>
-              <button onClick={() => setEditingAsset(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
-                <X size={18} />
+              <button
+                onClick={() => setEditingAsset(null)}
+                style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer" }}
+              >
+                <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleSaveEdit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <form onSubmit={handleSaveAssetEdit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Filename *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Folder Category
-                </label>
-                <select
-                  value={editFolder}
-                  onChange={(e) => setEditFolder(e.target.value as MediaAsset["folder"])}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                >
-                  <option value="Projects">Projects</option>
-                  <option value="Services">Services</option>
-                  <option value="Hero">Hero & Brand</option>
-                  <option value="Team">Team</option>
-                  <option value="Renders">Renders</option>
-                </select>
-              </div>
-
-              <ImageUploadField
-                label="Image File or URL *"
-                value={editUrl}
-                onChange={setEditUrl}
-                folder={editFolder}
-                required
-              />
-
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Alt Description / SEO Title
-                </label>
+                <label className="admin-label">Image Alt Text (SEO Accessibility)</label>
                 <input
                   type="text"
                   value={editAlt}
                   onChange={(e) => setEditAlt(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                  className="admin-input"
+                  placeholder="e.g. Modern living room with fluted oak panelling"
                 />
               </div>
 
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px", borderTop: "1px solid #F0F0F0", paddingTop: "14px" }}>
-                <button type="button" onClick={() => setEditingAsset(null)} className="admin-btn admin-btn--outline">
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                <button
+                  type="button"
+                  onClick={() => setEditingAsset(null)}
+                  className="admin-btn admin-btn--outline"
+                >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="admin-btn admin-btn--primary"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
-                >
-                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
-                  {saving ? "Saving Changes..." : "Save Changes & Update Website"}
+                <button type="submit" className="admin-btn admin-btn--gold">
+                  Save Alt Text
                 </button>
               </div>
             </form>
@@ -556,108 +833,71 @@ export default function MediaLibraryPage() {
         </div>
       )}
 
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* ADD ASSET MODAL */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {showAddModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.55)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "20px",
-          }}
-          onClick={() => setShowAddModal(false)}
-        >
-          <div
-            className="admin-table-wrap"
-            style={{ width: "100%", maxWidth: "500px", padding: "28px", margin: 0 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
-              <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "22px", fontWeight: 600, color: "var(--charcoal)", margin: 0 }}>
-                Add Media Asset
+      {/* Modal: Add Carousel Slide */}
+      {showCarouselModal && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal" style={{ maxWidth: "540px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h2 style={{ fontFamily: "var(--font-serif, serif)", fontSize: "20px", margin: 0, color: "#F3F4F6" }}>
+                Add Philosophy Carousel Slide
               </h2>
-              <button onClick={() => setShowAddModal(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
-                <X size={18} />
+              <button
+                onClick={() => setShowCarouselModal(false)}
+                style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer" }}
+              >
+                <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleAddMedia} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <ImageUploadField
-                label="Image File or URL *"
-                value={addUrl}
-                onChange={(url) => {
-                  setAddUrl(url);
-                  if (!addName) {
-                    const filename = url.split("/").pop() || "image.jpg";
-                    setAddName(filename);
-                  }
-                }}
-                folder={addFolder}
-                required
-              />
-
+            <form onSubmit={handleSaveCarouselSlide} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Display Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Master Bedroom Headboard"
-                  value={addName}
-                  onChange={(e) => setAddName(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                <label className="admin-label">Slide Image</label>
+                <ImageUploadField
+                  value={carouselImage}
+                  onChange={setCarouselImage}
+                  label="Upload or Select Slide Image"
                 />
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Folder Category
-                </label>
-                <select
-                  value={addFolder}
-                  onChange={(e) => setAddFolder(e.target.value as MediaAsset["folder"])}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                <label className="admin-label">Alt Text</label>
+                <input
+                  type="text"
+                  value={carouselAlt}
+                  onChange={(e) => setCarouselAlt(e.target.value)}
+                  className="admin-input"
+                  placeholder="e.g. Bespoke luxury living room architecture"
+                />
+              </div>
+
+              <div>
+                <label className="admin-label">Optional Caption</label>
+                <input
+                  type="text"
+                  value={carouselCaption}
+                  onChange={(e) => setCarouselCaption(e.target.value)}
+                  className="admin-input"
+                  placeholder="e.g. Sculptural elegance meets functional warmth"
+                />
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "12px" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowCarouselModal(false)}
+                  className="admin-btn admin-btn--outline"
+                  disabled={saving}
                 >
-                  <option value="Projects">Projects</option>
-                  <option value="Services">Services</option>
-                  <option value="Hero">Hero & Brand</option>
-                  <option value="Team">Team</option>
-                  <option value="Renders">Renders</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Alt Description / SEO Title
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Master Bedroom Wood Panelling and Indirect LED"
-                  value={addAlt}
-                  onChange={(e) => setAddAlt(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px", borderTop: "1px solid #F0F0F0", paddingTop: "14px" }}>
-                <button type="button" onClick={() => setShowAddModal(false)} className="admin-btn admin-btn--outline">
                   Cancel
                 </button>
                 <button
                   type="submit"
+                  className="admin-btn admin-btn--gold"
                   disabled={saving}
-                  className="admin-btn admin-btn--primary"
                   style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
                 >
-                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
-                  {saving ? "Adding..." : "Add to Library"}
+                  {saving && <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />}
+                  <span>Save Slide</span>
                 </button>
               </div>
             </form>

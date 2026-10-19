@@ -1,0 +1,15 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Public can read uploaded media assets for website display
+    match /uploads/{allPaths=**} {
+      allow read: if true;
+      allow write: if false; // Uploads and deletes must go through server-side /api/upload and /api/admin/media
+    }
+
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

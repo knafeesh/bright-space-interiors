@@ -4,8 +4,6 @@ import Link from "next/link";
 import { ArrowUpRight, ChevronRight } from "lucide-react";
 import { NAV_SERVICES, WHATSAPP_NUMBER } from "@/lib/data";
 
-const WA_BASE = `https://wa.me/${WHATSAPP_NUMBER}`;
-
 // ── Arrow-up-right icon that lives in each row header ────────────────────────
 function DiagonalArrow({ active }: { active: boolean }) {
   return (
@@ -24,11 +22,21 @@ function DiagonalArrow({ active }: { active: boolean }) {
 }
 
 // ── Cross-fading photo panel (right column / top on mobile) ──────────────────
-function PhotoPanel({ activeIndex, id }: { activeIndex: number; id: string }) {
+function PhotoPanel({
+  activeIndex,
+  id,
+  services,
+}: {
+  activeIndex: number;
+  id: string;
+  services: any[];
+}) {
   const prefersReduced =
     typeof window !== "undefined"
       ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
       : false;
+
+  const currentService = services[activeIndex] || services[0];
 
   return (
     <div style={{ width: "100%", display: "flex", flexDirection: "column" }}>
@@ -44,10 +52,10 @@ function PhotoPanel({ activeIndex, id }: { activeIndex: number; id: string }) {
           flexShrink: 0,
         }}
       >
-        {NAV_SERVICES.map((svc, i) => (
+        {services.map((svc, i) => (
           <Link
-            key={svc.slug}
-            href={svc.href}
+            key={svc.slug || i}
+            href={svc.href || svc.link || "/services"}
             tabIndex={i === activeIndex ? 0 : -1}
             aria-label={`View ${svc.title} project`}
             style={{
@@ -61,7 +69,7 @@ function PhotoPanel({ activeIndex, id }: { activeIndex: number; id: string }) {
           >
             <img
               src={svc.image}
-              alt={svc.caption}
+              alt={svc.caption || svc.title}
               loading={i === 0 ? "eager" : "lazy"}
               style={{
                 position: "absolute",
@@ -100,7 +108,7 @@ function PhotoPanel({ activeIndex, id }: { activeIndex: number; id: string }) {
             lineHeight: 1.4,
           }}
         >
-          {NAV_SERVICES[activeIndex].caption}
+          {currentService?.caption || currentService?.title}
         </span>
       </div>
     </div>
@@ -109,9 +117,37 @@ function PhotoPanel({ activeIndex, id }: { activeIndex: number; id: string }) {
 
 // ── Main accordion component ─────────────────────────────────────────────────
 export default function ServicesAccordion() {
+  const [services, setServices] = useState(NAV_SERVICES);
+  const [waNumber, setWaNumber] = useState(WHATSAPP_NUMBER);
   const [active, setActive] = useState(0);
   const baseId = useId();
   const photoId = `${baseId}-photo`;
+
+  useEffect(() => {
+    fetch("/api/admin/content", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.store?.navServices && Array.isArray(data.store.navServices)) {
+          const published = data.store.navServices.filter((s: any) => s.published !== false);
+          if (published.length > 0) {
+            setServices(
+              published.map((s: any) => ({
+                title: s.title,
+                slug: s.slug,
+                href: s.link || `/services`,
+                description: s.description || "",
+                image: s.image,
+                caption: `${s.title} — Bright Space Interiors`,
+              }))
+            );
+          }
+        }
+        if (data?.store?.settings?.whatsapp) {
+          setWaNumber(data.store.settings.whatsapp.replace(/[^0-9]/g, ""));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const activate = useCallback((i: number) => setActive(i), []);
 
@@ -120,7 +156,7 @@ export default function ServicesAccordion() {
     (e: React.KeyboardEvent, i: number) => {
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        const next = (i + 1) % NAV_SERVICES.length;
+        const next = (i + 1) % services.length;
         setActive(next);
         (
           document.getElementById(`${baseId}-btn-${next}`) as HTMLElement
@@ -128,253 +164,243 @@ export default function ServicesAccordion() {
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
         const prev =
-          (i - 1 + NAV_SERVICES.length) % NAV_SERVICES.length;
+          (i - 1 + services.length) % services.length;
         setActive(prev);
         (
           document.getElementById(`${baseId}-btn-${prev}`) as HTMLElement
         )?.focus();
       }
     },
-    [baseId]
+    [baseId, services.length]
   );
-
-  const waLink = `${WA_BASE}?text=${encodeURIComponent(
-    "Hello Bright Space Interiors, I saw your work and I'm interested in your interior design services. I would like to discuss my project and get a consultation."
-  )}`;
 
   return (
     <section
-      className="services-accordion-section"
-      aria-label="Our services"
-      style={{ background: "var(--ivory)", padding: "90px 0 80px" }}
+      aria-labelledby={`${baseId}-heading`}
+      style={{
+        background: "var(--cream, #F4EFEB)",
+        padding: "clamp(60px, 8vw, 100px) 0",
+        borderTop: "1px solid rgba(44,36,32,0.06)",
+        borderBottom: "1px solid rgba(44,36,32,0.06)",
+      }}
     >
       <div
         className="container"
-        style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "0 24px",
+        }}
       >
-        {/* ── Header row ── */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-            marginBottom: "48px",
-            flexWrap: "wrap",
-            gap: "16px",
-          }}
-        >
-          <div>
-            <span
-              className="eyebrow"
-              style={{ display: "block", marginBottom: "8px" }}
-            >
-              What we do
-            </span>
-            <h2
-              style={{
-                fontFamily: "var(--font-serif)",
-                fontSize: "clamp(26px, 3.2vw, 40px)",
-                fontWeight: 500,
-                letterSpacing: "0.04em",
-                margin: 0,
-                color: "var(--charcoal)",
-              }}
-            >
-              Interiors from concept
-              <br />
-              to handover
-            </h2>
-          </div>
-          <Link
-            href="/services"
-            id="services-accordion-all"
+        {/* Section Header */}
+        <div style={{ marginBottom: "clamp(32px, 5vw, 48px)" }}>
+          <span
+            className="eyebrow"
             style={{
-              fontSize: "12px",
-              fontWeight: 600,
-              letterSpacing: "0.14em",
+              display: "block",
+              letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "var(--gold-dark)",
-              textDecoration: "none",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              borderBottom: "1px solid rgba(184,151,90,0.4)",
-              paddingBottom: "2px",
-              transition: "color 0.2s, border-color 0.2s",
-              whiteSpace: "nowrap",
+              fontSize: "11px",
+              fontWeight: 600,
+              color: "var(--gold)",
+              marginBottom: "8px",
             }}
           >
-            All services <ChevronRight size={13} aria-hidden="true" />
-          </Link>
+            What We Do
+          </span>
+          <h2
+            id={`${baseId}-heading`}
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontSize: "clamp(28px, 4vw, 42px)",
+              fontWeight: 500,
+              letterSpacing: "0.04em",
+              color: "var(--charcoal)",
+              margin: 0,
+              textTransform: "uppercase",
+            }}
+          >
+            Our Services
+          </h2>
+          <div
+            className="title-line"
+            style={{ marginTop: "16px", marginBottom: 0 }}
+          />
         </div>
 
-        {/* ── Two-column layout ── */}
+        {/* Two-column layout: Left rows, Right photo */}
         <div
+          className="services-split-layout"
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr minmax(0, 380px)",
-            gap: "56px",
+            gridTemplateColumns: "1fr",
+            gap: "clamp(24px, 4vw, 48px)",
             alignItems: "start",
           }}
-          className="services-accordion-grid"
         >
-          {/* Left — accordion list */}
-          <div role="list">
-            {NAV_SERVICES.map((svc, i) => {
+          {/* On mobile: Photo rendered on top via CSS order or media query */}
+          <div className="services-split-photo-col">
+            <PhotoPanel activeIndex={active} id={photoId} services={services} />
+          </div>
+
+          {/* Rows */}
+          <div
+            role="region"
+            aria-label="Services list"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              borderTop: "1px solid rgba(44,36,32,0.12)",
+            }}
+          >
+            {services.map((svc, i) => {
               const isActive = i === active;
+              const rowId = `${baseId}-row-${i}`;
+              const descId = `${baseId}-desc-${i}`;
               const btnId = `${baseId}-btn-${i}`;
-              const panelId = `${baseId}-panel-${i}`;
 
               return (
                 <div
-                  key={svc.slug}
-                  role="listitem"
+                  key={svc.slug || i}
+                  id={rowId}
+                  onMouseEnter={() => activate(i)}
                   style={{
-                    borderTop:
-                      i === 0
-                        ? "1px solid var(--border)"
-                        : undefined,
-                    borderBottom: "1px solid var(--border)",
+                    borderBottom: "1px solid rgba(44,36,32,0.12)",
+                    transition: "background-color 0.2s ease",
+                    background: isActive
+                      ? "rgba(197, 168, 128, 0.08)"
+                      : "transparent",
                   }}
                 >
-                  {/* Row header — button */}
+                  {/* Row Button */}
                   <button
                     id={btnId}
                     type="button"
                     aria-expanded={isActive}
-                    aria-controls={panelId}
-                    onMouseEnter={() => activate(i)}
+                    aria-controls={descId}
                     onClick={() => activate(i)}
                     onKeyDown={(e) => handleKeyDown(e, i)}
                     style={{
                       width: "100%",
                       display: "flex",
                       alignItems: "center",
+                      justifyContent: "space-between",
                       gap: "16px",
-                      padding: "18px 0",
-                      background: "none",
+                      padding: "20px 12px",
+                      background: "transparent",
                       border: "none",
                       cursor: "pointer",
                       textAlign: "left",
-                      minHeight: "48px",
-                      outline: "none",
                     }}
-                    className="svc-row-btn"
                   >
-                    {/* Number */}
-                    <span
+                    <div
                       style={{
-                        fontFamily: "var(--font-serif)",
-                        fontSize: "13px",
-                        color: isActive
-                          ? "var(--gold)"
-                          : "var(--text-muted)",
-                        fontWeight: 400,
-                        minWidth: "26px",
-                        transition: "color 0.2s",
-                        letterSpacing: "0.06em",
-                      }}
-                      aria-hidden="true"
-                    >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-
-                    {/* Title */}
-                    <span
-                      style={{
-                        flex: 1,
-                        fontFamily: "var(--font-serif)",
-                        fontSize: "clamp(17px, 1.6vw, 21px)",
-                        fontWeight: isActive ? 500 : 400,
-                        color: isActive
-                          ? "var(--charcoal)"
-                          : "var(--text-secondary)",
-                        transition: "color 0.2s, font-weight 0.15s",
-                        letterSpacing: "0.02em",
+                        display: "flex",
+                        alignItems: "baseline",
+                        gap: "18px",
                       }}
                     >
-                      {svc.title}
-                    </span>
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          fontFamily: "var(--font-sans)",
+                          letterSpacing: "0.1em",
+                          color: isActive ? "var(--gold)" : "rgba(44,36,32,0.4)",
+                          fontWeight: 600,
+                        }}
+                      >
+                        0{i + 1}
+                      </span>
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-serif)",
+                          fontSize: "clamp(19px, 2.2vw, 24px)",
+                          fontWeight: 500,
+                          letterSpacing: "0.02em",
+                          margin: 0,
+                          color: isActive ? "var(--gold)" : "var(--charcoal)",
+                          transition: "color 0.2s ease",
+                        }}
+                      >
+                        {svc.title}
+                      </h3>
+                    </div>
 
                     <DiagonalArrow active={isActive} />
                   </button>
 
-                  {/* Expandable panel */}
+                  {/* Expandable description panel */}
                   <div
-                    id={panelId}
+                    id={descId}
                     role="region"
                     aria-labelledby={btnId}
                     style={{
-                      overflow: "hidden",
-                      maxHeight: isActive ? "200px" : "0",
+                      maxHeight: isActive ? "300px" : "0",
                       opacity: isActive ? 1 : 0,
-                      transition:
-                        "max-height 0.28s ease, opacity 0.22s ease",
+                      overflow: "hidden",
+                      transition: "max-height 0.28s ease, opacity 0.22s ease",
+                      padding: isActive ? "0 12px 20px 42px" : "0 12px 0 42px",
                     }}
                   >
-                    <div style={{ padding: "0 0 20px 42px" }}>
-                      <p
-                        style={{
-                          fontSize: "14px",
-                          lineHeight: 1.75,
-                          color: "var(--text-secondary)",
-                          margin: "0 0 14px",
-                          maxWidth: "460px",
-                        }}
-                      >
-                        {svc.description}
-                      </p>
+                    <p
+                      style={{
+                        fontSize: "14px",
+                        lineHeight: 1.7,
+                        color: "var(--text-secondary)",
+                        margin: "0 0 16px",
+                        maxWidth: "520px",
+                      }}
+                    >
+                      {svc.description}
+                    </p>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "16px",
+                        flexWrap: "wrap",
+                      }}
+                    >
                       <Link
-                        href={svc.href}
-                        id={`service-accordion-link-${svc.slug}`}
+                        href={svc.href || (svc as any).link || "/services"}
                         style={{
-                          fontSize: "11px",
-                          fontWeight: 700,
-                          letterSpacing: "0.15em",
+                          fontSize: "12px",
+                          letterSpacing: "0.12em",
                           textTransform: "uppercase",
-                          color: "var(--gold-dark)",
+                          fontWeight: 600,
+                          color: "var(--gold)",
                           textDecoration: "none",
                           display: "inline-flex",
                           alignItems: "center",
-                          gap: "6px",
+                          gap: "4px",
                         }}
                       >
-                        Explore service{" "}
-                        <ArrowUpRight size={12} aria-hidden="true" />
+                        <span>Explore Details</span>
+                        <ChevronRight size={14} />
                       </Link>
+
+                      <a
+                        href={`https://wa.me/${waNumber}?text=${encodeURIComponent(`Hello, I'd like to consult on your ${svc.title} service.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          fontSize: "12px",
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase",
+                          fontWeight: 500,
+                          color: "var(--text-secondary)",
+                          textDecoration: "none",
+                          opacity: 0.8,
+                        }}
+                      >
+                        Quick Consultation →
+                      </a>
                     </div>
                   </div>
                 </div>
               );
             })}
-
-            {/* WhatsApp CTA below the list */}
-            <div style={{ marginTop: "32px" }}>
-              <a
-                href={waLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                id="services-accordion-wa"
-                className="btn btn--primary"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "13px 28px",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                }}
-              >
-                Get a free consultation
-              </a>
-            </div>
-          </div>
-
-          {/* Right — photo panel (hidden on mobile — shown above on mobile via CSS) */}
-          <div className="services-accordion-photo-col">
-            <PhotoPanel activeIndex={active} id={photoId} />
           </div>
         </div>
       </div>

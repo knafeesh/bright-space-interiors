@@ -1,15 +1,11 @@
 import { notFound } from "next/navigation";
-import { PROJECTS } from "@/lib/data";
-import { getProjectFromDbBySlug } from "@/lib/server/portfolio-db";
+import { getProjectBySlug } from "@/lib/server/site-db";
 import type { Metadata } from "next";
 import ProjectDetailClient from "./ProjectDetailClient";
-import { Project } from "@/lib/cms";
-
 import { constructMetadata } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-export const fetchCache = "force-no-store";
 
 const SHORT_PROJECT_TITLES: Record<string, string> = {
   "rawls-salon-luxury": "Rawls Salon Luxury",
@@ -49,8 +45,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = (await getProjectFromDbBySlug(slug)) || PROJECTS.find((p) => p.slug === slug);
-  if (!project) {
+  const project = await getProjectBySlug(slug);
+  if (!project || project.status !== "published") {
     return constructMetadata({
       path: `/portfolio/${slug}`,
       title: "Portfolio",
@@ -73,11 +69,12 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = (await getProjectFromDbBySlug(slug)) || PROJECTS.find((p) => p.slug === slug);
+  const project = await getProjectBySlug(slug);
 
-  if (!project) {
+  // Return 404 if project was deleted from admin or marked as draft
+  if (!project || project.status !== "published") {
     notFound();
   }
 
-  return <ProjectDetailClient initialProject={project as Project} slug={slug} />;
+  return <ProjectDetailClient initialProject={project as any} slug={slug} />;
 }

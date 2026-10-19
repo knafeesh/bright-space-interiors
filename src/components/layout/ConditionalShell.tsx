@@ -1,13 +1,14 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
 
 export default function ConditionalShell({
   children,
+  footer,
 }: {
   children: React.ReactNode;
+  footer?: React.ReactNode;
 }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
@@ -20,7 +21,7 @@ export default function ConditionalShell({
     <>
       <Navbar />
       <main>{children}</main>
-      <Footer />
+      {footer}
       <WhatsAppFloat />
     </>
   );

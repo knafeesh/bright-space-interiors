@@ -9,16 +9,15 @@ import {
   getCategoryConsultationHeading,
 } from "@/lib/design-ideas-data";
 import {
-  getAllCategoriesFromDb,
-  getCategoryFromDbBySlug,
-} from "@/lib/server/design-ideas-db";
+  getCategoryBySlug,
+  getPublishedCategories,
+} from "@/lib/server/site-db";
 import { WHATSAPP_NUMBER, PHONE_NUMBER } from "@/lib/data";
 import CategoryGallery from "@/components/ui/CategoryGallery";
 import { constructMetadata } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-export const fetchCache = "force-no-store";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -26,8 +25,8 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const category = (await getCategoryFromDbBySlug(slug)) || getDesignCategoryBySlug(slug);
-  if (!category) {
+  const category = await getCategoryBySlug(slug);
+  if (!category || category.published === false) {
     return constructMetadata({
       path: `/design-ideas/${slug}`,
       title: "Design Ideas",
@@ -48,14 +47,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function DesignCategoryPage({ params }: Props) {
   const { slug } = await params;
-  const category = (await getCategoryFromDbBySlug(slug)) || getDesignCategoryBySlug(slug);
+  const category = await getCategoryBySlug(slug);
 
-  if (!category) {
+  if (!category || category.published === false) {
     notFound();
   }
 
-  // Related categories from database or initial list
-  const allCategories = await getAllCategoriesFromDb().catch(() => DESIGN_CATEGORIES);
+  // Related categories from database
+  const allCategories = await getPublishedCategories();
   const otherCategories = allCategories.filter((c) => c.slug !== category.slug).slice(0, 6);
 
   const customWhatsAppMsg = `Hello The Bright Space Interiors, I am interested in your ${category.name} concepts and would like to get a design consultation.`;

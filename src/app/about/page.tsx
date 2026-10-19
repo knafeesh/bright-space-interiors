@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { TEAM_MEMBERS, WHY_US_PILLARS, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
-
+import { getTeamMembers } from "@/lib/server/site-db";
 import { constructMetadata } from "@/lib/metadata";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = constructMetadata({
   path: "/about",
@@ -23,7 +26,8 @@ const MILESTONES = [
 
 const ICON_COLORS = ["shield", "users", "gem", "clock", "message"];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const team = await getTeamMembers();
   return (
     <>
       {/* Page Hero */}
@@ -192,7 +196,7 @@ export default function AboutPage() {
           </div>
 
           <div className="team-grid">
-            {TEAM_MEMBERS.map((member) => (
+            {team.map((member) => (
               <div key={member.id} className="team-card" id={`team-${member.id}`}>
                 <div className="team-card__photo-wrap">
                   <div

@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { SERVICES } from "@/lib/data";
+import { getDetailedServiceBySlug, getDetailedServices } from "@/lib/server/site-db";
 import ServiceDetailClient from "./ServiceDetailClient";
 import { constructMetadata } from "@/lib/metadata";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function generateStaticParams() {
-  return [
-    { slug: "residential" },
-    { slug: "commercial" },
-    { slug: "turnkey" },
-    { slug: "design-execution" },
-  ];
+  const services = await getDetailedServices();
+  return services.map((s) => ({ slug: s.slug }));
 }
 
 const SERVICE_META: Record<
@@ -49,7 +48,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const service = SERVICES.find((s) => s.slug === slug);
+  const service = await getDetailedServiceBySlug(slug);
   if (!service) return {};
 
   const meta = SERVICE_META[slug] || {
@@ -72,8 +71,10 @@ export default async function ServiceDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const service = SERVICES.find((s) => s.slug === slug);
-  if (!service) notFound();
+  const service = await getDetailedServiceBySlug(slug);
+  if (!service) {
+    notFound();
+  }
 
   return <ServiceDetailClient slug={slug} />;
 }

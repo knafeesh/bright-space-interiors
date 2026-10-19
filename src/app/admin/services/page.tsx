@@ -1,69 +1,59 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  useCmsServices,
-  useCmsSpecialties,
-  cmsUpdateService,
-  cmsDeleteService,
-  cmsAddService,
-  cmsUpdateSpecialty,
-  cmsDeleteSpecialty,
-  cmsAddSpecialty,
-  Service,
-  SpecialtyService,
-} from "@/lib/cms";
-import {
-  ExternalLink,
   Plus,
   Edit2,
   Trash2,
-  CheckCircle2,
+  ExternalLink,
   X,
   Check,
   AlertCircle,
   Loader2,
+  ArrowUp,
+  ArrowDown,
+  Eye,
+  EyeOff,
+  Layers,
+  FileText,
+  Sparkles,
 } from "lucide-react";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import type { NavServiceItem, ServiceDetailItem } from "@/lib/site-types";
 
 export default function ServicesManagerPage() {
-  const coreServices = useCmsServices();
-  const specialties = useCmsSpecialties();
-  const [activeTab, setActiveTab] = useState<"core" | "specialty">("core");
+  const [activeTab, setActiveTab] = useState<"homepage" | "detailed" | "specialty">("homepage");
+  const [navServices, setNavServices] = useState<NavServiceItem[]>([]);
+  const [detailedServices, setDetailedServices] = useState<ServiceDetailItem[]>([]);
+  const [specialties, setSpecialties] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Notifications
-  const [successMsg, setSuccessMsg] = useState("");
+  const [toastMsg, setToastMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // Modals
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [editingCore, setEditingCore] = useState<Service | null>(null);
-  const [editingSpecialty, setEditingSpecialty] = useState<SpecialtyService | null>(null);
+  // Homepage Service Modals & Form
+  const [showAddNavModal, setShowAddNavModal] = useState(false);
+  const [editingNavService, setEditingNavService] = useState<NavServiceItem | null>(null);
+  const [navTitle, setNavTitle] = useState("");
+  const [navSlug, setNavSlug] = useState("");
+  const [navDesc, setNavDesc] = useState("");
+  const [navImage, setNavImage] = useState("/images/hero-luxury.jpg");
+  const [navLink, setNavLink] = useState("/services/residential");
+  const [navPublished, setNavPublished] = useState(true);
 
-  // New service state
-  const [newTitle, setNewTitle] = useState("");
-  const [newSubtitle, setNewSubtitle] = useState("");
-  const [newDesc, setNewDesc] = useState("");
-  const [newImage, setNewImage] = useState("/images/real-bedroom-fluted.jpg");
-  const [newSubServices, setNewSubServices] = useState("");
-
-  // Edit core service form
-  const [editCoreTitle, setEditCoreTitle] = useState("");
-  const [editCoreSubtitle, setEditCoreSubtitle] = useState("");
-  const [editCoreImage, setEditCoreImage] = useState("");
-  const [editCoreDesc, setEditCoreDesc] = useState("");
-  const [editCoreSubServices, setEditCoreSubServices] = useState("");
-
-  // Edit specialty service form
-  const [editSpecName, setEditSpecName] = useState("");
-  const [editSpecTagline, setEditSpecTagline] = useState("");
-  const [editSpecImage, setEditSpecImage] = useState("");
-  const [editSpecDesc, setEditSpecDesc] = useState("");
+  // Detailed Service Modal & Form
+  const [editingDetailed, setEditingDetailed] = useState<ServiceDetailItem | null>(null);
+  const [detTitle, setDetTitle] = useState("");
+  const [detSubtitle, setDetSubtitle] = useState("");
+  const [detImage, setDetImage] = useState("");
+  const [detDesc, setDetDesc] = useState("");
+  const [detSubServices, setDetSubServices] = useState("");
 
   const notify = (msg: string) => {
-    setSuccessMsg(msg);
-    setTimeout(() => setSuccessMsg(""), 3500);
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(""), 3500);
   };
 
   const notifyError = (msg: string) => {
@@ -71,140 +61,239 @@ export default function ServicesManagerPage() {
     setTimeout(() => setErrorMsg(""), 5000);
   };
 
-  const handleOpenEditCore = (svc: Service) => {
-    setEditingCore(svc);
-    setEditCoreTitle(svc.title || "");
-    setEditCoreSubtitle(svc.subtitle || "");
-    setEditCoreImage(svc.image || "");
-    setEditCoreDesc(svc.description || "");
-    setEditCoreSubServices((svc.subServices || []).join(", "));
+  const loadServices = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/admin/services", { cache: "no-store" });
+      const data = await res.json();
+      if (data.success) {
+        setNavServices(data.navServices || []);
+        setDetailedServices(data.detailedServices || []);
+        setSpecialties(data.specialties || []);
+      }
+    } catch {
+      notifyError("Failed to load services data from server.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSaveEditCore = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingCore) return;
+  useEffect(() => {
+    loadServices();
+  }, []);
 
-    const subServicesArray = editCoreSubServices
-      .split(",")
+  // --- Homepage 6 Services Handlers ---
+  const openAddNav = () => {
+    setNavTitle("");
+    setNavSlug("");
+    setNavDesc("");
+    setNavImage("/images/hero-luxury.jpg");
+    setNavLink("/services/residential");
+    setNavPublished(true);
+    setEditingNavService(null);
+    setShowAddNavModal(true);
+  };
+
+  const openEditNav = (s: NavServiceItem) => {
+    setEditingNavService(s);
+    setNavTitle(s.title);
+    setNavSlug(s.slug);
+    setNavDesc(s.description || "");
+    setNavImage(s.image || "/images/hero-luxury.jpg");
+    setNavLink(s.link || "/services");
+    setNavPublished(s.published !== false);
+    setShowAddNavModal(true);
+  };
+
+  const handleSaveNavService = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!navTitle.trim()) {
+      notifyError("Service title is required.");
+      return;
+    }
+
+    const cleanSlug =
+      navSlug.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") ||
+      navTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+    const payload: NavServiceItem = {
+      id: editingNavService ? editingNavService.id : `srv-${Date.now()}`,
+      slug: cleanSlug,
+      title: navTitle.trim(),
+      description: navDesc.trim(),
+      image: navImage.trim(),
+      href: navLink.trim() || `/services/${cleanSlug}`,
+      link: navLink.trim() || `/services/${cleanSlug}`,
+      caption: "",
+      whatsappMsg: `Hello Bright Space Interiors, I am interested in ${navTitle.trim()}.`,
+      order: editingNavService ? editingNavService.order : navServices.length + 1,
+      published: navPublished,
+    };
+
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/services", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "navService",
+          data: payload,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setNavServices(data.navServices);
+        setShowAddNavModal(false);
+        setEditingNavService(null);
+        notify(
+          editingNavService
+            ? `Homepage service "${payload.title}" updated and synced!`
+            : `Homepage service "${payload.title}" created and published!`
+        );
+      } else {
+        notifyError(data.error || "Failed to save service to Firestore.");
+      }
+    } catch {
+      notifyError("Network error while saving service.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleToggleNavPublished = async (s: NavServiceItem) => {
+    const updated = { ...s, published: s.published === false ? true : false };
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/services", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "navService", data: updated }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNavServices(data.navServices);
+        notify(`Service status changed to ${updated.published ? "Published" : "Draft"}.`);
+      } else {
+        notifyError("Failed to update status.");
+      }
+    } catch {
+      notifyError("Network error.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteNav = async (s: NavServiceItem) => {
+    if (!confirm(`Are you sure you want to delete service "${s.title}"?`)) return;
+
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/services?slug=${s.slug}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) {
+        setNavServices(data.navServices);
+        notify(`Deleted service "${s.title}".`);
+      } else {
+        notifyError(data.error || "Failed to delete.");
+      }
+    } catch {
+      notifyError("Network error deleting service.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleReorderNav = async (idx: number, direction: "up" | "down") => {
+    const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= navServices.length) return;
+
+    const list = [...navServices];
+    const [moved] = list.splice(idx, 1);
+    list.splice(targetIdx, 0, moved);
+
+    const reordered = list.map((item, index) => ({
+      ...item,
+      order: index + 1,
+    }));
+
+    setNavServices(reordered);
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/services", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "navServices", items: reordered }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        notify("Homepage services reordered and saved to Firestore.");
+      } else {
+        notifyError("Failed to save reorder.");
+        loadServices();
+      }
+    } catch {
+      notifyError("Network error reordering.");
+      loadServices();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // --- Detailed Service Handlers ---
+  const openEditDetailed = (s: ServiceDetailItem) => {
+    setEditingDetailed(s);
+    setDetTitle(s.title);
+    setDetSubtitle(s.subtitle || "");
+    setDetImage(s.image || "");
+    setDetDesc(s.description || "");
+    setDetSubServices((s.subServices || []).join("\n"));
+  };
+
+  const handleSaveDetailed = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingDetailed) return;
+
+    const subServicesArray = detSubServices
+      .split("\n")
       .map((s) => s.trim())
       .filter(Boolean);
 
-    const updated: Service = {
-      ...editingCore,
-      title: editCoreTitle.trim() || editingCore.title,
-      subtitle: editCoreSubtitle.trim() || editingCore.subtitle,
-      image: editCoreImage.trim() || editingCore.image,
-      description: editCoreDesc.trim() || editingCore.description,
-      subServices: subServicesArray.length > 0 ? subServicesArray : editingCore.subServices,
+    const updated: ServiceDetailItem = {
+      ...editingDetailed,
+      title: detTitle.trim() || editingDetailed.title,
+      subtitle: detSubtitle.trim() || editingDetailed.subtitle,
+      image: detImage.trim() || editingDetailed.image,
+      description: detDesc.trim() || editingDetailed.description,
+      subServices: subServicesArray.length > 0 ? subServicesArray : editingDetailed.subServices,
     };
 
     setSaving(true);
-    const ok = await cmsUpdateService(updated);
-    setSaving(false);
-    if (ok) {
-      setEditingCore(null);
-      notify(`Saved changes to "${updated.title}" and updated website live!`);
-    } else {
-      notifyError(`Failed to save "${updated.title}" on live website.`);
-    }
-  };
-
-  const handleOpenEditSpecialty = (spec: SpecialtyService) => {
-    setEditingSpecialty(spec);
-    setEditSpecName(spec.name || "");
-    setEditSpecTagline(spec.tagline || "");
-    setEditSpecImage(spec.image || "");
-    setEditSpecDesc(spec.description || "");
-  };
-
-  const handleSaveEditSpecialty = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingSpecialty) return;
-
-    const updated: SpecialtyService = {
-      ...editingSpecialty,
-      name: editSpecName.trim() || editingSpecialty.name,
-      tagline: editSpecTagline.trim() || editingSpecialty.tagline,
-      image: editSpecImage.trim() || editingSpecialty.image,
-      description: editSpecDesc.trim() || editingSpecialty.description,
-    };
-
-    setSaving(true);
-    const ok = await cmsUpdateSpecialty(editingSpecialty.name, updated);
-    setSaving(false);
-    if (ok) {
-      setEditingSpecialty(null);
-      notify(`Saved changes to "${updated.name}" trade and updated website live!`);
-    } else {
-      notifyError(`Failed to save "${updated.name}" on live website.`);
-    }
-  };
-
-  const handleDeleteCore = async (slug: string, title: string) => {
-    if (confirm(`Are you sure you want to remove "${title}"? This will immediately update the live website.`)) {
-      const ok = await cmsDeleteService(slug);
-      if (ok) notify(`Removed "${title}" from services.`);
-      else notifyError(`Failed to remove "${title}" from live website.`);
-    }
-  };
-
-  const handleDeleteSpecialty = async (name: string) => {
-    if (confirm(`Are you sure you want to remove "${name}" specialty trade? This will immediately update the live website.`)) {
-      const ok = await cmsDeleteSpecialty(name);
-      if (ok) notify(`Removed "${name}" from specialty trades.`);
-      else notifyError(`Failed to remove "${name}" from live website.`);
-    }
-  };
-
-  const handleCreateService = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTitle.trim()) return;
-
-    setSaving(true);
-    let ok = false;
-
-    if (activeTab === "core") {
-      const created: Service = {
-        slug: newTitle.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || `service-${Date.now()}`,
-        title: newTitle.trim(),
-        subtitle: newSubtitle.trim() || "Tailored Luxury Spaces",
-        image: newImage.trim() || "/images/real-bedroom-fluted.jpg",
-        description: newDesc.trim() || "Bespoke interior design and turnkey execution services.",
-        subServices: newSubServices.split(",").map((s) => s.trim()).filter(Boolean),
-        bgColor: "#24201A",
-        faqs: [
-          { q: "What is the typical execution timeline?", a: "Timelines range from 4 to 12 weeks depending on scope." },
-        ],
-      };
-      ok = await cmsAddService(created);
-      if (ok) notify(`Added new service "${created.title}" to live website!`);
-    } else {
-      const createdSpecialty: SpecialtyService = {
-        name: newTitle.trim(),
-        tagline: newSubtitle.trim() || "Precision Craftsmanship",
-        image: newImage.trim() || "/images/real-kitchen-saket.jpg",
-        description: newDesc.trim() || "High-end bespoke material execution.",
-      };
-      ok = await cmsAddSpecialty(createdSpecialty);
-      if (ok) notify(`Added new specialty trade "${createdSpecialty.name}" to live website!`);
-    }
-
-    setSaving(false);
-    if (ok) {
-      setShowAddModal(false);
-      setNewTitle("");
-      setNewSubtitle("");
-      setNewDesc("");
-      setNewSubServices("");
-    } else {
-      notifyError("Failed to add service to live website. Please check connection.");
+    try {
+      const res = await fetch("/api/admin/services", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "detailedService", data: updated }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setDetailedServices(data.detailedServices);
+        setEditingDetailed(null);
+        notify(`Detailed service page for "${updated.title}" updated!`);
+      } else {
+        notifyError(data.error || "Failed to update detailed service.");
+      }
+    } catch {
+      notifyError("Network error.");
+    } finally {
+      setSaving(false);
     }
   };
 
   return (
-    <>
-      {/* Toast Feedback */}
-      {successMsg && (
+    <div>
+      {/* Toast notifications */}
+      {toastMsg && (
         <div
           style={{
             position: "fixed",
@@ -216,7 +305,7 @@ export default function ServicesManagerPage() {
             borderRadius: "8px",
             fontWeight: 600,
             fontSize: "13px",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
             zIndex: 9999,
             display: "flex",
             alignItems: "center",
@@ -224,7 +313,7 @@ export default function ServicesManagerPage() {
           }}
         >
           <Check size={16} />
-          {successMsg}
+          {toastMsg}
         </div>
       )}
 
@@ -240,7 +329,7 @@ export default function ServicesManagerPage() {
             borderRadius: "8px",
             fontWeight: 600,
             fontSize: "13px",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
             zIndex: 9999,
             display: "flex",
             alignItems: "center",
@@ -253,508 +342,603 @@ export default function ServicesManagerPage() {
       )}
 
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px", flexWrap: "wrap", gap: "16px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "24px",
+          flexWrap: "wrap",
+          gap: "16px",
+        }}
+      >
         <div>
-          <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "32px", fontWeight: 400, color: "var(--charcoal)" }}>
-            Services Manager
+          <h1
+            style={{
+              fontFamily: "var(--font-serif, serif)",
+              fontSize: "28px",
+              fontWeight: 500,
+              color: "#F6F5F2",
+              margin: "0 0 4px 0",
+            }}
+          >
+            Services Management
           </h1>
-          <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
-            Configure main design divisions and turnkey specialty trades. Any edits or deletions update live across the website.
+          <p style={{ fontSize: "13px", color: "#9CA3AF", margin: 0 }}>
+            Control the homepage 6-service split accordion layout and dedicated service detail pages (/services/[slug]).
           </p>
         </div>
-        <div style={{ display: "flex", gap: "12px" }}>
-          <Link href="/services" target="_blank" className="admin-btn admin-btn--outline" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-            <ExternalLink size={14} /> View Live Services
-          </Link>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="admin-btn admin-btn--primary"
-            id="services-add-btn"
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          {activeTab === "homepage" && (
+            <button
+              onClick={openAddNav}
+              className="admin-btn admin-btn--gold"
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+            >
+              <Plus size={16} /> Add Homepage Service
+            </button>
+          )}
+          <Link
+            href="/services"
+            target="_blank"
+            className="admin-btn admin-btn--outline"
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
           >
-            <Plus size={14} /> Add {activeTab === "core" ? "Core Service" : "Specialty Service"}
-          </button>
+            <ExternalLink size={14} /> View /services
+          </Link>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="admin-table-wrap" style={{ padding: "8px", marginBottom: "24px", display: "inline-flex", gap: "8px" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "8px",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+          marginBottom: "24px",
+        }}
+      >
         <button
-          onClick={() => setActiveTab("core")}
+          onClick={() => setActiveTab("homepage")}
           style={{
-            padding: "8px 20px",
-            borderRadius: "6px",
+            background: "none",
             border: "none",
-            fontSize: "13px",
+            borderBottom: activeTab === "homepage" ? "2px solid #C5A880" : "2px solid transparent",
+            color: activeTab === "homepage" ? "#DFBE99" : "#9CA3AF",
+            padding: "12px 18px",
+            fontSize: "14px",
             fontWeight: 600,
             cursor: "pointer",
-            background: activeTab === "core" ? "var(--charcoal)" : "transparent",
-            color: activeTab === "core" ? "#FFF" : "var(--text-secondary)",
-            transition: "all 0.2s ease",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
           }}
         >
-          Primary Services ({coreServices.length})
+          <Layers size={16} />
+          <span>Homepage Split Accordion ({navServices.length} Services)</span>
         </button>
+
+        <button
+          onClick={() => setActiveTab("detailed")}
+          style={{
+            background: "none",
+            border: "none",
+            borderBottom: activeTab === "detailed" ? "2px solid #C5A880" : "2px solid transparent",
+            color: activeTab === "detailed" ? "#DFBE99" : "#9CA3AF",
+            padding: "12px 18px",
+            fontSize: "14px",
+            fontWeight: 600,
+            cursor: "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <FileText size={16} />
+          <span>Detailed Service Pages ({detailedServices.length} Routes)</span>
+        </button>
+
         <button
           onClick={() => setActiveTab("specialty")}
           style={{
-            padding: "8px 20px",
-            borderRadius: "6px",
+            background: "none",
             border: "none",
-            fontSize: "13px",
+            borderBottom: activeTab === "specialty" ? "2px solid #C5A880" : "2px solid transparent",
+            color: activeTab === "specialty" ? "#DFBE99" : "#9CA3AF",
+            padding: "12px 18px",
+            fontSize: "14px",
             fontWeight: 600,
             cursor: "pointer",
-            background: activeTab === "specialty" ? "var(--charcoal)" : "transparent",
-            color: activeTab === "specialty" ? "#FFF" : "var(--text-secondary)",
-            transition: "all 0.2s ease",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
           }}
         >
-          Turnkey Specialty Trades ({specialties.length})
+          <Sparkles size={16} />
+          <span>Specialties Grid ({specialties.length})</span>
         </button>
       </div>
 
-      {/* Core Services Section */}
-      {activeTab === "core" && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: "24px" }}>
-          {coreServices.map((service) => (
-            <div key={service.slug} className="admin-table-wrap" style={{ margin: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-              <div style={{ position: "relative", width: "100%", height: "180px", background: "#222" }}>
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)" }} />
-                <div style={{ position: "absolute", bottom: "16px", left: "16px", right: "16px" }}>
-                  <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "22px", color: "#FFF", fontWeight: 600 }}>
-                    {service.title}
+      {/* Tab 1: Homepage 6 Services */}
+      {activeTab === "homepage" && (
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th style={{ width: "60px" }}>Order</th>
+                <th style={{ width: "70px" }}>Image</th>
+                <th>Service Title</th>
+                <th>Description</th>
+                <th>Target Link</th>
+                <th>Status</th>
+                <th style={{ textAlign: "right" }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={7} style={{ textAlign: "center", padding: "40px" }}>
+                    <Loader2 size={24} style={{ animation: "spin 1s linear infinite", margin: "0 auto 8px" }} />
+                    <p style={{ margin: 0, color: "#9CA3AF" }}>Loading services...</p>
+                  </td>
+                </tr>
+              ) : navServices.length === 0 ? (
+                <tr>
+                  <td colSpan={7} style={{ textAlign: "center", padding: "40px", color: "#9CA3AF" }}>
+                    No services found. Click "Add Homepage Service" to create one.
+                  </td>
+                </tr>
+              ) : (
+                navServices.map((s, idx) => (
+                  <tr key={s.id || s.slug}>
+                    <td>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                        <button
+                          onClick={() => handleReorderNav(idx, "up")}
+                          disabled={idx === 0 || saving}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: idx === 0 ? "#4B5563" : "#C5A880",
+                            cursor: idx === 0 ? "not-allowed" : "pointer",
+                            padding: "2px",
+                          }}
+                        >
+                          <ArrowUp size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleReorderNav(idx, "down")}
+                          disabled={idx === navServices.length - 1 || saving}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: idx === navServices.length - 1 ? "#4B5563" : "#C5A880",
+                            cursor: idx === navServices.length - 1 ? "not-allowed" : "pointer",
+                            padding: "2px",
+                          }}
+                        >
+                          <ArrowDown size={14} />
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <img
+                        src={s.image || "/images/hero-luxury.jpg"}
+                        alt={s.title}
+                        style={{
+                          width: "56px",
+                          height: "40px",
+                          objectFit: "cover",
+                          borderRadius: "6px",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <div style={{ fontWeight: 600, color: "#F3F4F6", fontSize: "14px" }}>{s.title}</div>
+                      <div style={{ fontSize: "11px", color: "#9CA3AF", fontFamily: "monospace" }}>slug: {s.slug}</div>
+                    </td>
+                    <td style={{ fontSize: "12px", color: "#D1D5DB", maxWidth: "280px" }}>
+                      {s.description || "—"}
+                    </td>
+                    <td>
+                      <span style={{ fontSize: "12px", color: "#60A5FA", fontFamily: "monospace" }}>
+                        {s.link}
+                      </span>
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => handleToggleNavPublished(s)}
+                        disabled={saving}
+                        style={{
+                          background: s.published !== false ? "rgba(16, 185, 129, 0.15)" : "rgba(245, 158, 11, 0.15)",
+                          border: `1px solid ${s.published !== false ? "rgba(16, 185, 129, 0.3)" : "rgba(245, 158, 11, 0.3)"}`,
+                          color: s.published !== false ? "#10B981" : "#F59E0B",
+                          padding: "4px 10px",
+                          borderRadius: "14px",
+                          fontSize: "11px",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        {s.published !== false ? <Eye size={12} /> : <EyeOff size={12} />}
+                        <span>{s.published !== false ? "Published" : "Draft"}</span>
+                      </button>
+                    </td>
+                    <td style={{ textAlign: "right" }}>
+                      <div style={{ display: "inline-flex", gap: "8px" }}>
+                        <button
+                          onClick={() => openEditNav(s)}
+                          className="admin-btn admin-btn--outline"
+                          style={{ padding: "6px 8px" }}
+                        >
+                          <Edit2 size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteNav(s)}
+                          className="admin-btn admin-btn--outline"
+                          style={{ padding: "6px 8px", color: "#EF4444" }}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Tab 2: Detailed Services */}
+      {activeTab === "detailed" && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px" }}>
+          {detailedServices.map((det) => (
+            <div
+              key={det.slug}
+              style={{
+                background: "#161920",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                borderRadius: "12px",
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <div style={{ height: "160px", position: "relative" }}>
+                  <img
+                    src={det.image}
+                    alt={det.title}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "10px",
+                      left: "12px",
+                      background: "rgba(0,0,0,0.75)",
+                      padding: "4px 10px",
+                      borderRadius: "6px",
+                      fontSize: "11px",
+                      fontFamily: "monospace",
+                      color: "#DFBE99",
+                    }}
+                  >
+                    /services/{det.slug}
+                  </div>
+                </div>
+
+                <div style={{ padding: "20px" }}>
+                  <h3 style={{ fontSize: "18px", fontWeight: 600, color: "#F3F4F6", margin: "0 0 6px 0" }}>
+                    {det.title}
                   </h3>
-                  <p style={{ fontSize: "12px", color: "var(--gold)", fontWeight: 500 }}>
-                    {service.subtitle}
+                  <p style={{ fontSize: "12px", color: "#C5A880", margin: "0 0 12px 0", fontWeight: 500 }}>
+                    {det.subtitle}
                   </p>
+                  <p style={{ fontSize: "13px", color: "#9CA3AF", lineHeight: 1.5, margin: "0 0 16px 0" }}>
+                    {det.description}
+                  </p>
+
+                  <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "12px" }}>
+                    <div style={{ fontSize: "11px", textTransform: "uppercase", color: "#6B7280", marginBottom: "6px", fontWeight: 600 }}>
+                      Sub-Services Included ({det.subServices?.length || 0})
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                      {(det.subServices || []).slice(0, 4).map((sub, i) => (
+                        <span
+                          key={i}
+                          style={{
+                            fontSize: "11px",
+                            padding: "2px 8px",
+                            borderRadius: "10px",
+                            background: "rgba(255,255,255,0.04)",
+                            color: "#D1D5DB",
+                          }}
+                        >
+                          {sub}
+                        </span>
+                      ))}
+                      {(det.subServices?.length || 0) > 4 && (
+                        <span style={{ fontSize: "11px", color: "#9CA3AF" }}>
+                          +{(det.subServices?.length || 0) - 4} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div style={{ padding: "20px", flex: 1, display: "flex", flexDirection: "column" }}>
-                <p style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "16px" }}>
-                  {service.description}
-                </p>
-
-                <div style={{ marginBottom: "16px", flex: 1 }}>
-                  <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>
-                    Included Specializations
-                  </div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                    {service.subServices.map((sub) => (
-                      <span key={sub} style={{ background: "#F5F5F5", padding: "4px 8px", borderRadius: "4px", fontSize: "11px", color: "var(--text-secondary)" }}>
-                        {sub}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "14px", borderTop: "1px solid #F0F0F0" }}>
-                  <Link href={`/services`} target="_blank" className="admin-btn admin-btn--outline" style={{ fontSize: "11px", padding: "6px 12px" }}>
-                    <ExternalLink size={12} /> View Page
-                  </Link>
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    <button
-                      onClick={() => handleOpenEditCore(service)}
-                      className="admin-btn admin-btn--outline"
-                      style={{ padding: "6px 12px", fontSize: "11px", display: "inline-flex", alignItems: "center", gap: "4px" }}
-                    >
-                      <Edit2 size={12} /> Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteCore(service.slug, service.title)}
-                      className="admin-btn"
-                      style={{ background: "#FEE2E2", color: "#DC2626", border: "none", padding: "6px 10px", fontSize: "12px", borderRadius: "6px", cursor: "pointer" }}
-                      title="Delete Service"
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
-                </div>
+              <div
+                style={{
+                  padding: "16px 20px",
+                  background: "rgba(0,0,0,0.2)",
+                  borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Link
+                  href={`/services/${det.slug}`}
+                  target="_blank"
+                  style={{
+                    fontSize: "12px",
+                    color: "#60A5FA",
+                    textDecoration: "none",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                  }}
+                >
+                  <ExternalLink size={13} /> View Live Page
+                </Link>
+                <button
+                  onClick={() => openEditDetailed(det)}
+                  className="admin-btn admin-btn--gold"
+                  style={{ padding: "6px 12px", fontSize: "12px" }}
+                >
+                  <Edit2 size={13} style={{ marginRight: "4px" }} /> Edit Content
+                </button>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Specialty Trades Section */}
+      {/* Tab 3: Specialties */}
       {activeTab === "specialty" && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
-          {specialties.map((spec) => (
-            <div key={spec.name} className="admin-table-wrap" style={{ margin: 0, padding: "20px", display: "flex", flexDirection: "column" }}>
-              <div style={{ display: "flex", gap: "14px", alignItems: "center", marginBottom: "14px" }}>
-                <img
-                  src={spec.image}
-                  alt={spec.name}
-                  style={{ width: "56px", height: "56px", borderRadius: "8px", objectFit: "cover", border: "1px solid #E0E0E0" }}
-                />
-                <div>
-                  <h4 style={{ fontSize: "15px", fontWeight: 700, color: "var(--charcoal)", margin: 0 }}>
-                    {spec.name}
-                  </h4>
-                  <div style={{ fontSize: "12px", color: "var(--gold)", fontWeight: 600, marginTop: "2px" }}>
-                    {spec.tagline}
-                  </div>
-                </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "16px" }}>
+          {specialties.map((spec, i) => (
+            <div
+              key={spec.id || i}
+              style={{
+                background: "#161920",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                borderRadius: "10px",
+                padding: "16px",
+              }}
+            >
+              <div style={{ fontSize: "14px", fontWeight: 600, color: "#F3F4F6", marginBottom: "4px" }}>
+                {spec.name}
               </div>
-              <p style={{ fontSize: "12px", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "16px", flex: 1 }}>
+              <div style={{ fontSize: "12px", color: "#C5A880", marginBottom: "8px" }}>
+                {spec.tagline || spec.subtitle}
+              </div>
+              <p style={{ fontSize: "12px", color: "#9CA3AF", lineHeight: 1.4, margin: 0 }}>
                 {spec.description}
               </p>
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", borderTop: "1px solid #F0F0F0", paddingTop: "12px" }}>
-                <button
-                  onClick={() => handleOpenEditSpecialty(spec)}
-                  className="admin-btn admin-btn--outline"
-                  style={{ padding: "5px 10px", fontSize: "11px", display: "inline-flex", alignItems: "center", gap: "4px" }}
-                >
-                  <Edit2 size={11} /> Edit
-                </button>
-                <button
-                  onClick={() => handleDeleteSpecialty(spec.name)}
-                  className="admin-btn"
-                  style={{ background: "#FEE2E2", color: "#DC2626", border: "none", padding: "5px 8px", fontSize: "11px", borderRadius: "6px", cursor: "pointer" }}
-                  title="Delete Trade"
-                >
-                  <Trash2 size={12} />
-                </button>
-              </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* EDIT CORE SERVICE MODAL */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {editingCore && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.55)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "20px",
-          }}
-          onClick={() => setEditingCore(null)}
-        >
-          <div
-            className="admin-table-wrap"
-            style={{ width: "100%", maxWidth: "560px", padding: "32px", margin: 0, maxHeight: "90vh", overflowY: "auto" }}
-            onClick={(e) => e.stopPropagation()}
-          >
+      {/* Modal: Add / Edit Homepage Service */}
+      {showAddNavModal && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal" style={{ maxWidth: "600px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <div>
-                <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "24px", fontWeight: 600, color: "var(--charcoal)" }}>
-                  Edit Primary Service
-                </h2>
-                <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
-                  All fields are prefilled. Untouched fields remain intact. Updates sync live on the website.
-                </p>
-              </div>
-              <button onClick={() => setEditingCore(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveEditCore} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Service Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={editCoreTitle}
-                  onChange={(e) => setEditCoreTitle(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Subtitle / Tagline
-                </label>
-                <input
-                  type="text"
-                  value={editCoreSubtitle}
-                  onChange={(e) => setEditCoreSubtitle(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
-
-              <ImageUploadField
-                label="Cover Image *"
-                value={editCoreImage}
-                onChange={setEditCoreImage}
-                folder="Services"
-                required
-              />
-
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Description
-                </label>
-                <textarea
-                  rows={3}
-                  value={editCoreDesc}
-                  onChange={(e) => setEditCoreDesc(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px", resize: "vertical" }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Specialization Sub-Services (comma separated)
-                </label>
-                <input
-                  type="text"
-                  value={editCoreSubServices}
-                  onChange={(e) => setEditCoreSubServices(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px", borderTop: "1px solid #F0F0F0", paddingTop: "16px" }}>
-                <button type="button" onClick={() => setEditingCore(null)} className="admin-btn admin-btn--outline">
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="admin-btn admin-btn--primary"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
-                >
-                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
-                  {saving ? "Saving Changes..." : "Save Changes & Update Website"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* EDIT SPECIALTY SERVICE MODAL */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {editingSpecialty && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.55)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "20px",
-          }}
-          onClick={() => setEditingSpecialty(null)}
-        >
-          <div
-            className="admin-table-wrap"
-            style={{ width: "100%", maxWidth: "520px", padding: "32px", margin: 0, maxHeight: "90vh", overflowY: "auto" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <div>
-                <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "24px", fontWeight: 600, color: "var(--charcoal)" }}>
-                  Edit Specialty Trade
-                </h2>
-                <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
-                  All fields are prefilled. Untouched fields remain intact. Updates sync live on the website.
-                </p>
-              </div>
-              <button onClick={() => setEditingSpecialty(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveEditSpecialty} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Trade Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={editSpecName}
-                  onChange={(e) => setEditSpecName(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Tagline
-                </label>
-                <input
-                  type="text"
-                  value={editSpecTagline}
-                  onChange={(e) => setEditSpecTagline(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
-
-              <ImageUploadField
-                label="Trade Photo *"
-                value={editSpecImage}
-                onChange={setEditSpecImage}
-                folder="Services"
-                required
-              />
-
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Description
-                </label>
-                <textarea
-                  rows={3}
-                  value={editSpecDesc}
-                  onChange={(e) => setEditSpecDesc(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px", resize: "vertical" }}
-                />
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px", borderTop: "1px solid #F0F0F0", paddingTop: "16px" }}>
-                <button type="button" onClick={() => setEditingSpecialty(null)} className="admin-btn admin-btn--outline">
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="admin-btn admin-btn--primary"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
-                >
-                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
-                  {saving ? "Saving Changes..." : "Save Changes & Update Website"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* ADD SERVICE MODAL */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {showAddModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.55)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "20px",
-          }}
-          onClick={() => setShowAddModal(false)}
-        >
-          <div
-            className="admin-table-wrap"
-            style={{ width: "100%", maxWidth: "560px", padding: "32px", margin: 0, maxHeight: "90vh", overflowY: "auto" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "24px", fontWeight: 600, color: "var(--charcoal)" }}>
-                Add {activeTab === "core" ? "Primary Service" : "Specialty Trade"}
+              <h2 style={{ fontFamily: "var(--font-serif, serif)", fontSize: "20px", margin: 0, color: "#F3F4F6" }}>
+                {editingNavService ? `Edit Service: ${editingNavService.title}` : "Add Homepage Service"}
               </h2>
-              <button onClick={() => setShowAddModal(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
+              <button
+                onClick={() => setShowAddNavModal(false)}
+                style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer" }}
+              >
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateService} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  {activeTab === "core" ? "Service Title" : "Specialty Name"} *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder={activeTab === "core" ? "e.g. Hospitality & Luxury Resorts" : "e.g. Italian Marble Polishing"}
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Subtitle / Tagline
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Crafted to Perfection"
-                  value={newSubtitle}
-                  onChange={(e) => setNewSubtitle(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
-                />
-              </div>
-
-              <ImageUploadField
-                label="Cover Image / Photo *"
-                value={newImage}
-                onChange={setNewImage}
-                folder="Services"
-                required
-              />
-
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                  Description
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Service overview and client deliverables..."
-                  value={newDesc}
-                  onChange={(e) => setNewDesc(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px", resize: "vertical" }}
-                />
-              </div>
-
-              {activeTab === "core" && (
+            <form onSubmit={handleSaveNavService} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "16px" }}>
                 <div>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-                    Included Specializations (comma separated)
-                  </label>
+                  <label className="admin-label">Service Title *</label>
                   <input
                     type="text"
-                    placeholder="e.g. Lounges, Master Suites, Custom Kitchens"
-                    value={newSubServices}
-                    onChange={(e) => setNewSubServices(e.target.value)}
-                    style={{ width: "100%", padding: "8px 12px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "13px" }}
+                    required
+                    value={navTitle}
+                    onChange={(e) => setNavTitle(e.target.value)}
+                    className="admin-input"
+                    placeholder="e.g. Architecture & Planning"
                   />
                 </div>
-              )}
+                <div>
+                  <label className="admin-label">Slug</label>
+                  <input
+                    type="text"
+                    value={navSlug}
+                    onChange={(e) => setNavSlug(e.target.value)}
+                    className="admin-input"
+                    placeholder="architecture-planning"
+                  />
+                </div>
+              </div>
 
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px" }}>
-                <button type="button" onClick={() => setShowAddModal(false)} className="admin-btn admin-btn--outline">
+              <div>
+                <label className="admin-label">Short Description (Displayed in Split Layout)</label>
+                <textarea
+                  rows={3}
+                  value={navDesc}
+                  onChange={(e) => setNavDesc(e.target.value)}
+                  className="admin-input"
+                  placeholder="Comprehensive structural planning, 3D elevation design, and municipal approvals..."
+                />
+              </div>
+
+              <div>
+                <label className="admin-label">Photo (Firebase Storage / WebP)</label>
+                <ImageUploadField
+                  value={navImage}
+                  onChange={setNavImage}
+                  label="Upload or Select Service Photo"
+                />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "16px" }}>
+                <div>
+                  <label className="admin-label">Target Link</label>
+                  <input
+                    type="text"
+                    value={navLink}
+                    onChange={(e) => setNavLink(e.target.value)}
+                    className="admin-input"
+                    placeholder="/services/residential"
+                  />
+                </div>
+                <div>
+                  <label className="admin-label">Status</label>
+                  <select
+                    value={navPublished ? "true" : "false"}
+                    onChange={(e) => setNavPublished(e.target.value === "true")}
+                    className="admin-select"
+                  >
+                    <option value="true">Published</option>
+                    <option value="false">Draft</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "12px" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAddNavModal(false)}
+                  className="admin-btn admin-btn--outline"
+                  disabled={saving}
+                >
                   Cancel
                 </button>
                 <button
                   type="submit"
+                  className="admin-btn admin-btn--gold"
                   disabled={saving}
-                  className="admin-btn admin-btn--primary"
                   style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
                 >
-                  {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
-                  {saving ? "Publishing..." : "Publish to Website"}
+                  {saving && <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />}
+                  <span>Save Service</span>
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
-    </>
+
+      {/* Modal: Edit Detailed Service */}
+      {editingDetailed && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal" style={{ maxWidth: "680px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h2 style={{ fontFamily: "var(--font-serif, serif)", fontSize: "20px", margin: 0, color: "#F3F4F6" }}>
+                Edit /services/{editingDetailed.slug}
+              </h2>
+              <button
+                onClick={() => setEditingDetailed(null)}
+                style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer" }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveDetailed} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div>
+                <label className="admin-label">Page Title</label>
+                <input
+                  type="text"
+                  required
+                  value={detTitle}
+                  onChange={(e) => setDetTitle(e.target.value)}
+                  className="admin-input"
+                />
+              </div>
+
+              <div>
+                <label className="admin-label">Subtitle / Hook</label>
+                <input
+                  type="text"
+                  value={detSubtitle}
+                  onChange={(e) => setDetSubtitle(e.target.value)}
+                  className="admin-input"
+                />
+              </div>
+
+              <div>
+                <label className="admin-label">Hero Banner Image</label>
+                <ImageUploadField
+                  value={detImage}
+                  onChange={setDetImage}
+                  label="Upload or Select Service Hero Image"
+                />
+              </div>
+
+              <div>
+                <label className="admin-label">Detailed Description</label>
+                <textarea
+                  rows={4}
+                  value={detDesc}
+                  onChange={(e) => setDetDesc(e.target.value)}
+                  className="admin-input"
+                />
+              </div>
+
+              <div>
+                <label className="admin-label">Sub-Services Included (One per line)</label>
+                <textarea
+                  rows={4}
+                  value={detSubServices}
+                  onChange={(e) => setDetSubServices(e.target.value)}
+                  className="admin-input"
+                  placeholder="Living Room Design&#10;Master Suite Architecture&#10;Modular Kitchens"
+                />
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "12px" }}>
+                <button
+                  type="button"
+                  onClick={() => setEditingDetailed(null)}
+                  className="admin-btn admin-btn--outline"
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="admin-btn admin-btn--gold"
+                  disabled={saving}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                >
+                  {saving && <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />}
+                  <span>Save Page Content</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

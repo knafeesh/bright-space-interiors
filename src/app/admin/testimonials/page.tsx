@@ -1,271 +1,551 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { TESTIMONIALS as INITIAL_TESTIMONIALS } from "@/lib/data";
 import {
   Star,
   Plus,
   Trash2,
   Edit2,
   ExternalLink,
-  CheckCircle,
+  Check,
   X,
-  MessageSquareQuote,
+  AlertCircle,
+  Loader2,
+  Eye,
+  EyeOff,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
+import type { TestimonialItem } from "@/lib/site-types";
 
 export default function TestimonialsManagerPage() {
-  const [testimonials, setTestimonials] = useState(
-    INITIAL_TESTIMONIALS.map((t) => ({ ...t, status: "Published" }))
-  );
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Form state
-  const [clientName, setClientName] = useState("");
-  const [projectLocation, setProjectLocation] = useState("");
-  const [rating, setRating] = useState(5);
+  // Notifications
+  const [toastMsg, setToastMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  // Modal & Form State
+  const [showModal, setShowModal] = useState(false);
+  const [editingItem, setEditingItem] = useState<TestimonialItem | null>(null);
+  const [author, setAuthor] = useState("");
+  const [role, setRole] = useState("Homeowner");
+  const [location, setLocation] = useState("Gurugram, DLF Phase 5");
   const [quote, setQuote] = useState("");
+  const [rating, setRating] = useState(5);
+  const [published, setPublished] = useState(true);
 
-  const handleAddTestimonial = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!clientName.trim() || !quote.trim()) return;
+  const notify = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(""), 3500);
+  };
 
-    const newReview = {
-      id: Date.now(),
-      name: clientName.trim(),
-      project: projectLocation.trim() || "Residential Interior",
-      rating: Number(rating),
-      quote: quote.trim(),
-      status: "Published",
-    };
+  const notifyError = (msg: string) => {
+    setErrorMsg(msg);
+    setTimeout(() => setErrorMsg(""), 5000);
+  };
 
-    setTestimonials([newReview, ...testimonials]);
-    setShowAddModal(false);
-    setClientName("");
-    setProjectLocation("");
+  const loadTestimonials = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/admin/testimonials", { cache: "no-store" });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.testimonials)) {
+        setTestimonials(data.testimonials);
+      }
+    } catch {
+      notifyError("Failed to load testimonials from Firestore.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTestimonials();
+  }, []);
+
+  const openAdd = () => {
+    setEditingItem(null);
+    setAuthor("");
+    setRole("Homeowner");
+    setLocation("Delhi NCR");
     setQuote("");
     setRating(5);
+    setPublished(true);
+    setShowModal(true);
   };
 
-  const handleToggleStatus = (id: number) => {
-    setTestimonials(
-      testimonials.map((t) =>
-        t.id === id
-          ? { ...t, status: t.status === "Published" ? "Draft" : "Published" }
-          : t
-      )
-    );
+  const openEdit = (t: TestimonialItem) => {
+    setEditingItem(t);
+    setAuthor(t.author || t.name || "");
+    setRole(t.role || t.project || "Homeowner");
+    setLocation(t.location || "");
+    setQuote(t.quote || "");
+    setRating(t.rating || 5);
+    setPublished(t.published !== false);
+    setShowModal(true);
   };
 
-  const handleDelete = (id: number) => {
-    if (confirm("Are you sure you want to delete this client review?")) {
-      setTestimonials(testimonials.filter((t) => t.id !== id));
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!author.trim() || !quote.trim()) {
+      notifyError("Author name and quote are required.");
+      return;
+    }
+
+    const payload: TestimonialItem = {
+      id: editingItem ? editingItem.id : Date.now(),
+      author: author.trim(),
+      name: author.trim(),
+      role: role.trim(),
+      project: role.trim(),
+      location: location.trim(),
+      quote: quote.trim(),
+      rating: Number(rating),
+      published,
+      order: editingItem ? editingItem.order : testimonials.length + 1,
+    };
+
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/testimonials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ testimonial: payload }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setTestimonials(data.testimonials);
+        setShowModal(false);
+        setEditingItem(null);
+        notify("Testimonial saved and synced to Firestore!");
+      } else {
+        notifyError(data.error || "Failed to save testimonial.");
+      }
+    } catch {
+      notifyError("Network error.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleTogglePublished = async (t: TestimonialItem) => {
+    const updated = { ...t, published: t.published === false ? true : false };
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/testimonials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ testimonial: updated }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTestimonials(data.testimonials);
+        notify(`Testimonial is now ${updated.published ? "Published" : "Draft"}.`);
+      } else {
+        notifyError("Failed to update status.");
+      }
+    } catch {
+      notifyError("Network error.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this testimonial?")) return;
+
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/testimonials?id=${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) {
+        setTestimonials(data.testimonials);
+        notify("Testimonial deleted from Firestore.");
+      } else {
+        notifyError(data.error || "Failed to delete.");
+      }
+    } catch {
+      notifyError("Network error.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleReorder = async (idx: number, direction: "up" | "down") => {
+    const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= testimonials.length) return;
+
+    const list = [...testimonials];
+    const [moved] = list.splice(idx, 1);
+    list.splice(targetIdx, 0, moved);
+
+    const reordered = list.map((item, index) => ({
+      ...item,
+      order: index + 1,
+    }));
+
+    setTestimonials(reordered);
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/testimonials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "bulk", testimonials: reordered }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        notify("Testimonials reordered and saved.");
+      } else {
+        notifyError("Failed to save reorder.");
+        loadTestimonials();
+      }
+    } catch {
+      notifyError("Network error.");
+      loadTestimonials();
+    } finally {
+      setSaving(false);
     }
   };
 
   return (
-    <>
-      {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px", flexWrap: "wrap", gap: "16px" }}>
-        <div>
-          <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "32px", fontWeight: 400, color: "var(--charcoal)" }}>
-            Client Testimonials
-          </h1>
-          <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
-            Curate customer feedback, reviews, and testimonials displayed on the homepage
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: "12px" }}>
-          <Link href="/#testimonials" target="_blank" className="admin-btn admin-btn--outline" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-            <ExternalLink size={14} /> View On Site
-          </Link>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="admin-btn admin-btn--primary"
-            id="testimonial-add-btn"
-          >
-            <Plus size={14} /> Add Testimonial
-          </button>
-        </div>
-      </div>
-
-      {/* Review Metrics */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "20px", marginBottom: "24px" }}>
-        <div className="stat-card" style={{ margin: 0 }}>
-          <div className="stat-card__label">Average Rating</div>
-          <div className="stat-card__value" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            5.0 <Star size={24} fill="var(--gold)" color="var(--gold)" />
-          </div>
-          <div className="stat-card__change" style={{ color: "#27AE60" }}>100% 5-Star Reviews</div>
-        </div>
-
-        <div className="stat-card" style={{ margin: 0 }}>
-          <div className="stat-card__label">Total Testimonials</div>
-          <div className="stat-card__value">{testimonials.length}</div>
-          <div className="stat-card__change" style={{ color: "var(--text-muted)" }}>Verified Clients</div>
-        </div>
-
-        <div className="stat-card" style={{ margin: 0 }}>
-          <div className="stat-card__label">Published on Website</div>
-          <div className="stat-card__value">
-            {testimonials.filter((t) => t.status === "Published").length}
-          </div>
-          <div className="stat-card__change" style={{ color: "var(--gold)" }}>Live on Homepage</div>
-        </div>
-      </div>
-
-      {/* Testimonials List */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: "20px" }}>
-        {testimonials.map((t) => (
-          <div
-            key={t.id}
-            className="admin-table-wrap"
-            style={{ margin: 0, padding: "24px", display: "flex", flexDirection: "column", position: "relative" }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px" }}>
-              <div>
-                <div style={{ display: "flex", gap: "2px", marginBottom: "6px" }}>
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      size={14}
-                      fill={i < t.rating ? "var(--gold)" : "#E0E0E0"}
-                      color={i < t.rating ? "var(--gold)" : "#E0E0E0"}
-                    />
-                  ))}
-                </div>
-                <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "20px", fontWeight: 600, color: "var(--charcoal)" }}>
-                  {t.name}
-                </h3>
-                <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{t.project}</div>
-              </div>
-
-              <button
-                onClick={() => handleToggleStatus(t.id)}
-                className={`status-badge ${t.status === "Published" ? "status-badge--won" : "status-badge--draft"}`}
-                style={{ border: "none", cursor: "pointer" }}
-                title="Click to toggle status"
-              >
-                {t.status}
-              </button>
-            </div>
-
-            <p style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.6, fontStyle: "italic", flex: 1, marginBottom: "20px" }}>
-              &ldquo;{t.quote}&rdquo;
-            </p>
-
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", paddingTop: "12px", borderTop: "1px solid #F0F0F0" }}>
-              <button
-                onClick={() => handleDelete(t.id)}
-                className="admin-btn"
-                style={{ background: "#FEE2E2", color: "#DC2626", border: "none", padding: "6px 12px", fontSize: "12px", borderRadius: "6px", cursor: "pointer" }}
-                title="Delete Testimonial"
-              >
-                <Trash2 size={13} /> Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Add Modal */}
-      {showAddModal && (
+    <div>
+      {/* Toast notifications */}
+      {toastMsg && (
         <div
           style={{
             position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
+            bottom: "24px",
+            right: "24px",
+            background: "#10B981",
+            color: "#FFF",
+            padding: "12px 20px",
+            borderRadius: "8px",
+            fontWeight: 600,
+            fontSize: "13px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+            zIndex: 9999,
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "20px",
+            gap: "8px",
           }}
-          onClick={() => setShowAddModal(false)}
         >
-          <div
-            className="admin-table-wrap"
-            style={{ width: "100%", maxWidth: "520px", padding: "32px", margin: 0 }}
-            onClick={(e) => e.stopPropagation()}
+          <Check size={16} />
+          {toastMsg}
+        </div>
+      )}
+
+      {errorMsg && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            background: "#EF4444",
+            color: "#FFF",
+            padding: "12px 20px",
+            borderRadius: "8px",
+            fontWeight: 600,
+            fontSize: "13px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <AlertCircle size={16} />
+          {errorMsg}
+        </div>
+      )}
+
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "24px",
+          flexWrap: "wrap",
+          gap: "16px",
+        }}
+      >
+        <div>
+          <h1
+            style={{
+              fontFamily: "var(--font-serif, serif)",
+              fontSize: "28px",
+              fontWeight: 500,
+              color: "#F6F5F2",
+              margin: "0 0 4px 0",
+            }}
           >
+            Client Testimonials
+          </h1>
+          <p style={{ fontSize: "13px", color: "#9CA3AF", margin: 0 }}>
+            Curate customer reviews and testimonials displayed on the homepage. Saved directly to Firestore.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            onClick={openAdd}
+            className="admin-btn admin-btn--gold"
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+          >
+            <Plus size={16} /> Add Testimonial
+          </button>
+          <Link
+            href="/#testimonials"
+            target="_blank"
+            className="admin-btn admin-btn--outline"
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+          >
+            <ExternalLink size={14} /> View On Site
+          </Link>
+        </div>
+      </div>
+
+      {/* Testimonials Table */}
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th style={{ width: "60px" }}>Order</th>
+              <th>Client Name & Role</th>
+              <th>Location</th>
+              <th>Rating</th>
+              <th>Quote</th>
+              <th>Status</th>
+              <th style={{ textAlign: "right" }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={7} style={{ textAlign: "center", padding: "40px" }}>
+                  <Loader2 size={24} style={{ animation: "spin 1s linear infinite", margin: "0 auto 8px" }} />
+                  <p style={{ margin: 0, color: "#9CA3AF" }}>Loading testimonials...</p>
+                </td>
+              </tr>
+            ) : testimonials.length === 0 ? (
+              <tr>
+                <td colSpan={7} style={{ textAlign: "center", padding: "40px", color: "#9CA3AF" }}>
+                  No testimonials found. Click "Add Testimonial" to create one.
+                </td>
+              </tr>
+            ) : (
+              testimonials.map((t, idx) => (
+                <tr key={t.id}>
+                  <td>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                      <button
+                        onClick={() => handleReorder(idx, "up")}
+                        disabled={idx === 0 || saving}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: idx === 0 ? "#4B5563" : "#C5A880",
+                          cursor: idx === 0 ? "not-allowed" : "pointer",
+                          padding: "2px",
+                        }}
+                      >
+                        <ArrowUp size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleReorder(idx, "down")}
+                        disabled={idx === testimonials.length - 1 || saving}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: idx === testimonials.length - 1 ? "#4B5563" : "#C5A880",
+                          cursor: idx === testimonials.length - 1 ? "not-allowed" : "pointer",
+                          padding: "2px",
+                        }}
+                      >
+                        <ArrowDown size={14} />
+                      </button>
+                    </div>
+                  </td>
+                  <td>
+                    <div style={{ fontWeight: 600, color: "#F3F4F6", fontSize: "14px" }}>
+                      {t.author || t.name}
+                    </div>
+                    <div style={{ fontSize: "11px", color: "#9CA3AF" }}>{t.role || t.project}</div>
+                  </td>
+                  <td style={{ fontSize: "13px", color: "#D1D5DB" }}>{t.location || "Delhi NCR"}</td>
+                  <td>
+                    <div style={{ display: "flex", alignItems: "center", gap: "2px", color: "#FBBF24" }}>
+                      {Array.from({ length: t.rating || 5 }).map((_, i) => (
+                        <Star key={i} size={14} fill="#FBBF24" />
+                      ))}
+                    </div>
+                  </td>
+                  <td style={{ fontSize: "13px", color: "#D1D5DB", maxWidth: "340px", lineHeight: 1.4 }}>
+                    "{t.quote}"
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => handleTogglePublished(t)}
+                      disabled={saving}
+                      style={{
+                        background: t.published !== false ? "rgba(16, 185, 129, 0.15)" : "rgba(245, 158, 11, 0.15)",
+                        border: `1px solid ${t.published !== false ? "rgba(16, 185, 129, 0.3)" : "rgba(245, 158, 11, 0.3)"}`,
+                        color: t.published !== false ? "#10B981" : "#F59E0B",
+                        padding: "4px 10px",
+                        borderRadius: "14px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      {t.published !== false ? <Eye size={12} /> : <EyeOff size={12} />}
+                      <span>{t.published !== false ? "Published" : "Draft"}</span>
+                    </button>
+                  </td>
+                  <td style={{ textAlign: "right" }}>
+                    <div style={{ display: "inline-flex", gap: "8px" }}>
+                      <button
+                        onClick={() => openEdit(t)}
+                        className="admin-btn admin-btn--outline"
+                        style={{ padding: "6px 8px" }}
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(t.id)}
+                        className="admin-btn admin-btn--outline"
+                        style={{ padding: "6px 8px", color: "#EF4444" }}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Modal: Add / Edit Testimonial */}
+      {showModal && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal" style={{ maxWidth: "560px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "24px" }}>Add Client Review</h3>
+              <h2 style={{ fontFamily: "var(--font-serif, serif)", fontSize: "20px", margin: 0, color: "#F3F4F6" }}>
+                {editingItem ? "Edit Testimonial" : "Add Testimonial"}
+              </h2>
               <button
-                onClick={() => setShowAddModal(false)}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}
+                onClick={() => setShowModal(false)}
+                style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer" }}
               >
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleAddTestimonial}>
-              <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>Client Name *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Ramesh & Sneha Kapoor"
-                  value={clientName}
-                  onChange={(e) => setClientName(e.target.value)}
-                  style={{ width: "100%", padding: "10px 14px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "14px" }}
-                />
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+            <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 <div>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>Project / Location</label>
+                  <label className="admin-label">Client Name *</label>
                   <input
                     type="text"
-                    placeholder="e.g. Duplex Penthouse, Juhu"
-                    value={projectLocation}
-                    onChange={(e) => setProjectLocation(e.target.value)}
-                    style={{ width: "100%", padding: "10px 14px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "14px" }}
+                    required
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                    className="admin-input"
+                    placeholder="e.g. Vikramaditya Singhania"
                   />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>Star Rating</label>
+                  <label className="admin-label">Role / Project Type</label>
+                  <input
+                    type="text"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="admin-input"
+                    placeholder="e.g. Luxury Penthouse Owner"
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label className="admin-label">Location</label>
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="admin-input"
+                    placeholder="e.g. DLF Magnolias, Gurugram"
+                  />
+                </div>
+                <div>
+                  <label className="admin-label">Star Rating (1–5)</label>
                   <select
                     value={rating}
                     onChange={(e) => setRating(Number(e.target.value))}
-                    style={{ width: "100%", padding: "10px 14px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "14px" }}
+                    className="admin-select"
                   >
-                    <option value={5}>5 Stars (Exceptional)</option>
-                    <option value={4}>4 Stars (Very Good)</option>
-                    <option value={3}>3 Stars (Good)</option>
+                    <option value={5}>5 Stars ★★★★★</option>
+                    <option value={4}>4 Stars ★★★★☆</option>
+                    <option value={3}>3 Stars ★★★☆☆</option>
                   </select>
                 </div>
               </div>
 
-              <div style={{ marginBottom: "24px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>Testimonial Quote *</label>
+              <div>
+                <label className="admin-label">Client Feedback Quote *</label>
                 <textarea
                   rows={4}
                   required
-                  placeholder="Client feedback regarding design quality, communication, and turnkey handover..."
                   value={quote}
                   onChange={(e) => setQuote(e.target.value)}
-                  style={{ width: "100%", padding: "10px 14px", border: "1px solid #E0E0E0", borderRadius: "6px", fontSize: "14px", fontFamily: "inherit" }}
+                  className="admin-input"
+                  placeholder="The design philosophy, precision craftsmanship, and turnkey handover surpassed all expectations..."
                 />
               </div>
 
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
+              <div>
+                <label className="admin-label">Status</label>
+                <select
+                  value={published ? "true" : "false"}
+                  onChange={(e) => setPublished(e.target.value === "true")}
+                  className="admin-select"
+                >
+                  <option value="true">Published (Live on Website)</option>
+                  <option value="false">Draft (Hidden)</option>
+                </select>
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "12px" }}>
                 <button
                   type="button"
+                  onClick={() => setShowModal(false)}
                   className="admin-btn admin-btn--outline"
-                  onClick={() => setShowAddModal(false)}
+                  disabled={saving}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="admin-btn admin-btn--primary"
+                  className="admin-btn admin-btn--gold"
+                  disabled={saving}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
                 >
-                  Publish Review
+                  {saving && <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />}
+                  <span>Save Testimonial</span>
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -44,22 +44,8 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
       } else {
         setError(data.error || "Invalid username or password. Please try again.");
       }
-    } catch (err) {
-      // Fallback client check if API unreachable
-      if (
-        (trimmedUsername === "Azam" || trimmedUsername.toLowerCase() === "azam") &&
-        password === "Azam@2005"
-      ) {
-        localStorage.setItem("bs_admin_authenticated", "true");
-        localStorage.setItem(
-          "bs_admin_user",
-          JSON.stringify({ username: "Azam", name: "Azam Khan", role: "Super Admin" })
-        );
-        sessionStorage.setItem("bs_admin_authenticated", "true");
-        onLoginSuccess();
-      } else {
-        setError("Invalid username or password. Please try again.");
-      }
+    } catch {
+      setError("Network or server connection error. Please try again.");
     } finally {
       setLoading(false);
     }

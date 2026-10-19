@@ -23,6 +23,16 @@ function YoutubeIcon({ size = 20 }: { size?: number }) {
     </svg>
   );
 }
+import type { SiteSettings } from "@/lib/site-types";
+
+function FacebookIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  );
+}
+
 import {
   WHATSAPP_NUMBER,
   PHONE_NUMBER,
@@ -57,8 +67,9 @@ const BUDGET_RANGES = [
   "To be Discussed",
 ];
 
-export default function ContactClient() {
+export default function ContactClient({ initialSettings }: { initialSettings?: SiteSettings }) {
   const router = useRouter();
+  const [settings] = useState<SiteSettings | null>(initialSettings || null);
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -72,6 +83,17 @@ export default function ContactClient() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const phone = settings?.phoneNumber || PHONE_NUMBER;
+  const altPhone = settings?.altPhoneNumber || ALT_PHONE_NUMBER;
+  const whatsappNum = (settings?.whatsappNumber || WHATSAPP_NUMBER).replace(/[^0-9]/g, "");
+  const whatsappMsg = settings?.whatsappMessage || WHATSAPP_MESSAGE;
+  const email = settings?.email || EMAIL;
+  const address = settings?.address || ADDRESS;
+  const workingHours = settings?.workingHours || "Monday – Saturday: 9:00 AM – 7:00 PM";
+  const instagramUrl = (settings?.instagramUrl || INSTAGRAM_URL || "").trim();
+  const facebookUrl = (settings?.facebookUrl || "").trim();
+  const youtubeUrl = (settings?.youtubeUrl || YOUTUBE_URL || "").trim();
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -105,7 +127,7 @@ export default function ContactClient() {
         project: form.projectType,
         location: form.location.trim() || "Delhi NCR",
         budget: form.budget || "₹10–25 Lakhs",
-        source: "Form",
+        source: "Contact Page Form",
         status: "New",
         assigned: "Mohd Mushir",
         tags: ["Website Lead"],
@@ -164,7 +186,7 @@ export default function ContactClient() {
               </p>
 
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
+                href={`https://wa.me/${whatsappNum}?text=${encodeURIComponent(whatsappMsg)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-action"
@@ -175,61 +197,84 @@ export default function ContactClient() {
                 </div>
                 <div>
                   <div className="contact-action__label">WhatsApp</div>
-                  <div className="contact-action__value">{PHONE_NUMBER}</div>
+                  <div className="contact-action__value">{phone}</div>
                 </div>
               </a>
 
-              <a href={`tel:${PHONE_NUMBER.replace(/\s+/g, "")}`} className="contact-action" id="contact-phone-link">
+              <a href={`tel:${phone.replace(/\s+/g, "")}`} className="contact-action" id="contact-phone-link">
                 <div className="contact-action__icon">
                   <Phone size={20} />
                 </div>
                 <div>
                   <div className="contact-action__label">Call Studio</div>
-                  <div className="contact-action__value">{PHONE_NUMBER} / {ALT_PHONE_NUMBER}</div>
+                  <div className="contact-action__value">{phone}{altPhone ? ` / ${altPhone}` : ""}</div>
                 </div>
               </a>
 
-              <a href={`mailto:${EMAIL}`} className="contact-action" id="contact-email-link">
+              <a href={`mailto:${email}`} className="contact-action" id="contact-email-link">
                 <div className="contact-action__icon">
                   <Mail size={20} />
                 </div>
                 <div>
                   <div className="contact-action__label">Email</div>
-                  <div className="contact-action__value">{EMAIL}</div>
+                  <div className="contact-action__value">{email}</div>
                 </div>
               </a>
 
-              <a
-                href={INSTAGRAM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-action"
-                id="contact-instagram-link"
-              >
-                <div className="contact-action__icon">
-                  <InstagramIcon size={20} />
-                </div>
-                <div>
-                  <div className="contact-action__label">Instagram</div>
-                  <div className="contact-action__value">@thebrightspaceinterior</div>
-                </div>
-              </a>
+              {/* Hide social icons if links are empty */}
+              {instagramUrl && (
+                <a
+                  href={instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-action"
+                  id="contact-instagram-link"
+                >
+                  <div className="contact-action__icon">
+                    <InstagramIcon size={20} />
+                  </div>
+                  <div>
+                    <div className="contact-action__label">Instagram</div>
+                    <div className="contact-action__value">@thebrightspaceinterior</div>
+                  </div>
+                </a>
+              )}
 
-              <a
-                href={YOUTUBE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-action"
-                id="contact-youtube-link"
-              >
-                <div className="contact-action__icon">
-                  <YoutubeIcon size={20} />
-                </div>
-                <div>
-                  <div className="contact-action__label">YouTube</div>
-                  <div className="contact-action__value">@thebrightspaceinterior</div>
-                </div>
-              </a>
+              {facebookUrl && (
+                <a
+                  href={facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-action"
+                  id="contact-facebook-link"
+                >
+                  <div className="contact-action__icon">
+                    <FacebookIcon size={20} />
+                  </div>
+                  <div>
+                    <div className="contact-action__label">Facebook</div>
+                    <div className="contact-action__value">Bright Space Interiors</div>
+                  </div>
+                </a>
+              )}
+
+              {youtubeUrl && (
+                <a
+                  href={youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-action"
+                  id="contact-youtube-link"
+                >
+                  <div className="contact-action__icon">
+                    <YoutubeIcon size={20} />
+                  </div>
+                  <div>
+                    <div className="contact-action__label">YouTube</div>
+                    <div className="contact-action__value">@thebrightspaceinterior</div>
+                  </div>
+                </a>
+              )}
 
               <div style={{ marginTop: "32px", padding: "24px", background: "var(--stone)" }}>
                 <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", marginBottom: "16px" }}>
@@ -239,7 +284,7 @@ export default function ContactClient() {
                       Registered & Corporate Office
                     </div>
                     <div style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                      {ADDRESS}
+                      {address}
                     </div>
                   </div>
                 </div>
@@ -250,7 +295,7 @@ export default function ContactClient() {
                       Working Hours
                     </div>
                     <div style={{ fontSize: "14px", color: "var(--text-secondary)" }}>
-                      Monday – Saturday: 9:00 AM – 7:00 PM
+                      {workingHours}
                     </div>
                   </div>
                 </div>
@@ -273,7 +318,7 @@ export default function ContactClient() {
                     For immediate response, WhatsApp us.
                   </p>
                   <a
-                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%2C%20I%20just%20submitted%20an%20enquiry%20on%20your%20website`}
+                    href={`https://wa.me/${whatsappNum}?text=Hi%2C%20I%20just%20submitted%20an%20enquiry%20on%20your%20website`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn btn--primary"

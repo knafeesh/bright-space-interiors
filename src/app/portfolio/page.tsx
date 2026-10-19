@@ -1,13 +1,10 @@
-import { getProjectsFromDb } from "@/lib/server/portfolio-db";
-import { PROJECTS } from "@/lib/data";
+import { getPublishedProjects } from "@/lib/server/site-db";
 import PortfolioClient from "./PortfolioClient";
 import type { Metadata } from "next";
-
 import { constructMetadata } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-export const fetchCache = "force-no-store";
 
 export const metadata: Metadata = constructMetadata({
   path: "/portfolio",
@@ -17,6 +14,6 @@ export const metadata: Metadata = constructMetadata({
 });
 
 export default async function PortfolioPage() {
-  const initialProjects = await getProjectsFromDb().catch(() => PROJECTS);
-  return <PortfolioClient initialProjects={initialProjects} />;
+  const initialProjects = await getPublishedProjects();
+  return <PortfolioClient initialProjects={initialProjects as any} />;
 }

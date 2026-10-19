@@ -5,24 +5,27 @@ import { usePathname } from "next/navigation";
 import AdminLogin from "@/components/admin/AdminLogin";
 import {
   LayoutDashboard,
-  Users,
-  FolderOpen,
-  Image,
+  FolderKanban,
   FileText,
+  Sparkles,
+  Images,
   Star,
-  BarChart2,
+  Users,
   Settings,
+  Globe,
+  Mail,
+  Database,
   LogOut,
-  Bell,
-  ChevronDown,
   Menu,
   X,
   ExternalLink,
-  FolderKanban,
-  Receipt,
-  Images,
-  Sparkles,
+  ChevronDown,
+  Loader2,
+  Check,
+  AlertCircle,
+  Cloud,
 } from "lucide-react";
+import { CMS_SAVE_STATUS_EVENT, type CmsSaveStatus } from "@/lib/cms";
 
 interface NavLinkItem {
   href: string;
@@ -38,58 +41,62 @@ interface NavGroupItem {
 
 const NAV_GROUPS: NavGroupItem[] = [
   {
-    label: "Main",
+    label: "Overview",
     links: [
       { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/admin/leads", label: "Lead Management", icon: Users },
-      { href: "/admin/quotations", label: "Quotations & BOQ", icon: Receipt },
-      { href: "/admin/projects", label: "Project Management", icon: FolderKanban },
+      { href: "/admin/enquiries", label: "Enquiries", icon: Mail },
     ],
   },
   {
-    label: "Content",
+    label: "Website Content",
     links: [
-      { href: "/admin/portfolio", label: "Portfolio Manager", icon: Image },
-      { href: "/admin/design-ideas", label: "Design Ideas Management", icon: Sparkles },
-      { href: "/admin/media", label: "Media Library", icon: Images },
-      { href: "/admin/services", label: "Services Manager", icon: FileText },
+      { href: "/admin/projects", label: "Projects", icon: FolderKanban },
+      { href: "/admin/services", label: "Services", icon: FileText },
+      { href: "/admin/categories", label: "Categories", icon: Sparkles },
+      { href: "/admin/media", label: "Gallery / Images", icon: Images },
       { href: "/admin/testimonials", label: "Testimonials", icon: Star },
+      { href: "/admin/team", label: "Team", icon: Users },
     ],
   },
   {
-    label: "System",
+    label: "Site & SEO",
     links: [
-      { href: "/admin/reports", label: "Reports", icon: BarChart2 },
-      { href: "/admin/settings", label: "Settings", icon: Settings },
+      { href: "/admin/settings", label: "Site Settings", icon: Settings },
+      { href: "/admin/seo", label: "Page SEO", icon: Globe },
+      { href: "/admin/backup", label: "Backup", icon: Database },
     ],
   },
 ];
 
 const PAGE_TITLES: Record<string, string> = {
   "/admin": "Dashboard Overview",
-  "/admin/leads": "Lead Management",
-  "/admin/quotations": "Quotation & BOQ Builder",
-  "/admin/projects": "Project Management",
-  "/admin/portfolio": "Portfolio Manager",
-  "/admin/design-ideas": "Design Ideas Management",
-  "/admin/media": "Media Library",
-  "/admin/services": "Services Manager",
+  "/admin/enquiries": "Customer Enquiries & Leads",
+  "/admin/leads": "Customer Enquiries & Leads",
+  "/admin/projects": "Portfolio Projects Management",
+  "/admin/portfolio": "Portfolio Projects Management",
+  "/admin/services": "Services Management (Homepage & Detailed)",
+  "/admin/categories": "Design Ideas Categories & Cards",
+  "/admin/design-ideas": "Design Ideas Categories & Cards",
+  "/admin/media": "Media Gallery & Assets",
   "/admin/testimonials": "Client Testimonials",
-  "/admin/reports": "Analytics & Reports",
-  "/admin/settings": "System Settings",
+  "/admin/team": "Team Members",
+  "/admin/settings": "Site Settings (Phone, Address, Socials)",
+  "/admin/seo": "Page SEO & Canonical Meta",
+  "/admin/backup": "Backup & JSON Store (Export / Import)",
 };
-
-import { CMS_SAVE_STATUS_EVENT, type CmsSaveStatus } from "@/lib/cms";
-import { Loader2, Check, AlertCircle } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [saveStatus, setSaveStatus] = useState<CmsSaveStatus | null>(null);
+  const [dbStatus, setDbStatus] = useState<{ configured: boolean; text: string }>({
+    configured: false,
+    text: "Connecting...",
+  });
 
   useEffect(() => {
-    // 1. Initial local auth check for instant paint
+    // 1. Initial local auth check
     const localAuth = typeof window !== "undefined" && localStorage.getItem("bs_admin_authenticated") === "true";
     const sessionAuth = typeof window !== "undefined" && sessionStorage.getItem("bs_admin_authenticated") === "true";
     setIsAuthenticated(localAuth || sessionAuth);
@@ -108,13 +115,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       })
       .catch(() => {});
 
+    // Check storage configuration
+    fetch("/api/admin/content", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.success) {
+          setDbStatus({ configured: true, text: "Firestore Connected" });
+        } else {
+          setDbStatus({ configured: false, text: "Local Storage Fallback" });
+        }
+      })
+      .catch(() => {
+        setDbStatus({ configured: false, text: "Storage Ready" });
+      });
+
     // 3. Listen to live save status across admin panels
     const handleSaveStatus = (e: Event) => {
       const detail = (e as CustomEvent<CmsSaveStatus>).detail;
       if (detail) {
         setSaveStatus(detail);
         if (detail.state === "saved") {
-          setTimeout(() => setSaveStatus(null), 3000);
+          setTimeout(() => setSaveStatus(null), 3500);
         }
       }
     };
@@ -134,7 +155,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setIsAuthenticated(false);
   };
 
-  // While checking auth on initial render, show sleek dark background to prevent layout flicker
   if (isAuthenticated === null) {
     return (
       <div
@@ -168,7 +188,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // If not authenticated, display login screen directly without hint
   if (!isAuthenticated) {
     return <AdminLogin onLoginSuccess={() => setIsAuthenticated(true)} />;
   }
@@ -229,27 +248,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {NAV_GROUPS.map((group) => (
             <div key={group.label}>
               <div className="admin-sidebar__section">{group.label}</div>
-              {group.links.map(({ href, label, icon: Icon, badge }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`admin-nav-link${pathname === href ? " admin-nav-link--active" : ""}`}
-                  id={`admin-nav-${label.toLowerCase().replace(/\s+/g, "-")}`}
-                >
-                  <Icon className="admin-nav-link__icon" />
-                  {label}
-                  {badge && <span className="admin-nav-link__badge">{badge}</span>}
-                </Link>
-              ))}
+              {group.links.map(({ href, label, icon: Icon, badge }) => {
+                const isActive = pathname === href || (href === "/admin/projects" && pathname === "/admin/portfolio") || (href === "/admin/categories" && pathname === "/admin/design-ideas") || (href === "/admin/enquiries" && pathname === "/admin/leads");
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`admin-nav-link${isActive ? " admin-nav-link--active" : ""}`}
+                    id={`admin-nav-${label.toLowerCase().replace(/[\s\/]+/g, "-")}`}
+                  >
+                    <Icon className="admin-nav-link__icon" size={18} />
+                    <span>{label}</span>
+                    {badge && <span className="admin-nav-link__badge">{badge}</span>}
+                  </Link>
+                );
+              })}
             </div>
           ))}
         </nav>
 
         <div style={{ padding: "16px 0", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
           <Link href="/" target="_blank" className="admin-nav-link" id="admin-view-site">
-            <ExternalLink className="admin-nav-link__icon" />
-            View Live Website
+            <ExternalLink className="admin-nav-link__icon" size={18} />
+            <span>View Live Website</span>
           </Link>
           <button
             onClick={handleSignOut}
@@ -257,13 +279,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             style={{ width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer" }}
             id="admin-logout"
           >
-            <LogOut className="admin-nav-link__icon" />
-            Sign Out
+            <LogOut className="admin-nav-link__icon" size={18} />
+            <span>Sign Out</span>
           </button>
         </div>
       </aside>
 
-      {/* Main */}
+      {/* Main Container */}
       <div className="admin-main">
         {/* Topbar */}
         <header className="admin-topbar">
@@ -288,6 +310,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           <div className="admin-topbar__right">
+            {/* Live Firestore / Persistence Badge */}
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "4px 10px",
+                borderRadius: "16px",
+                fontSize: "11px",
+                fontWeight: 600,
+                background: "rgba(197, 168, 128, 0.12)",
+                color: "#9C7A4A",
+                border: "1px solid rgba(197, 168, 128, 0.25)",
+              }}
+              title="Persistent Storage Status"
+            >
+              <Cloud size={12} />
+              <span>{dbStatus.text}</span>
+            </div>
+
             {saveStatus && (
               <div
                 style={{
@@ -334,10 +376,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </div>
             )}
 
-            <div className="admin-topbar__notification" id="admin-notifications" title="8 unread notifications">
-              <Bell size={16} />
-              <div className="admin-topbar__notification-dot" />
-            </div>
             <div className="admin-topbar__user">
               <div className="admin-topbar__avatar">AK</div>
               <div>
@@ -355,4 +393,3 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     </div>
   );
 }
-

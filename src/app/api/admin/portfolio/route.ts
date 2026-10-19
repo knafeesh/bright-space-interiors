@@ -1,204 +1,95 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/server/admin-auth";
 import {
-  getProjectsFromDb,
-  updateProjectInDb,
-  addProjectToDb,
-  deleteProjectFromDb,
-} from "@/lib/server/portfolio-db";
-import { Project } from "@/lib/cms-types";
-import { getDb, isFirebaseConfigured } from "@/lib/server/firebase-admin";
+  getProjects,
+  saveProject,
+  deleteProject,
+  isFirebaseConfigured,
+  ProjectItem,
+} from "@/lib/server/site-db";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
-const CORS_HEADERS = {
-  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Cookie, Authorization",
-};
-
-export async function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
-}
-
-/**
- * GET: Retrieve all portfolio projects
- */
 export async function GET(req: Request) {
   if (!isAdminRequest(req)) {
-    return NextResponse.json(
-      { error: "Unauthorized. Admin session required." },
-      { status: 401, headers: CORS_HEADERS }
-    );
+    return NextResponse.json({ error: "Unauthorized. Admin session required." }, { status: 401 });
   }
 
   try {
     const isConfigured = isFirebaseConfigured();
-    let firestoreError: string | null = null;
-    let docExists = false;
-    let docProjectsCount = 0;
-    if (isConfigured) {
-      try {
-        const snap = await getDb().collection("site").doc("cms").get();
-        docExists = snap.exists;
-        if (snap.exists) {
-          const d = snap.data();
-          docProjectsCount = Array.isArray(d?.projects) ? d.projects.length : 0;
-        }
-      } catch (err: unknown) {
-        firestoreError = err instanceof Error ? err.message : String(err);
-      }
-    }
-
-    const projects = await getProjectsFromDb();
-    return NextResponse.json({
-      projects,
-      storageStatus: {
-        isConfigured,
-        firestoreReady: isConfigured && docExists,
-        storageType: isConfigured ? "firestore" : "ephemeral_serverless",
-      }
-    }, { headers: CORS_HEADERS });
-  } catch (error) {
-    console.error("[api/admin/portfolio] GET error:", error);
+    const projects = await getProjects();
     return NextResponse.json(
-      { error: "Failed to load portfolio projects." },
-      { status: 500, headers: CORS_HEADERS }
+      {
+        projects,
+        storageStatus: {
+          isConfigured,
+          firestoreReady: isConfigured,
+          storageType: isConfigured ? "firestore" : "local_file_fallback",
+        },
+      },
+      { headers: { "Cache-Control": "no-store" } }
     );
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to load projects." }, { status: 500 });
   }
 }
 
-/**
- * PUT: Edit an existing portfolio project with full field update
- */
 export async function PUT(req: Request) {
   if (!isAdminRequest(req)) {
-    return NextResponse.json(
-      { error: "Your admin session has expired. Please sign in again." },
-      { status: 401, headers: CORS_HEADERS }
-    );
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
   try {
     const body = await req.json();
-
-    if (!body || typeof body !== "object") {
-      return NextResponse.json({ error: "Invalid project data provided." }, { status: 400, headers: CORS_HEADERS });
-    }
-
-    if (!body.id && !body.slug) {
-      return NextResponse.json({ error: "Project ID or slug is required for update." }, { status: 400, headers: CORS_HEADERS });
-    }
-
-    const result = await updateProjectInDb(body);
-
+    const result = await saveProject(body as ProjectItem);
     if (!result.success) {
-      return NextResponse.json({ error: result.error || "Failed to update project." }, { status: 400, headers: CORS_HEADERS });
+      return NextResponse.json({ error: result.error || "Save failed." }, { status: 500 });
     }
-
-    return NextResponse.json(
-      {
-        success: true,
-        persisted: result.persisted,
-        storage: result.storage,
-        message: result.persisted
-          ? `Project "${result.project?.title}" saved permanently to ${result.storage}.`
-          : `Project "${result.project?.title}" saved in temporary serverless cache. Configure Firestore in Vercel to persist permanently across redeployments.`,
-        project: result.project,
-        projects: result.projects,
-      },
-      { headers: CORS_HEADERS }
-    );
+    const projects = await getProjects();
+    return NextResponse.json({
+      success: true,
+      persisted: result.persisted,
+      storage: result.storage,
+      project: body,
+      projects,
+    });
   } catch (error) {
-    console.error("[api/admin/portfolio] PUT error:", error);
-    const message = error instanceof Error ? error.message : "Failed to update project.";
-    return NextResponse.json({ error: message }, { status: 500, headers: CORS_HEADERS });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Error saving project." },
+      { status: 500 }
+    );
   }
 }
 
-/**
- * POST: Create a new portfolio project
- */
 export async function POST(req: Request) {
-  if (!isAdminRequest(req)) {
-    return NextResponse.json(
-      { error: "Your admin session has expired. Please sign in again." },
-      { status: 401, headers: CORS_HEADERS }
-    );
-  }
-
-  try {
-    const body = await req.json();
-
-    if (!body || typeof body !== "object" || !body.title) {
-      return NextResponse.json({ error: "Project title is required." }, { status: 400, headers: CORS_HEADERS });
-    }
-
-    const result = await addProjectToDb(body as Project);
-
-    if (!result.success) {
-      return NextResponse.json({ error: result.error || "Failed to add project." }, { status: 400, headers: CORS_HEADERS });
-    }
-
-    return NextResponse.json(
-      {
-        success: true,
-        persisted: result.persisted,
-        storage: result.storage,
-        message: `Project "${result.project?.title}" added successfully.`,
-        project: result.project,
-        projects: result.projects,
-      },
-      { headers: CORS_HEADERS }
-    );
-  } catch (error) {
-    console.error("[api/admin/portfolio] POST error:", error);
-    const message = error instanceof Error ? error.message : "Failed to add project.";
-    return NextResponse.json({ error: message }, { status: 500, headers: CORS_HEADERS });
-  }
+  return PUT(req);
 }
 
-/**
- * DELETE: Remove a portfolio project by ID
- */
 export async function DELETE(req: Request) {
   if (!isAdminRequest(req)) {
-    return NextResponse.json(
-      { error: "Your admin session has expired. Please sign in again." },
-      { status: 401, headers: CORS_HEADERS }
-    );
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
   try {
     const { searchParams } = new URL(req.url);
-    const idParam = searchParams.get("id");
-    const id = idParam ? parseInt(idParam, 10) : NaN;
-
-    if (isNaN(id)) {
-      return NextResponse.json({ error: "Valid numeric Project ID is required." }, { status: 400, headers: CORS_HEADERS });
+    const id = searchParams.get("id");
+    const slug = searchParams.get("slug");
+    if (!id && !slug) {
+      return NextResponse.json({ error: "ID or slug required." }, { status: 400 });
     }
 
-    const result = await deleteProjectFromDb(id);
-
+    const target = id ? parseInt(id, 10) : slug!;
+    const result = await deleteProject(target);
     if (!result.success) {
-      return NextResponse.json({ error: result.error || "Failed to delete project." }, { status: 400, headers: CORS_HEADERS });
+      return NextResponse.json({ error: result.error || "Delete failed." }, { status: 500 });
     }
 
-    return NextResponse.json(
-      {
-        success: true,
-        persisted: result.persisted,
-        storage: result.storage,
-        message: "Project removed successfully.",
-        projects: result.projects,
-      },
-      { headers: CORS_HEADERS }
-    );
+    const projects = await getProjects();
+    return NextResponse.json({ success: true, projects });
   } catch (error) {
-    console.error("[api/admin/portfolio] DELETE error:", error);
-    const message = error instanceof Error ? error.message : "Failed to delete project.";
-    return NextResponse.json({ error: message }, { status: 500, headers: CORS_HEADERS });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Error deleting project." },
+      { status: 500 }
+    );
   }
 }

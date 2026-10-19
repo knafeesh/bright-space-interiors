@@ -1,13 +1,27 @@
+"use client";
+import { useState, useEffect } from "react";
 import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 
 export default function WhatsAppFloat() {
+  const [waNumber, setWaNumber] = useState(WHATSAPP_NUMBER);
   const message = encodeURIComponent(WHATSAPP_MESSAGE);
+
+  useEffect(() => {
+    fetch("/api/admin/content", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.store?.settings?.whatsapp) {
+          setWaNumber(data.store.settings.whatsapp.replace(/[^0-9]/g, ""));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="whatsapp-float" aria-label="WhatsApp chat">
       <span className="whatsapp-float__tooltip">Chat with us</span>
       <a
-        href={`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`}
+        href={`https://wa.me/${waNumber}?text=${message}`}
         target="_blank"
         rel="noopener noreferrer"
         className="whatsapp-float__btn"

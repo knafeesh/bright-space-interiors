@@ -27,7 +27,24 @@ const PHOTOS = [
 ];
 
 export default function DesignPhilosophyShowcase() {
+  const [photos, setPhotos] = useState(PHOTOS);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/admin/philosophy", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.success && Array.isArray(data.slides) && data.slides.length > 0) {
+          setPhotos(
+            data.slides.map((s: any) => ({
+              src: s.src,
+              alt: s.alt || "Bright Space Interior Design Philosophy",
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, []);
   const containerRef = useRef<HTMLDivElement>(null);
   const mobileCarouselRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -159,7 +176,7 @@ export default function DesignPhilosophyShowcase() {
           !isPausedByTouch
         ) {
           setActiveIndex((prev) => {
-            const next = (prev + 1) % PHOTOS.length;
+            const next = (prev + 1) % (photos.length || 1);
             if (window.innerWidth < 768) {
               scrollToSlide(next);
             }
@@ -190,7 +207,7 @@ export default function DesignPhilosophyShowcase() {
     >
       {/* Polite announcer for screen readers */}
       <div aria-live="polite" className="sr-only">
-        {PHOTOS[activeIndex].alt}
+        {photos[activeIndex]?.alt || ""}
       </div>
 
       {/* ══════════════ DESKTOP VIEW (>= 768px): 5 Panels, flex 4 vs flex 1 ══════════════ */}
@@ -203,7 +220,7 @@ export default function DesignPhilosophyShowcase() {
           isHoveredRef.current = false;
         }}
       >
-        {PHOTOS.map((photo, i) => {
+        {photos.map((photo, i) => {
           const isActive = i === activeIndex;
           return (
             <div
@@ -276,7 +293,7 @@ export default function DesignPhilosophyShowcase() {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {PHOTOS.map((photo, i) => (
+          {photos.map((photo, i) => (
             <div
               key={photo.src}
               ref={(el) => {
@@ -302,7 +319,7 @@ export default function DesignPhilosophyShowcase() {
         {/* Small non-clickable indicator dots and Photo Name */}
         <div className="philosophy-mobile-footer">
           <div className="philosophy-dots" aria-hidden="true">
-            {PHOTOS.map((_, idx) => (
+            {photos.map((_, idx) => (
               <span
                 key={idx}
                 className={`philosophy-dot ${
@@ -312,7 +329,7 @@ export default function DesignPhilosophyShowcase() {
             ))}
           </div>
           <p className="philosophy-mobile-caption" aria-live="polite">
-            {PHOTOS[activeIndex].alt}
+            {photos[activeIndex]?.alt || ""}
           </p>
         </div>
       </div>

@@ -76,6 +76,30 @@ export default function ServicesCarousel({
   controls = "arrows",
   showHeader = true,
 }: ServicesCarouselProps) {
+  const [items, setItems] = useState<ServiceCarouselItem[]>(SERVICE_CAROUSEL_ITEMS);
+
+  useEffect(() => {
+    fetch("/api/admin/services", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.success && Array.isArray(data.navServices) && data.navServices.length > 0) {
+          const published = data.navServices.filter((s: any) => s.published !== false);
+          if (published.length > 0) {
+            setItems(
+              published.map((s: any) => ({
+                title: s.title,
+                slug: s.slug,
+                image: s.image || "/images/hero-luxury.jpg",
+                href: s.link || `/services`,
+                description: s.description || "",
+              }))
+            );
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const trackRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
 
@@ -316,7 +340,7 @@ export default function ServicesCarousel({
           onMouseUp={handleMouseUpOrLeave}
           onMouseLeave={handleMouseUpOrLeave}
         >
-          {SERVICE_CAROUSEL_ITEMS.map((service, index) => (
+          {items.map((service, index) => (
             <div
               key={service.slug}
               className="services-carousel-slide"

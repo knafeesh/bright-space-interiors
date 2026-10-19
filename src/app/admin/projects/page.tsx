@@ -1,626 +1,842 @@
 "use client";
-
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
-  Plus, Search, Filter, MoreVertical, Edit2, Trash2, X, Save,
-  MapPin, Calendar, DollarSign, User, Phone, CheckCircle,
-  Clock, AlertCircle, Pause, ChevronDown, ChevronUp, Tag,
-  Building2, Home, Briefcase, Layers, ArrowRight, TrendingUp,
+  Plus,
+  Search,
+  Edit2,
+  Trash2,
+  ExternalLink,
+  X,
+  Check,
+  AlertCircle,
+  Loader2,
+  ArrowUp,
+  ArrowDown,
+  Eye,
+  EyeOff,
+  Image as ImageIcon,
 } from "lucide-react";
+import ImageUploadField from "@/components/admin/ImageUploadField";
+import type { ProjectItem } from "@/lib/site-types";
 
-// ─────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────
-type ProjectStatus = "planning" | "in-progress" | "on-hold" | "completed" | "cancelled";
-type ProjectType = "Residential" | "Commercial" | "Turnkey" | "Design & Execution";
-
-interface Milestone {
-  id: string;
-  name: string;
-  done: boolean;
-}
-
-interface Project {
-  id: string;
-  name: string;
-  client: string;
-  phone: string;
-  type: ProjectType;
-  location: string;
-  budget: string;
-  startDate: string;
-  endDate: string;
-  status: ProjectStatus;
-  progress: number;
-  description: string;
-  milestones: Milestone[];
-  createdAt: string;
-}
-
-// ─────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────
-const STATUS_META: Record<ProjectStatus, { label: string; color: string; bg: string; icon: any }> = {
-  planning:    { label: "Planning",     color: "#6366F1", bg: "rgba(99,102,241,0.12)",  icon: Clock },
-  "in-progress":{ label: "In Progress", color: "#F59E0B", bg: "rgba(245,158,11,0.12)", icon: TrendingUp },
-  "on-hold":   { label: "On Hold",      color: "#F97316", bg: "rgba(249,115,22,0.12)", icon: Pause },
-  completed:   { label: "Completed",    color: "#10B981", bg: "rgba(16,185,129,0.12)", icon: CheckCircle },
-  cancelled:   { label: "Cancelled",    color: "#EF4444", bg: "rgba(239,68,68,0.12)",  icon: AlertCircle },
-};
-
-const TYPE_ICONS: Record<ProjectType, any> = {
-  "Residential": Home,
-  "Commercial": Building2,
-  "Turnkey": Layers,
-  "Design & Execution": Briefcase,
-};
-
-const STORAGE_KEY = "bs_admin_projects";
-
-function genId() { return `proj_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`; }
-
-const DEFAULT_MILESTONES: Milestone[] = [
-  { id: "m1", name: "Site Visit & Measurement", done: false },
-  { id: "m2", name: "Design Concept Approval", done: false },
-  { id: "m3", name: "Material Selection", done: false },
-  { id: "m4", name: "Execution Started", done: false },
-  { id: "m5", name: "Final Inspection", done: false },
-  { id: "m6", name: "Handover", done: false },
-];
-
-function calcProgress(milestones: Milestone[]) {
-  if (!milestones.length) return 0;
-  return Math.round((milestones.filter((m) => m.done).length / milestones.length) * 100);
-}
-
-// ─────────────────────────────────────────────
-// Status Badge
-// ─────────────────────────────────────────────
-function StatusBadge({ status }: { status: ProjectStatus }) {
-  const meta = STATUS_META[status];
-  const Icon = meta.icon;
-  return (
-    <span style={{
-      display: "inline-flex", alignItems: "center", gap: "5px",
-      padding: "3px 10px", borderRadius: "20px",
-      background: meta.bg, color: meta.color,
-      fontSize: "12px", fontWeight: 600, letterSpacing: "0.02em",
-    }}>
-      <Icon size={12} /> {meta.label}
-    </span>
-  );
-}
-
-// ─────────────────────────────────────────────
-// Progress Bar
-// ─────────────────────────────────────────────
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <div style={{ width: "100%", background: "rgba(0,0,0,0.06)", borderRadius: "6px", height: "6px", overflow: "hidden" }}>
-      <div style={{
-        height: "100%",
-        width: `${value}%`,
-        background: value === 100
-          ? "linear-gradient(90deg,#10B981,#059669)"
-          : "linear-gradient(90deg,#C5A880,#A27B42)",
-        borderRadius: "6px",
-        transition: "width 0.5s ease",
-      }} />
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────
-// Form Modal
-// ─────────────────────────────────────────────
-function ProjectModal({
-  project, onClose, onSave,
-}: {
-  project: Project | null;
-  onClose: () => void;
-  onSave: (p: Project) => void;
-}) {
-  const isNew = !project;
-  const [form, setForm] = useState<Project>(
-    project ?? {
-      id: genId(),
-      name: "",
-      client: "",
-      phone: "",
-      type: "Residential",
-      location: "",
-      budget: "",
-      startDate: "",
-      endDate: "",
-      status: "planning",
-      progress: 0,
-      description: "",
-      milestones: DEFAULT_MILESTONES.map((m) => ({ ...m, id: genId() })),
-      createdAt: new Date().toISOString(),
-    }
-  );
-
-  const set = (k: keyof Project, v: any) => setForm((f) => ({ ...f, [k]: v }));
-
-  const toggleMilestone = (id: string) => {
-    const updated = form.milestones.map((m) => m.id === id ? { ...m, done: !m.done } : m);
-    setForm((f) => ({ ...f, milestones: updated, progress: calcProgress(updated) }));
-  };
-
-  const addMilestone = () => {
-    const ms = [...form.milestones, { id: genId(), name: "New milestone", done: false }];
-    setForm((f) => ({ ...f, milestones: ms }));
-  };
-
-  const updateMilestoneName = (id: string, name: string) => {
-    setForm((f) => ({ ...f, milestones: f.milestones.map((m) => m.id === id ? { ...m, name } : m) }));
-  };
-
-  const deleteMilestone = (id: string) => {
-    const ms = form.milestones.filter((m) => m.id !== id);
-    setForm((f) => ({ ...f, milestones: ms, progress: calcProgress(ms) }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name.trim() || !form.client.trim()) return;
-    onSave({ ...form, progress: calcProgress(form.milestones) });
-  };
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "10px 12px",
-    background: "#F9FAFB", border: "1px solid #E5E7EB",
-    borderRadius: "8px", fontSize: "14px", color: "#111827",
-    outline: "none", boxSizing: "border-box",
-  };
-  const labelStyle: React.CSSProperties = { fontSize: "12px", fontWeight: 600, color: "#6B7280", marginBottom: "5px", display: "block" };
-
-  return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(3px)" }} />
-      <div style={{
-        position: "relative", width: "100%", maxWidth: "680px", maxHeight: "92vh",
-        background: "#FFF", borderRadius: "16px", boxShadow: "0 24px 60px rgba(0,0,0,0.18)",
-        overflow: "hidden", display: "flex", flexDirection: "column",
-        zIndex: 1,
-      }}>
-        {/* Header */}
-        <div style={{ padding: "20px 24px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div>
-            <h2 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#111827" }}>{isNew ? "Add New Project" : "Edit Project"}</h2>
-            <p style={{ margin: "2px 0 0", fontSize: "13px", color: "#9CA3AF" }}>{isNew ? "Fill in project details below" : `Editing: ${project?.name}`}</p>
-          </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#6B7280", borderRadius: "6px", padding: "4px" }}>
-            <X size={20} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} style={{ overflowY: "auto", flex: 1, padding: "24px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-            <div style={{ gridColumn: "1 / -1" }}>
-              <label style={labelStyle}>Project Name *</label>
-              <input style={inputStyle} placeholder="e.g. Gupta Residence — Living Room" value={form.name} onChange={(e) => set("name", e.target.value)} required />
-            </div>
-            <div>
-              <label style={labelStyle}>Client Name *</label>
-              <input style={inputStyle} placeholder="Full name" value={form.client} onChange={(e) => set("client", e.target.value)} required />
-            </div>
-            <div>
-              <label style={labelStyle}>Client Phone</label>
-              <input style={inputStyle} placeholder="+91 XXXXX XXXXX" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
-            </div>
-            <div>
-              <label style={labelStyle}>Project Type</label>
-              <select style={inputStyle} value={form.type} onChange={(e) => set("type", e.target.value as ProjectType)}>
-                <option>Residential</option>
-                <option>Commercial</option>
-                <option>Turnkey</option>
-                <option>Design & Execution</option>
-              </select>
-            </div>
-            <div>
-              <label style={labelStyle}>Status</label>
-              <select style={inputStyle} value={form.status} onChange={(e) => set("status", e.target.value as ProjectStatus)}>
-                <option value="planning">Planning</option>
-                <option value="in-progress">In Progress</option>
-                <option value="on-hold">On Hold</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-            <div>
-              <label style={labelStyle}>Location</label>
-              <input style={inputStyle} placeholder="City / Area" value={form.location} onChange={(e) => set("location", e.target.value)} />
-            </div>
-            <div>
-              <label style={labelStyle}>Budget</label>
-              <input style={inputStyle} placeholder="e.g. ₹15 Lakh" value={form.budget} onChange={(e) => set("budget", e.target.value)} />
-            </div>
-            <div>
-              <label style={labelStyle}>Start Date</label>
-              <input style={inputStyle} type="date" value={form.startDate} onChange={(e) => set("startDate", e.target.value)} />
-            </div>
-            <div>
-              <label style={labelStyle}>Expected End Date</label>
-              <input style={inputStyle} type="date" value={form.endDate} onChange={(e) => set("endDate", e.target.value)} />
-            </div>
-            <div style={{ gridColumn: "1 / -1" }}>
-              <label style={labelStyle}>Description / Notes</label>
-              <textarea style={{ ...inputStyle, minHeight: "80px", resize: "vertical" }} placeholder="Project scope, requirements, special notes..." value={form.description} onChange={(e) => set("description", e.target.value)} />
-            </div>
-          </div>
-
-          {/* Milestones */}
-          <div style={{ marginTop: "24px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-              <div>
-                <div style={{ fontSize: "14px", fontWeight: 700, color: "#111827" }}>Milestones</div>
-                <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{form.milestones.filter((m) => m.done).length} / {form.milestones.length} completed</div>
-              </div>
-              <button type="button" onClick={addMilestone} style={{ display: "flex", alignItems: "center", gap: "5px", padding: "6px 12px", background: "#F3F4F6", border: "none", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer", color: "#374151" }}>
-                <Plus size={13} /> Add
-              </button>
-            </div>
-            <ProgressBar value={calcProgress(form.milestones)} />
-            <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "6px" }}>
-              {form.milestones.map((m) => (
-                <div key={m.id} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", background: m.done ? "rgba(16,185,129,0.06)" : "#F9FAFB", borderRadius: "8px", border: `1px solid ${m.done ? "rgba(16,185,129,0.2)" : "#E5E7EB"}` }}>
-                  <input type="checkbox" checked={m.done} onChange={() => toggleMilestone(m.id)} style={{ accentColor: "#10B981", cursor: "pointer", flexShrink: 0 }} />
-                  <input
-                    value={m.name}
-                    onChange={(e) => updateMilestoneName(m.id, e.target.value)}
-                    style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: "13px", color: m.done ? "#6B7280" : "#111827", textDecoration: m.done ? "line-through" : "none" }}
-                  />
-                  <button type="button" onClick={() => deleteMilestone(m.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#D1D5DB", padding: "2px" }}>
-                    <X size={13} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div style={{ marginTop: "24px", display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-            <button type="button" onClick={onClose} style={{ padding: "10px 20px", background: "#F3F4F6", border: "none", borderRadius: "8px", fontWeight: 600, cursor: "pointer", color: "#374151" }}>Cancel</button>
-            <button type="submit" style={{ padding: "10px 24px", background: "linear-gradient(135deg,#C5A880,#A27B42)", border: "none", borderRadius: "8px", fontWeight: 700, cursor: "pointer", color: "#FFF", display: "flex", alignItems: "center", gap: "6px" }}>
-              <Save size={15} /> {isNew ? "Add Project" : "Save Changes"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────
-// Project Card
-// ─────────────────────────────────────────────
-function ProjectCard({ project, onEdit, onDelete }: { project: Project; onEdit: () => void; onDelete: () => void }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const TypeIcon = TYPE_ICONS[project.type];
-
-  return (
-    <div style={{
-      background: "#FFF", borderRadius: "14px",
-      border: "1px solid #F3F4F6",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-      transition: "box-shadow 0.2s",
-      overflow: "hidden",
-    }}
-    onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.1)")}
-    onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)")}
-    >
-      {/* Card Header */}
-      <div style={{ padding: "18px 20px 14px", position: "relative" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px" }}>
-          <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", flex: 1 }}>
-            <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "rgba(197,168,128,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <TypeIcon size={18} style={{ color: "#C5A880" }} />
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: "15px", fontWeight: 700, color: "#111827", marginBottom: "2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{project.name}</div>
-              <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "12px", color: "#6B7280" }}>
-                <User size={11} /> {project.client}
-                {project.phone && <><span style={{ color: "#D1D5DB" }}>•</span><Phone size={11} /> {project.phone}</>}
-              </div>
-            </div>
-          </div>
-          <div style={{ position: "relative" }}>
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              style={{ background: "none", border: "none", cursor: "pointer", color: "#9CA3AF", borderRadius: "6px", padding: "4px" }}
-            >
-              <MoreVertical size={16} />
-            </button>
-            {menuOpen && (
-              <>
-                <div onClick={() => setMenuOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 10 }} />
-                <div style={{ position: "absolute", right: 0, top: "100%", zIndex: 20, background: "#FFF", borderRadius: "10px", boxShadow: "0 8px 24px rgba(0,0,0,0.12)", border: "1px solid #F3F4F6", minWidth: "140px", overflow: "hidden" }}>
-                  <button onClick={() => { onEdit(); setMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "10px 14px", background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "#374151" }}>
-                    <Edit2 size={14} /> Edit
-                  </button>
-                  <button onClick={() => { onDelete(); setMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "10px 14px", background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "#EF4444" }}>
-                    <Trash2 size={14} /> Delete
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "12px" }}>
-          <StatusBadge status={project.status} />
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "3px 9px", background: "#F3F4F6", borderRadius: "20px", fontSize: "11px", color: "#6B7280", fontWeight: 500 }}>
-            <Tag size={10} /> {project.type}
-          </span>
-          {project.location && (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "3px 9px", background: "#F3F4F6", borderRadius: "20px", fontSize: "11px", color: "#6B7280", fontWeight: 500 }}>
-              <MapPin size={10} /> {project.location}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Progress Section */}
-      <div style={{ padding: "12px 20px", borderTop: "1px solid #F9FAFB" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-          <span style={{ fontSize: "11px", color: "#9CA3AF", fontWeight: 500 }}>Progress</span>
-          <span style={{ fontSize: "12px", fontWeight: 700, color: project.progress === 100 ? "#10B981" : "#374151" }}>{project.progress}%</span>
-        </div>
-        <ProgressBar value={project.progress} />
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "6px" }}>
-          <span style={{ fontSize: "11px", color: "#9CA3AF" }}>
-            {project.milestones.filter((m) => m.done).length} / {project.milestones.length} milestones
-          </span>
-          {project.budget && (
-            <span style={{ fontSize: "11px", color: "#9CA3AF", display: "flex", alignItems: "center", gap: "3px" }}>
-              <DollarSign size={10} /> {project.budget}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Dates + Expand */}
-      <div style={{ padding: "10px 20px 14px", borderTop: "1px solid #F9FAFB" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", gap: "14px" }}>
-            {project.startDate && (
-              <span style={{ fontSize: "11px", color: "#6B7280", display: "flex", alignItems: "center", gap: "4px" }}>
-                <Calendar size={11} /> {new Date(project.startDate).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
-              </span>
-            )}
-            {project.endDate && (
-              <>
-                <span style={{ color: "#D1D5DB", fontSize: "11px" }}>→</span>
-                <span style={{ fontSize: "11px", color: "#6B7280", display: "flex", alignItems: "center", gap: "4px" }}>
-                  <Calendar size={11} /> {new Date(project.endDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-                </span>
-              </>
-            )}
-          </div>
-          <button
-            onClick={() => setExpanded(!expanded)}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "#9CA3AF", fontSize: "11px", display: "flex", alignItems: "center", gap: "3px" }}
-          >
-            {expanded ? <><ChevronUp size={13} /> Less</> : <><ChevronDown size={13} /> Details</>}
-          </button>
-        </div>
-
-        {expanded && (
-          <div style={{ marginTop: "14px", borderTop: "1px dashed #F3F4F6", paddingTop: "14px" }}>
-            {project.description && (
-              <p style={{ fontSize: "12px", color: "#6B7280", lineHeight: 1.6, marginBottom: "12px" }}>{project.description}</p>
-            )}
-            <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-              {project.milestones.map((m) => (
-                <div key={m.id} style={{ display: "flex", alignItems: "center", gap: "7px", fontSize: "12px", color: m.done ? "#10B981" : "#6B7280" }}>
-                  <CheckCircle size={12} style={{ color: m.done ? "#10B981" : "#D1D5DB" }} />
-                  <span style={{ textDecoration: m.done ? "line-through" : "none" }}>{m.name}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{ marginTop: "12px", display: "flex", gap: "8px" }}>
-              <button onClick={onEdit} style={{ flex: 1, padding: "8px", background: "rgba(197,168,128,0.1)", border: "1px solid rgba(197,168,128,0.3)", borderRadius: "8px", fontSize: "12px", fontWeight: 600, color: "#A27B42", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "5px" }}>
-                <Edit2 size={12} /> Edit Project
-              </button>
-              {project.phone && (
-                <a href={`https://wa.me/${project.phone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer"
-                  style={{ flex: 1, padding: "8px", background: "rgba(37,211,102,0.08)", border: "1px solid rgba(37,211,102,0.25)", borderRadius: "8px", fontSize: "12px", fontWeight: 600, color: "#15803D", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "5px", textDecoration: "none" }}>
-                  <Phone size={12} /> WhatsApp
-                </a>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────
-// Main Page
-// ─────────────────────────────────────────────
-export default function ProjectsManagementPage() {
-  const [projects, setProjects] = useState<Project[]>([]);
+export default function ProjectsManagerPage() {
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [filterStatus, setFilterStatus] = useState<"all" | ProjectStatus>("all");
-  const [filterType, setFilterType] = useState<"all" | ProjectType>("all");
-  const [modalProject, setModalProject] = useState<Project | null | "new">(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [view, setView] = useState<"grid" | "list">("grid");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+
+  // Notifications
+  const [toastMsg, setToastMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  // Modals
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingProject, setEditingProject] = useState<ProjectItem | null>(null);
+
+  // Form states for Add / Edit
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [category, setCategory] = useState("Residential");
+  const [location, setLocation] = useState("Delhi NCR");
+  const [area, setArea] = useState("");
+  const [year, setYear] = useState(new Date().getFullYear().toString());
+  const [duration, setDuration] = useState("");
+  const [client, setClient] = useState("");
+  const [description, setDescription] = useState("");
+  const [challenge, setChallenge] = useState("");
+  const [solution, setSolution] = useState("");
+  const [materials, setMaterials] = useState("");
+  const [quote, setQuote] = useState("");
+  const [image, setImage] = useState("/images/hero-luxury.jpg");
+  const [galleryText, setGalleryText] = useState("");
+  const [status, setStatus] = useState<"published" | "draft">("published");
+
+  const notify = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(""), 3500);
+  };
+
+  const notifyError = (msg: string) => {
+    setErrorMsg(msg);
+    setTimeout(() => setErrorMsg(""), 5000);
+  };
+
+  const loadProjects = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/admin/projects", { cache: "no-store" });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.projects)) {
+        setProjects(data.projects);
+      }
+    } catch (err) {
+      notifyError("Failed to load projects from server.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setProjects(JSON.parse(stored));
-    } catch {}
+    loadProjects();
   }, []);
 
-  const persist = (data: Project[]) => {
-    setProjects(data);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  const openAddModal = () => {
+    setTitle("");
+    setSlug("");
+    setCategory("Residential");
+    setLocation("Delhi NCR");
+    setArea("2,400 sq.ft");
+    setYear(new Date().getFullYear().toString());
+    setDuration("3 Months");
+    setClient("Private Residence");
+    setDescription("");
+    setChallenge("");
+    setSolution("");
+    setMaterials("Italian Marble, Fluted Oak Paneling");
+    setQuote("");
+    setImage("/images/hero-luxury.jpg");
+    setGalleryText("/images/hero-luxury.jpg\n/images/real-living-gold-trim.jpg");
+    setStatus("published");
+    setShowAddModal(true);
   };
 
-  const handleSave = (p: Project) => {
-    const exists = projects.find((x) => x.id === p.id);
-    const updated = exists ? projects.map((x) => (x.id === p.id ? p : x)) : [p, ...projects];
-    persist(updated);
-    setModalProject(null);
+  const openEditModal = (p: ProjectItem) => {
+    setEditingProject(p);
+    setTitle(p.title);
+    setSlug(p.slug);
+    setCategory(p.category || "Residential");
+    setLocation(p.location || "Delhi NCR");
+    setArea(p.area || "");
+    setYear(p.year || "");
+    setDuration(p.duration || "");
+    setClient(p.client || "");
+    setDescription(p.description || "");
+    setChallenge(p.challenge || "");
+    setSolution(p.solution || "");
+    setMaterials(Array.isArray(p.materials) ? p.materials.join(", ") : (p.materials || ""));
+    setQuote(p.quote || "");
+    setImage(p.image || "/images/hero-luxury.jpg");
+    setGalleryText((p.gallery || []).join("\n"));
+    setStatus(p.status || "published");
   };
 
-  const handleDelete = (id: string) => {
-    persist(projects.filter((p) => p.id !== id));
-    setDeleteConfirm(null);
+  const handleSaveProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim()) {
+      notifyError("Project title is required.");
+      return;
+    }
+
+    const cleanSlug =
+      slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") ||
+      title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+    const galleryArray = galleryText
+      .split("\n")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+
+    const materialsArray = materials
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+
+    const payload: ProjectItem = {
+      id: editingProject ? editingProject.id : Date.now(),
+      slug: cleanSlug,
+      title: title.trim(),
+      category,
+      categories: [category],
+      location: location.trim(),
+      area: area.trim(),
+      year: year.trim(),
+      duration: duration.trim(),
+      client: client.trim(),
+      clientName: client.trim(),
+      description: description.trim(),
+      challenge: challenge.trim(),
+      solution: solution.trim(),
+      materials: materialsArray,
+      quote: quote.trim(),
+      clientQuote: quote.trim(),
+      image: image.trim(),
+      gallery: galleryArray.length > 0 ? galleryArray : [image.trim()],
+      bgGradient: "linear-gradient(135deg, #1C1917 0%, #2A231E 100%)",
+      featured: true,
+      order: editingProject ? editingProject.order : projects.length + 1,
+      status,
+    };
+
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const resData = await res.json();
+      if (res.ok && resData.success) {
+        setProjects(resData.projects);
+        setShowAddModal(false);
+        setEditingProject(null);
+        notify(
+          editingProject
+            ? `Project "${payload.title}" updated and synced to Firestore!`
+            : `Project "${payload.title}" created and published to site!`
+        );
+      } else {
+        notifyError(resData.error || "Failed to persist project to Firestore.");
+      }
+    } catch (err) {
+      notifyError("Connection failed while saving project.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleToggleStatus = async (p: ProjectItem) => {
+    const nextStatus = p.status === "published" ? "draft" : "published";
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...p, status: nextStatus }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setProjects(data.projects);
+        notify(`Project is now ${nextStatus === "published" ? "Live" : "Draft (Hidden from site & sitemap)"}.`);
+      } else {
+        notifyError(data.error || "Failed to update project status.");
+      }
+    } catch {
+      notifyError("Network error while updating status.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (p: ProjectItem) => {
+    if (!confirm(`Are you sure you want to delete "${p.title}"? This permanently removes it from the public website and sitemap. Its URL will return 404.`)) {
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/projects?id=${p.id}&slug=${p.slug}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setProjects(data.projects);
+        notify(`Deleted "${p.title}". Public page removed and returns 404.`);
+      } else {
+        notifyError(data.error || "Failed to delete project.");
+      }
+    } catch {
+      notifyError("Network error deleting project.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleReorder = async (idx: number, direction: "up" | "down") => {
+    const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= projects.length) return;
+
+    const reordered = [...projects];
+    const [moved] = reordered.splice(idx, 1);
+    reordered.splice(targetIdx, 0, moved);
+
+    // Update orders
+    const updated = reordered.map((item, index) => ({
+      ...item,
+      order: index + 1,
+    }));
+
+    setProjects(updated);
+    setSaving(true);
+
+    try {
+      const res = await fetch("/api/admin/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projects: updated }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        notify("Project order updated and saved to Firestore.");
+      } else {
+        notifyError("Failed to save reordered projects.");
+        loadProjects();
+      }
+    } catch {
+      notifyError("Network error reordering projects.");
+      loadProjects();
+    } finally {
+      setSaving(false);
+    }
   };
 
   const filtered = projects.filter((p) => {
-    const matchSearch = !search || [p.name, p.client, p.location].some((v) => v.toLowerCase().includes(search.toLowerCase()));
-    const matchStatus = filterStatus === "all" || p.status === filterStatus;
-    const matchType = filterType === "all" || p.type === filterType;
-    return matchSearch && matchStatus && matchType;
+    const matchesCategory = categoryFilter === "All" || p.category.toLowerCase() === categoryFilter.toLowerCase();
+    const matchesSearch =
+      p.title.toLowerCase().includes(search.toLowerCase()) ||
+      (p.location && p.location.toLowerCase().includes(search.toLowerCase())) ||
+      p.slug.toLowerCase().includes(search.toLowerCase());
+    return matchesCategory && matchesSearch;
   });
 
-  const stats = {
-    total: projects.length,
-    inProgress: projects.filter((p) => p.status === "in-progress").length,
-    completed: projects.filter((p) => p.status === "completed").length,
-    planning: projects.filter((p) => p.status === "planning").length,
-  };
-
   return (
-    <div style={{ padding: "0", fontFamily: "var(--font-sans, system-ui, sans-serif)" }}>
-      {/* Stats Row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "28px" }}>
-        {[
-          { label: "Total Projects", value: stats.total, color: "#6366F1", icon: Briefcase },
-          { label: "In Progress", value: stats.inProgress, color: "#F59E0B", icon: TrendingUp },
-          { label: "Completed", value: stats.completed, color: "#10B981", icon: CheckCircle },
-          { label: "Planning", value: stats.planning, color: "#8B5CF6", icon: Clock },
-        ].map((s) => (
-          <div key={s.label} style={{ background: "#FFF", borderRadius: "14px", border: "1px solid #F3F4F6", padding: "20px 22px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: `${s.color}18`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <s.icon size={18} style={{ color: s.color }} />
-              </div>
-              <div>
-                <div style={{ fontSize: "26px", fontWeight: 800, color: "#111827", lineHeight: 1 }}>{s.value}</div>
-                <div style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "2px" }}>{s.label}</div>
-              </div>
-            </div>
-          </div>
-        ))}
+    <div>
+      {/* Toast notifications */}
+      {toastMsg && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            background: "#10B981",
+            color: "#FFF",
+            padding: "12px 20px",
+            borderRadius: "8px",
+            fontWeight: 600,
+            fontSize: "13px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <Check size={16} />
+          {toastMsg}
+        </div>
+      )}
+
+      {errorMsg && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            background: "#EF4444",
+            color: "#FFF",
+            padding: "12px 20px",
+            borderRadius: "8px",
+            fontWeight: 600,
+            fontSize: "13px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <AlertCircle size={16} />
+          {errorMsg}
+        </div>
+      )}
+
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "24px",
+          flexWrap: "wrap",
+          gap: "16px",
+        }}
+      >
+        <div>
+          <h1
+            style={{
+              fontFamily: "var(--font-serif, serif)",
+              fontSize: "28px",
+              fontWeight: 500,
+              color: "#F6F5F2",
+              margin: "0 0 4px 0",
+            }}
+          >
+            Portfolio Projects
+          </h1>
+          <p style={{ fontSize: "13px", color: "#9CA3AF", margin: 0 }}>
+            Manage the luxury portfolio showcased on /portfolio and /portfolio/[slug]. Edits persist directly to Firestore.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            onClick={openAddModal}
+            className="admin-btn admin-btn--gold"
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+          >
+            <Plus size={16} /> Add New Project
+          </button>
+          <Link
+            href="/portfolio"
+            target="_blank"
+            className="admin-btn admin-btn--outline"
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+          >
+            <ExternalLink size={14} /> View /portfolio
+          </Link>
+        </div>
       </div>
 
-      {/* Toolbar */}
-      <div style={{ background: "#FFF", borderRadius: "14px", border: "1px solid #F3F4F6", padding: "16px 20px", marginBottom: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "center" }}>
-          {/* Search */}
-          <div style={{ position: "relative", flex: "1 1 220px" }}>
-            <Search size={15} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#9CA3AF" }} />
+      {/* Filters bar */}
+      <div
+        style={{
+          display: "flex",
+          gap: "12px",
+          marginBottom: "20px",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex", gap: "12px", flex: 1, maxWidth: "540px" }}>
+          <div style={{ position: "relative", flex: 1 }}>
+            <Search
+              size={16}
+              style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#9CA3AF" }}
+            />
             <input
+              type="text"
+              placeholder="Search by title, location, slug..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by project, client, location…"
-              style={{ width: "100%", padding: "9px 12px 9px 36px", border: "1px solid #E5E7EB", borderRadius: "8px", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
+              className="admin-input"
+              style={{ width: "100%", paddingLeft: "36px", height: "40px" }}
             />
           </div>
 
-          {/* Status Filter */}
           <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as any)}
-            style={{ padding: "9px 32px 9px 12px", border: "1px solid #E5E7EB", borderRadius: "8px", fontSize: "13px", color: "#374151", background: "#FFF", cursor: "pointer", outline: "none" }}
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="admin-select"
+            style={{ width: "160px", height: "40px" }}
           >
-            <option value="all">All Statuses</option>
-            {(Object.keys(STATUS_META) as ProjectStatus[]).map((s) => (
-              <option key={s} value={s}>{STATUS_META[s].label}</option>
-            ))}
+            <option value="All">All Categories</option>
+            <option value="Residential">Residential</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Hospitality">Hospitality</option>
           </select>
-
-          {/* Type Filter */}
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value as any)}
-            style={{ padding: "9px 32px 9px 12px", border: "1px solid #E5E7EB", borderRadius: "8px", fontSize: "13px", color: "#374151", background: "#FFF", cursor: "pointer", outline: "none" }}
-          >
-            <option value="all">All Types</option>
-            <option>Residential</option>
-            <option>Commercial</option>
-            <option>Turnkey</option>
-            <option>Design & Execution</option>
-          </select>
-
-          {/* Add Button */}
-          <button
-            id="add-project-btn"
-            onClick={() => setModalProject("new")}
-            style={{ display: "flex", alignItems: "center", gap: "7px", padding: "9px 18px", background: "linear-gradient(135deg,#C5A880,#A27B42)", border: "none", borderRadius: "8px", color: "#FFF", fontWeight: 700, fontSize: "13px", cursor: "pointer", letterSpacing: "0.02em" }}
-          >
-            <Plus size={15} /> Add Project
-          </button>
         </div>
 
-        {/* Result count */}
-        <div style={{ marginTop: "10px", fontSize: "12px", color: "#9CA3AF" }}>
-          Showing <strong>{filtered.length}</strong> of <strong>{projects.length}</strong> projects
+        <div style={{ fontSize: "13px", color: "#9CA3AF" }}>
+          Showing <strong>{filtered.length}</strong> of {projects.length} projects
         </div>
       </div>
 
-      {/* Grid / Empty State */}
-      {filtered.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "80px 24px", background: "#FFF", borderRadius: "14px", border: "1px solid #F3F4F6" }}>
-          <div style={{ width: "64px", height: "64px", borderRadius: "16px", background: "rgba(197,168,128,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
-            <Briefcase size={28} style={{ color: "#C5A880" }} />
-          </div>
-          <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#111827", margin: "0 0 8px" }}>
-            {projects.length === 0 ? "No Projects Yet" : "No Matching Projects"}
-          </h3>
-          <p style={{ fontSize: "14px", color: "#9CA3AF", margin: "0 0 20px" }}>
-            {projects.length === 0 ? "Add your first project to start tracking progress." : "Try adjusting your search or filters."}
-          </p>
-          {projects.length === 0 && (
-            <button onClick={() => setModalProject("new")} style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "10px 22px", background: "linear-gradient(135deg,#C5A880,#A27B42)", border: "none", borderRadius: "8px", color: "#FFF", fontWeight: 700, cursor: "pointer" }}>
-              <Plus size={16} /> Add First Project <ArrowRight size={14} />
-            </button>
-          )}
-        </div>
-      ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "18px" }}>
-          {filtered.map((p) => (
-            <ProjectCard
-              key={p.id}
-              project={p}
-              onEdit={() => setModalProject(p)}
-              onDelete={() => setDeleteConfirm(p.id)}
-            />
-          ))}
-        </div>
-      )}
+      {/* Projects Table */}
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th style={{ width: "60px" }}>Order</th>
+              <th style={{ width: "70px" }}>Photo</th>
+              <th>Title & URL Slug</th>
+              <th>Category</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th style={{ textAlign: "right" }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={7} style={{ textAlign: "center", padding: "40px" }}>
+                  <Loader2 size={24} style={{ animation: "spin 1s linear infinite", margin: "0 auto 8px" }} />
+                  <p style={{ margin: 0, color: "#9CA3AF" }}>Loading projects from Firestore...</p>
+                </td>
+              </tr>
+            ) : filtered.length === 0 ? (
+              <tr>
+                <td colSpan={7} style={{ textAlign: "center", padding: "40px", color: "#9CA3AF" }}>
+                  No projects match your filter.
+                </td>
+              </tr>
+            ) : (
+              filtered.map((p, idx) => (
+                <tr key={p.id}>
+                  {/* Reorder Buttons */}
+                  <td>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                      <button
+                        onClick={() => handleReorder(idx, "up")}
+                        disabled={idx === 0 || saving}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: idx === 0 ? "#4B5563" : "#C5A880",
+                          cursor: idx === 0 ? "not-allowed" : "pointer",
+                          padding: "2px",
+                        }}
+                        title="Move Up"
+                      >
+                        <ArrowUp size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleReorder(idx, "down")}
+                        disabled={idx === projects.length - 1 || saving}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: idx === projects.length - 1 ? "#4B5563" : "#C5A880",
+                          cursor: idx === projects.length - 1 ? "not-allowed" : "pointer",
+                          padding: "2px",
+                        }}
+                        title="Move Down"
+                      >
+                        <ArrowDown size={14} />
+                      </button>
+                    </div>
+                  </td>
 
-      {/* Add/Edit Modal */}
-      {modalProject !== null && (
-        <ProjectModal
-          project={modalProject === "new" ? null : modalProject}
-          onClose={() => setModalProject(null)}
-          onSave={handleSave}
-        />
-      )}
+                  {/* Thumbnail */}
+                  <td>
+                    <img
+                      src={p.image || "/images/hero-luxury.jpg"}
+                      alt={p.title}
+                      style={{
+                        width: "56px",
+                        height: "40px",
+                        objectFit: "cover",
+                        borderRadius: "6px",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                      }}
+                    />
+                  </td>
 
-      {/* Delete Confirm */}
-      {deleteConfirm && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div onClick={() => setDeleteConfirm(null)} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)" }} />
-          <div style={{ position: "relative", background: "#FFF", borderRadius: "14px", padding: "28px 32px", boxShadow: "0 20px 50px rgba(0,0,0,0.15)", textAlign: "center", maxWidth: "360px", zIndex: 1 }}>
-            <div style={{ width: "52px", height: "52px", borderRadius: "14px", background: "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
-              <Trash2 size={24} style={{ color: "#EF4444" }} />
+                  {/* Title & Slug */}
+                  <td>
+                    <div style={{ fontWeight: 600, color: "#F3F4F6", fontSize: "14px" }}>{p.title}</div>
+                    <div style={{ fontSize: "11px", color: "#9CA3AF", fontFamily: "monospace" }}>
+                      /portfolio/{p.slug}
+                    </div>
+                  </td>
+
+                  {/* Category */}
+                  <td>
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        padding: "3px 8px",
+                        borderRadius: "12px",
+                        background: "rgba(197, 168, 128, 0.15)",
+                        color: "#C5A880",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {p.category}
+                    </span>
+                  </td>
+
+                  {/* Location */}
+                  <td style={{ fontSize: "13px", color: "#D1D5DB" }}>{p.location || "Delhi NCR"}</td>
+
+                  {/* Status Toggle */}
+                  <td>
+                    <button
+                      onClick={() => handleToggleStatus(p)}
+                      disabled={saving}
+                      style={{
+                        background: p.status === "published" ? "rgba(16, 185, 129, 0.15)" : "rgba(245, 158, 11, 0.15)",
+                        border: `1px solid ${p.status === "published" ? "rgba(16, 185, 129, 0.3)" : "rgba(245, 158, 11, 0.3)"}`,
+                        color: p.status === "published" ? "#10B981" : "#F59E0B",
+                        padding: "4px 10px",
+                        borderRadius: "14px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      {p.status === "published" ? <Eye size={12} /> : <EyeOff size={12} />}
+                      <span>{p.status === "published" ? "Published" : "Draft"}</span>
+                    </button>
+                  </td>
+
+                  {/* Actions */}
+                  <td style={{ textAlign: "right" }}>
+                    <div style={{ display: "inline-flex", gap: "8px" }}>
+                      {p.status === "published" && (
+                        <Link
+                          href={`/portfolio/${p.slug}`}
+                          target="_blank"
+                          className="admin-btn admin-btn--outline"
+                          style={{ padding: "6px 8px" }}
+                          title="View live page"
+                        >
+                          <ExternalLink size={14} />
+                        </Link>
+                      )}
+                      <button
+                        onClick={() => openEditModal(p)}
+                        className="admin-btn admin-btn--outline"
+                        style={{ padding: "6px 8px" }}
+                        title="Edit project"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(p)}
+                        className="admin-btn admin-btn--outline"
+                        style={{ padding: "6px 8px", color: "#EF4444" }}
+                        title="Delete project"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Add / Edit Project Modal */}
+      {(showAddModal || editingProject) && (
+        <div className="admin-modal-overlay">
+          <div
+            className="admin-modal"
+            style={{ maxWidth: "800px", maxHeight: "90vh", overflowY: "auto" }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h2 style={{ fontFamily: "var(--font-serif, serif)", fontSize: "22px", margin: 0, color: "#F3F4F6" }}>
+                {editingProject ? `Edit Project: ${editingProject.title}` : "Add New Portfolio Project"}
+              </h2>
+              <button
+                onClick={() => {
+                  setShowAddModal(false);
+                  setEditingProject(null);
+                }}
+                style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer" }}
+              >
+                <X size={20} />
+              </button>
             </div>
-            <h3 style={{ margin: "0 0 8px", fontSize: "17px", fontWeight: 700, color: "#111827" }}>Delete Project?</h3>
-            <p style={{ margin: "0 0 20px", fontSize: "13px", color: "#6B7280" }}>This action cannot be undone. The project and all milestones will be permanently removed.</p>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button onClick={() => setDeleteConfirm(null)} style={{ flex: 1, padding: "10px", background: "#F3F4F6", border: "none", borderRadius: "8px", fontWeight: 600, cursor: "pointer", color: "#374151" }}>Cancel</button>
-              <button onClick={() => handleDelete(deleteConfirm)} style={{ flex: 1, padding: "10px", background: "#EF4444", border: "none", borderRadius: "8px", fontWeight: 700, cursor: "pointer", color: "#FFF" }}>Delete</button>
-            </div>
+
+            <form onSubmit={handleSaveProject} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "16px" }}>
+                <div>
+                  <label className="admin-label">Project Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="admin-input"
+                    placeholder="e.g. Luxury Penthouse at DLF Camellias"
+                  />
+                </div>
+                <div>
+                  <label className="admin-label">URL Slug</label>
+                  <input
+                    type="text"
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value)}
+                    className="admin-input"
+                    placeholder="e.g. luxury-penthouse-camellias"
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label className="admin-label">Category</label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="admin-select"
+                  >
+                    <option value="Residential">Residential</option>
+                    <option value="Commercial">Commercial</option>
+                    <option value="Hospitality">Hospitality</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="admin-label">Location</label>
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="admin-input"
+                    placeholder="e.g. Gurugram, Delhi NCR"
+                  />
+                </div>
+                <div>
+                  <label className="admin-label">Status</label>
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value as any)}
+                    className="admin-select"
+                  >
+                    <option value="published">Published (Live)</option>
+                    <option value="draft">Draft (Hidden)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label className="admin-label">Area (sq.ft)</label>
+                  <input
+                    type="text"
+                    value={area}
+                    onChange={(e) => setArea(e.target.value)}
+                    className="admin-input"
+                    placeholder="e.g. 3,800 sq.ft"
+                  />
+                </div>
+                <div>
+                  <label className="admin-label">Year Completed</label>
+                  <input
+                    type="text"
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    className="admin-input"
+                    placeholder="2025"
+                  />
+                </div>
+                <div>
+                  <label className="admin-label">Duration</label>
+                  <input
+                    type="text"
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
+                    className="admin-input"
+                    placeholder="e.g. 4 Months"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="admin-label">Client / Residence Type</label>
+                <input
+                  type="text"
+                  value={client}
+                  onChange={(e) => setClient(e.target.value)}
+                  className="admin-input"
+                  placeholder="e.g. Private Residence / Corporate Executive"
+                />
+              </div>
+
+              {/* Hero Image Upload */}
+              <div>
+                <label className="admin-label">Hero Cover Image (Stored in Firebase Storage / WebP)</label>
+                <ImageUploadField
+                  value={image}
+                  onChange={setImage}
+                  label="Upload or Select Project Hero Image"
+                />
+              </div>
+
+              {/* Gallery Images */}
+              <div>
+                <label className="admin-label">Gallery Images (One URL per line)</label>
+                <textarea
+                  rows={3}
+                  value={galleryText}
+                  onChange={(e) => setGalleryText(e.target.value)}
+                  className="admin-input"
+                  placeholder="/images/photo-1.jpg&#10;/images/photo-2.jpg"
+                  style={{ fontFamily: "monospace", fontSize: "12px" }}
+                />
+                <span style={{ fontSize: "11px", color: "#9CA3AF" }}>
+                  Tip: Upload images using the media library or image uploader above, then paste their URLs here.
+                </span>
+              </div>
+
+              <div>
+                <label className="admin-label">Project Overview Description</label>
+                <textarea
+                  rows={3}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="admin-input"
+                  placeholder="Describe the architectural and interior vision..."
+                />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label className="admin-label">Design Challenge</label>
+                  <textarea
+                    rows={2}
+                    value={challenge}
+                    onChange={(e) => setChallenge(e.target.value)}
+                    className="admin-input"
+                    placeholder="Specific design or spatial constraints..."
+                  />
+                </div>
+                <div>
+                  <label className="admin-label">Design Solution</label>
+                  <textarea
+                    rows={2}
+                    value={solution}
+                    onChange={(e) => setSolution(e.target.value)}
+                    className="admin-input"
+                    placeholder="How the studio resolved it..."
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label className="admin-label">Materials Used</label>
+                  <input
+                    type="text"
+                    value={materials}
+                    onChange={(e) => setMaterials(e.target.value)}
+                    className="admin-input"
+                    placeholder="Italian Marble, Custom Brass, Fluted Oak"
+                  />
+                </div>
+                <div>
+                  <label className="admin-label">Client Quote / Testimonial</label>
+                  <input
+                    type="text"
+                    value={quote}
+                    onChange={(e) => setQuote(e.target.value)}
+                    className="admin-input"
+                    placeholder="Short feedback quote from client..."
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "12px" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setEditingProject(null);
+                  }}
+                  className="admin-btn admin-btn--outline"
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="admin-btn admin-btn--gold"
+                  disabled={saving}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                >
+                  {saving && <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />}
+                  <span>{editingProject ? "Update Project" : "Save Project"}</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

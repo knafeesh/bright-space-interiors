@@ -1,191 +1,160 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/server/admin-auth";
 import {
-  getAllCategoriesFromDb,
-  addDesignCardToDb,
-  updateDesignCardInDb,
-  deleteDesignCardFromDb,
-} from "@/lib/server/design-ideas-db";
+  getCategories,
+  saveCategory,
+  deleteCategory,
+  getFullSiteStore,
+  saveFullSiteStore,
+} from "@/lib/server/site-db";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
-const NO_CACHE_HEADERS = {
-  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
-};
-
-/**
- * GET: Retrieve all 32 categories with their design cards
- */
 export async function GET(req: Request) {
   if (!isAdminRequest(req)) {
-    return NextResponse.json(
-      { error: "Unauthorized. Admin session required." },
-      { status: 401, headers: NO_CACHE_HEADERS }
-    );
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
   try {
-    const categories = await getAllCategoriesFromDb();
-    return NextResponse.json({ categories }, { headers: NO_CACHE_HEADERS });
+    const categories = await getCategories();
+    return NextResponse.json({ categories }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("[api/admin/design-ideas] GET error:", error);
-    return NextResponse.json(
-      { error: "Failed to load Design Ideas categories." },
-      { status: 500, headers: NO_CACHE_HEADERS }
-    );
+    return NextResponse.json({ error: "Failed to load categories." }, { status: 500 });
   }
 }
 
-/**
- * POST: Add a new design card to a category
- */
 export async function POST(req: Request) {
   if (!isAdminRequest(req)) {
-    return NextResponse.json(
-      { error: "Unauthorized. Admin session required." },
-      { status: 401, headers: NO_CACHE_HEADERS }
-    );
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
   try {
     const body = await req.json();
     const { categorySlug, title, image } = body;
 
-    if (!categorySlug || typeof categorySlug !== "string") {
-      return NextResponse.json({ error: "Category is required." }, { status: 400 });
-    }
-    if (!title || typeof title !== "string" || !title.trim()) {
-      return NextResponse.json({ error: "Design title is required." }, { status: 400 });
-    }
-    if (!image || typeof image !== "string" || !image.trim()) {
-      return NextResponse.json({ error: "Design image is required." }, { status: 400 });
+    if (!categorySlug || !title || !image) {
+      return NextResponse.json({ error: "Category, title, and image required." }, { status: 400 });
     }
 
-    const result = await addDesignCardToDb(categorySlug, {
+    const store = await getFullSiteStore();
+    const list = [...(store.categories || [])];
+    const catIdx = list.findIndex((c) => c.slug === categorySlug);
+    if (catIdx === -1) {
+      return NextResponse.json({ error: "Category not found." }, { status: 404 });
+    }
+
+    const newDesign = {
+      id: `card-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       title: title.trim(),
       image: image.trim(),
+    };
+
+    list[catIdx] = {
+      ...list[catIdx],
+      designs: [...(list[catIdx].designs || []), newDesign],
+    };
+
+    store.categories = list;
+    await saveFullSiteStore(store);
+
+    return NextResponse.json({
+      success: true,
+      message: `Design "${title}" added successfully.`,
+      design: newDesign,
+      categories: list,
     });
-
-    if (!result.success) {
-      return NextResponse.json({ error: result.error || "Failed to add design." }, { status: 400 });
-    }
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: `Design "${title.trim()}" added successfully.`,
-        design: result.design,
-        categories: result.categories,
-      },
-      { headers: NO_CACHE_HEADERS }
-    );
   } catch (error) {
-    console.error("[api/admin/design-ideas] POST error:", error);
-    return NextResponse.json(
-      { error: "Failed to save new design. Please try again." },
-      { status: 500, headers: NO_CACHE_HEADERS }
-    );
+    return NextResponse.json({ error: "Failed to save design." }, { status: 500 });
   }
 }
 
-/**
- * PUT: Edit / replace an existing design card
- */
 export async function PUT(req: Request) {
   if (!isAdminRequest(req)) {
-    return NextResponse.json(
-      { error: "Unauthorized. Admin session required." },
-      { status: 401, headers: NO_CACHE_HEADERS }
-    );
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
   try {
     const body = await req.json();
     const { id, title, image, categorySlug, oldCategorySlug } = body;
 
-    if (!id || typeof id !== "string") {
-      return NextResponse.json({ error: "Design ID is required." }, { status: 400 });
-    }
-    if (!title || typeof title !== "string" || !title.trim()) {
-      return NextResponse.json({ error: "Design title is required." }, { status: 400 });
-    }
-    if (!image || typeof image !== "string" || !image.trim()) {
-      return NextResponse.json({ error: "Design image is required." }, { status: 400 });
-    }
-    if (!categorySlug || typeof categorySlug !== "string") {
-      return NextResponse.json({ error: "Category is required." }, { status: 400 });
+    const store = await getFullSiteStore();
+    const list = [...(store.categories || [])];
+
+    // Remove from old category if category changed
+    if (oldCategorySlug && oldCategorySlug !== categorySlug) {
+      const oldIdx = list.findIndex((c) => c.slug === oldCategorySlug);
+      if (oldIdx !== -1) {
+        list[oldIdx] = {
+          ...list[oldIdx],
+          designs: (list[oldIdx].designs || []).filter((d: any) => d.id !== id),
+        };
+      }
     }
 
-    const result = await updateDesignCardInDb(id, {
-      title: title.trim(),
-      image: image.trim(),
-      categorySlug,
-      oldCategorySlug,
+    const targetIdx = list.findIndex((c) => c.slug === categorySlug);
+    if (targetIdx !== -1) {
+      const designs = [...(list[targetIdx].designs || [])];
+      const dIdx = designs.findIndex((d: any) => d.id === id);
+      if (dIdx !== -1) {
+        designs[dIdx] = { ...designs[dIdx], title: title.trim(), image: image.trim() };
+      } else {
+        designs.push({ id, title: title.trim(), image: image.trim() });
+      }
+      list[targetIdx] = { ...list[targetIdx], designs };
+    }
+
+    store.categories = list;
+    await saveFullSiteStore(store);
+
+    return NextResponse.json({
+      success: true,
+      message: `Design updated.`,
+      categories: list,
     });
-
-    if (!result.success) {
-      return NextResponse.json({ error: result.error || "Failed to update design." }, { status: 400 });
-    }
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: `Design "${title.trim()}" updated successfully.`,
-        design: result.design,
-        categories: result.categories,
-      },
-      { headers: NO_CACHE_HEADERS }
-    );
   } catch (error) {
-    console.error("[api/admin/design-ideas] PUT error:", error);
-    return NextResponse.json(
-      { error: "Failed to update design. Please try again." },
-      { status: 500, headers: NO_CACHE_HEADERS }
-    );
+    return NextResponse.json({ error: "Failed to update design." }, { status: 500 });
   }
 }
 
-/**
- * DELETE: Delete a design card
- */
 export async function DELETE(req: Request) {
   if (!isAdminRequest(req)) {
-    return NextResponse.json(
-      { error: "Unauthorized. Admin session required." },
-      { status: 401, headers: NO_CACHE_HEADERS }
-    );
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
   try {
-    const url = new URL(req.url);
-    const id = url.searchParams.get("id");
-    const categorySlug = url.searchParams.get("categorySlug") || undefined;
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    const categorySlug = searchParams.get("categorySlug");
 
-    if (!id) {
-      return NextResponse.json({ error: "Design ID is required." }, { status: 400 });
+    const store = await getFullSiteStore();
+    const list = [...(store.categories || [])];
+
+    if (categorySlug) {
+      const catIdx = list.findIndex((c) => c.slug === categorySlug);
+      if (catIdx !== -1) {
+        list[catIdx] = {
+          ...list[catIdx],
+          designs: (list[catIdx].designs || []).filter((d: any) => d.id !== id),
+        };
+      }
+    } else {
+      for (let i = 0; i < list.length; i++) {
+        list[i] = {
+          ...list[i],
+          designs: (list[i].designs || []).filter((d: any) => d.id !== id),
+        };
+      }
     }
 
-    const result = await deleteDesignCardFromDb(id, categorySlug);
+    store.categories = list;
+    await saveFullSiteStore(store);
 
-    if (!result.success) {
-      return NextResponse.json({ error: result.error || "Failed to delete design." }, { status: 400 });
-    }
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Design deleted successfully.",
-        id,
-        categories: result.categories,
-      },
-      { headers: NO_CACHE_HEADERS }
-    );
+    return NextResponse.json({
+      success: true,
+      message: "Design deleted.",
+      categories: list,
+    });
   } catch (error) {
-    console.error("[api/admin/design-ideas] DELETE error:", error);
-    return NextResponse.json(
-      { error: "Failed to delete design. Please try again." },
-      { status: 500, headers: NO_CACHE_HEADERS }
-    );
+    return NextResponse.json({ error: "Failed to delete design." }, { status: 500 });
   }
 }
