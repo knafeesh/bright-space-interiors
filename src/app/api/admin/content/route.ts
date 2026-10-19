@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/server/admin-auth";
-import { getFullSiteStore, saveFullSiteStore } from "@/lib/server/site-db";
+import { getFullSiteStore, saveFullSiteStore, isFirebaseConfigured } from "@/lib/server/site-db";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -8,7 +8,24 @@ export const revalidate = 0;
 export async function GET(req: Request) {
   try {
     const store = await getFullSiteStore();
-    return NextResponse.json({ success: true, store }, { headers: { "Cache-Control": "no-store" } });
+    const isConfigured = isFirebaseConfigured();
+    const isVercel = Boolean(process.env.VERCEL);
+    const storageMode: "firestore" | "local_disk" | "ephemeral_tmp" = isConfigured
+      ? "firestore"
+      : isVercel
+      ? "ephemeral_tmp"
+      : "local_disk";
+
+    return NextResponse.json(
+      {
+        success: true,
+        store,
+        isFirebaseConfigured: isConfigured,
+        isVercel,
+        storageMode,
+      },
+      { headers: { "Cache-Control": "no-store" } }
+    );
   } catch (error) {
     console.error("GET /api/admin/content error:", error);
     return NextResponse.json({ success: false, error: "Failed to read site data." }, { status: 500 });

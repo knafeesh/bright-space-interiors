@@ -53,7 +53,9 @@
           "description": "Natural walnut veneer paired with concealed warm 3000K LED illumination for cozy entertaining."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 1,
+      "published": true
     },
     {
       "slug": "modular-kitchen-designs",
@@ -108,7 +110,9 @@
           "description": "Dual-counter parallel layout maximizing prep space with built-in pantry tall-units."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 2,
+      "published": true
     },
     {
       "slug": "dining-room-designs",
@@ -163,7 +167,9 @@
           "description": "Ten-seater dining centerpiece with fluted wall panels and architectural cove illumination."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 3,
+      "published": true
     },
     {
       "slug": "master-bedroom-designs",
@@ -218,7 +224,9 @@
           "description": "Cane and rattan headboard accents with breathable organic fabrics and tranquil ambient tones."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 4,
+      "published": true
     },
     {
       "slug": "false-ceiling-designs",
@@ -273,7 +281,9 @@
           "description": "Suspended floating island ceiling element with soft halo edge illumination."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 5,
+      "published": true
     },
     {
       "slug": "wardrobe-designs",
@@ -328,7 +338,9 @@
           "description": "Concealed micro-LED profiles embedded into hanger rods and shoe display drawers."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 6,
+      "published": true
     },
     {
       "slug": "living-room-designs",
@@ -383,7 +395,9 @@
           "description": "Tapered wooden legs, warm leather lounge chairs, and rich sculptural brass accessories."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 7,
+      "published": true
     },
     {
       "slug": "bathroom-designs",
@@ -438,7 +452,9 @@
           "description": "Dramatic fluted pedestal basin with dark textured wallpaper and warm spotlight beam."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 8,
+      "published": true
     },
     {
       "slug": "balcony-designs",
@@ -493,7 +509,9 @@
           "description": "Pebble stone border, Buddha water cascade, and natural bamboo privacy screening."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 9,
+      "published": true
     },
     {
       "slug": "cafe-interiors",
@@ -548,7 +566,9 @@
           "description": "Polished concrete floor, visible ductwork, and oversized industrial steel window casements."
         }
       ],
-      "type": "commercial"
+      "type": "commercial",
+      "order": 10,
+      "published": true
     },
     {
       "slug": "salon-interiors",
@@ -603,7 +623,9 @@
           "description": "Natural bamboo screens, indoor cascading fountain, and soft warm earthen color tones."
         }
       ],
-      "type": "commercial"
+      "type": "commercial",
+      "order": 11,
+      "published": true
     },
     {
       "slug": "office-interiors",
@@ -658,7 +680,9 @@
           "description": "Exposed ceilings, writeable whiteboard walls, and relaxed informal beanbag brainstorming zones."
         }
       ],
-      "type": "commercial"
+      "type": "commercial",
+      "order": 12,
+      "published": true
     },
     {
       "slug": "hotel-interiors",
@@ -713,7 +737,9 @@
           "description": "Subtly illuminated tables with acoustic ceiling baffles and dramatic sculptural wine display cellar."
         }
       ],
-      "type": "commercial"
+      "type": "commercial",
+      "order": 13,
+      "published": true
     },
     {
       "slug": "school-interiors",
@@ -768,7 +794,9 @@
           "description": "Durable bench seating arrangements, bright acoustic panels, and hygienic self-service counters."
         }
       ],
-      "type": "commercial"
+      "type": "commercial",
+      "order": 14,
+      "published": true
     },
     {
       "slug": "hospital-interiors",
@@ -823,7 +851,9 @@
           "description": "Soft indirect lighting, tranquil soundproofing, and seamless anti-microbial wall cladding."
         }
       ],
-      "type": "commercial"
+      "type": "commercial",
+      "order": 15,
+      "published": true
     },
     {
       "slug": "gym-interiors",
@@ -878,7 +908,9 @@
           "description": "Dedicated VIP coaching suite equipped with functional fitness mirrors and acoustic insulation."
         }
       ],
-      "type": "commercial"
+      "type": "commercial",
+      "order": 16,
+      "published": true
     },
     {
       "slug": "home-wallpaper",
@@ -933,7 +965,9 @@
           "description": "Organic Belgian linen weave surface adding tactile richness while preserving quiet minimalist calm."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 17,
+      "published": true
     },
     {
       "slug": "home-bar",
@@ -988,7 +1022,9 @@
           "description": "Sleek brass shelving suspended from the ceiling above a polished Nero Marquina marble counter."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 18,
+      "published": true
     },
     {
       "slug": "pooja-room",
@@ -1043,7 +1079,9 @@
           "description": "Wall-mounted floating pooja unit with integrated diya drawers and warm focused spotlights."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 19,
+      "published": true
     },
     {
       "slug": "space-saving",
@@ -1098,7 +1136,9 @@
           "description": "Set of three graduated marble and oak coffee tables that slide together when space is needed."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 20,
+      "published": true
     },
     {
       "slug": "staircase",
@@ -1153,7 +1193,9 @@
           "description": "Central spine steel structure supporting warm oak steps for a clean loft aesthetic."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 21,
+      "published": true
     },
     {
       "slug": "study-room",
@@ -1208,7 +1250,9 @@
           "description": "Acoustically insulated corner workstation with anti-glare overhead illumination and cable management."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 22,
+      "published": true
     },
     {
       "slug": "tv-unit",
@@ -1263,7 +1307,9 @@
           "description": "Center pivot swivel unit allowing viewing from both the living lounge and dining space."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 23,
+      "published": true
     },
     {
       "slug": "wall-decor",
@@ -1318,7 +1364,9 @@
           "description": "Concealed LED light channels washing down behind spaced wooden slats for evening mood ambiance."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 24,
+      "published": true
     },
     {
       "slug": "wall-paint",
@@ -1373,7 +1421,9 @@
           "description": "Micro-fine pearlescent glaze catching shifting ambient angles in foyer entryways."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 25,
+      "published": true
     },
     {
       "slug": "window",
@@ -1428,7 +1478,9 @@
           "description": "Custom louvred plantation shutters set within an elegant architectural semicircular arch."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 26,
+      "published": true
     },
     {
       "slug": "tile",
@@ -1483,7 +1535,9 @@
           "description": "Textured oak-embossed porcelain planks delivering natural warmth with zero moisture maintenance."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 27,
+      "published": true
     },
     {
       "slug": "front-elevation",
@@ -1538,7 +1592,9 @@
           "description": "Natural dry-stacked slate stone walls accentuated by upward warm LED architectural grazers."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 28,
+      "published": true
     },
     {
       "slug": "kitchen-interiors",
@@ -1593,7 +1649,9 @@
           "description": "Optimized golden work triangle with corner carousel pullouts and tall spice storage racks."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 29,
+      "published": true
     },
     {
       "slug": "kids-bedroom-designs",
@@ -1648,7 +1706,9 @@
           "description": "Elevated loft bed freeing the entire floor below for a modern gaming and study lounge."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 30,
+      "published": true
     },
     {
       "slug": "foyer-designs",
@@ -1703,7 +1763,9 @@
           "description": "Linear spotlight ceiling track illuminating curated framed paintings along the arrival passage."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 31,
+      "published": true
     },
     {
       "slug": "dressing-room-designs",
@@ -1758,8 +1820,10 @@
           "description": "Clever corner dressing solution featuring vertical pullout mirrors and integrated cosmetic organizers."
         }
       ],
-      "type": "residential"
+      "type": "residential",
+      "order": 32,
+      "published": true
     }
   ],
-  "updatedAt": 1791633323268
+  "updatedAt": 1792417907977
 }

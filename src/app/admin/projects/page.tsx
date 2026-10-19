@@ -310,7 +310,12 @@ export default function ProjectsManagerPage() {
         setProjects(data.projects);
         setGalleryProject(updatedPayload);
         broadcastCmsProjects(data.projects);
-        notify(`Gallery for "${targetProject.title}" saved to Firestore.`);
+        const isCloud = data.storage === "firestore";
+        notify(
+          isCloud
+            ? `Gallery for "${targetProject.title}" saved permanently to Firestore.`
+            : `Gallery for "${targetProject.title}" updated on live site.`
+        );
       } else {
         notifyError(data.error || "Failed to update project gallery.");
       }
@@ -448,7 +453,6 @@ export default function ProjectsManagerPage() {
 
     setImageIndexToDelete(null);
     await saveProjectGallery(galleryProject, currentList, newCover);
-    notify("Photo removed from gallery.");
   };
 
   const filtered = projects.filter((p) => {

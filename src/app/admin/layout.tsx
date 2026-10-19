@@ -90,7 +90,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [saveStatus, setSaveStatus] = useState<CmsSaveStatus | null>(null);
-  const [dbStatus, setDbStatus] = useState<{ configured: boolean; text: string }>({
+  const [dbStatus, setDbStatus] = useState<{ configured: boolean; text: string; mode?: string }>({
     configured: false,
     text: "Connecting...",
   });
@@ -119,10 +119,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     fetch("/api/admin/content", { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data?.success) {
-          setDbStatus({ configured: true, text: "Firestore Connected" });
+        if (data?.isFirebaseConfigured) {
+          setDbStatus({ configured: true, text: "Firestore Cloud Connected", mode: "firestore" });
+        } else if (data?.isVercel || data?.storageMode === "ephemeral_tmp") {
+          setDbStatus({ configured: false, text: "⚠️ Temporary Memory (Vercel)", mode: "ephemeral_tmp" });
+        } else if (data?.success) {
+          setDbStatus({ configured: true, text: "Local Disk Store (Dev)", mode: "local_disk" });
         } else {
-          setDbStatus({ configured: false, text: "Local Storage Fallback" });
+          setDbStatus({ configured: false, text: "Storage Offline", mode: "offline" });
         }
       })
       .catch(() => {
@@ -320,11 +324,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 borderRadius: "16px",
                 fontSize: "11px",
                 fontWeight: 600,
-                background: "rgba(197, 168, 128, 0.12)",
-                color: "#9C7A4A",
-                border: "1px solid rgba(197, 168, 128, 0.25)",
+                background:
+                  dbStatus.mode === "firestore"
+                    ? "rgba(16, 185, 129, 0.12)"
+                    : dbStatus.mode === "ephemeral_tmp"
+                    ? "rgba(245, 158, 11, 0.15)"
+                    : "rgba(197, 168, 128, 0.12)",
+                color:
+                  dbStatus.mode === "firestore"
+                    ? "#059669"
+                    : dbStatus.mode === "ephemeral_tmp"
+                    ? "#D97706"
+                    : "#9C7A4A",
+                border: `1px solid ${
+                  dbStatus.mode === "firestore"
+                    ? "rgba(16, 185, 129, 0.25)"
+                    : dbStatus.mode === "ephemeral_tmp"
+                    ? "rgba(245, 158, 11, 0.35)"
+                    : "rgba(197, 168, 128, 0.25)"
+                }`,
               }}
-              title="Persistent Storage Status"
+              title={
+                dbStatus.mode === "ephemeral_tmp"
+                  ? "Live site is running in temporary memory. Add Firebase environment variables in Vercel to persist permanently."
+                  : "Persistent Storage Status"
+              }
             >
               <Cloud size={12} />
               <span>{dbStatus.text}</span>
@@ -386,6 +410,42 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </div>
         </header>
+
+        {/* Temporary Ephemeral Warning Banner (Shown on Vercel when Firebase is not connected) */}
+        {dbStatus.mode === "ephemeral_tmp" && (
+          <div
+            style={{
+              background: "#451A03",
+              color: "#FDE68A",
+              padding: "10px 24px",
+              fontSize: "12px",
+              borderBottom: "1px solid rgba(245, 158, 11, 0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "12px",
+              flexWrap: "wrap",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <AlertCircle size={16} color="#F59E0B" />
+              <span>
+                <strong>Storage Notice:</strong> Live website is running on temporary serverless memory. Edits or deleted images will reset on server restart. To make updates permanent, add Firebase credentials in Vercel.
+              </span>
+            </div>
+            <Link
+              href="/admin/backup"
+              style={{
+                color: "#FDE68A",
+                textDecoration: "underline",
+                fontWeight: 600,
+                fontSize: "11px",
+              }}
+            >
+              Export Backup / Firebase Guide →
+            </Link>
+          </div>
+        )}
 
         {/* Page Content */}
         <main className="admin-content">{children}</main>

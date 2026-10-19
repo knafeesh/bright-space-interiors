@@ -313,19 +313,48 @@ export async function saveFullSiteStore(store: FullSiteStore): Promise<SaveResul
   }
 
   // 2. Persist locally to server disk
+  let localDiskSaved = false;
   try {
     fs.mkdirSync(path.dirname(LOCAL_STORE_PATH), { recursive: true });
     fs.writeFileSync(LOCAL_STORE_PATH, JSON.stringify(payload, null, 2), "utf-8");
+    localDiskSaved = true;
+
+    // Keep cms-store.json synchronized so default seed never reverts projects
+    try {
+      const cmsStorePath = path.join(process.cwd(), "src", "data", "cms-store.json");
+      if (Array.isArray(payload.projects)) {
+        const cmsData = {
+          projects: payload.projects,
+          services: payload.detailedServices,
+          specialties: payload.specialties,
+          media: payload.media,
+          updatedAt: timestamp,
+        };
+        fs.writeFileSync(cmsStorePath, JSON.stringify(cmsData, null, 2), "utf-8");
+      }
+    } catch {}
+
+    // Keep design-ideas-store.json synchronized
+    try {
+      const catStorePath = path.join(process.cwd(), "src", "data", "design-ideas-store.json");
+      if (Array.isArray(payload.categories)) {
+        fs.writeFileSync(catStorePath, JSON.stringify({ categories: payload.categories, updatedAt: timestamp }, null, 2), "utf-8");
+      }
+    } catch {}
+
     if (!persisted) {
       persisted = true;
       storage = "local_disk";
     }
   } catch {}
 
-  // 3. Persist to /tmp for serverless continuity
+  // 3. Persist to /tmp for serverless continuity (Vercel / serverless ephemeral environment)
   try {
     fs.mkdirSync(path.dirname(TMP_STORE_PATH), { recursive: true });
     fs.writeFileSync(TMP_STORE_PATH, JSON.stringify(payload, null, 2), "utf-8");
+    if (!persisted) {
+      storage = "ephemeral_tmp";
+    }
   } catch {}
 
   // 4. Trigger Next.js On-Demand Revalidation across all public pages
@@ -920,6 +949,18 @@ export async function deleteMediaAsset(assetIdOrUrl: string): Promise<{ success:
       }
     } catch (storageErr) {
       console.warn("[site-db] Storage delete failed:", storageErr);
+    }
+  }
+
+  // Also clean up local file if uploaded to /uploads/
+  if (target.url.startsWith("/uploads/")) {
+    try {
+      const localFilePath = path.join(process.cwd(), "public", target.url.replace(/^\//, ""));
+      if (fs.existsSync(localFilePath)) {
+        fs.unlinkSync(localFilePath);
+      }
+    } catch (localErr) {
+      console.warn("[site-db] Local file unlink skipped:", localErr);
     }
   }
 
