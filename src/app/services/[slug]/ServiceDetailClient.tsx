@@ -47,12 +47,14 @@ const HERO_IMAGES: Record<string, string> = {
   "design-execution": "/images/salon-rawls-styling-suites.jpg",
 };
 
-export default function ServiceDetailClient({ slug }: { slug: string }) {
+export default function ServiceDetailClient({ slug, initialService }: { slug: string; initialService?: any }) {
   const cmsServices = useCmsServices();
   const cmsProjects = useCmsProjects();
 
   const service =
-    cmsServices.find((s) => s.slug === slug) || SERVICES.find((s) => s.slug === slug);
+    initialService ||
+    cmsServices.find((s) => s.slug === slug) ||
+    SERVICES.find((s) => s.slug === slug);
 
   if (!service) notFound();
 
@@ -137,7 +139,7 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
               <div className="service-includes" style={{ marginTop: "40px" }}>
                 <div className="service-includes__title">What's Included</div>
                 <ul className="service-includes__list">
-                  {service.subServices.map((sub) => (
+                  {(service.subServices || []).map((sub: string) => (
                     <li key={sub} className="service-includes__item">
                       {sub}
                     </li>
@@ -355,7 +357,7 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
           </div>
 
           <div className="faq-list">
-            {service.faqs.map((faq, i) => (
+            {(service.faqs || []).map((faq: { q: string; a: string }, i: number) => (
               <div
                 key={i}
                 className={`faq-item${openFaq === i ? " faq-item--open" : ""}`}

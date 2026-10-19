@@ -58,9 +58,11 @@ export interface SpecialtyServiceItem {
   id?: string;
   name: string;
   tagline: string;
-  image: string;
+  image?: string;
   description: string;
+  icon?: string;
   order: number;
+  published?: boolean;
 }
 
 export interface ProjectItem {

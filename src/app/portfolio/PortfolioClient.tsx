@@ -16,14 +16,10 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
   useEffect(() => {
     if (initialProjects && initialProjects.length > 0) {
       setProjects(initialProjects);
-    }
-  }, [initialProjects]);
-
-  useEffect(() => {
-    if (cmsLoaded && cmsProjects && cmsProjects.length > 0) {
+    } else if (cmsLoaded && cmsProjects && cmsProjects.length > 0) {
       setProjects(cmsProjects);
     }
-  }, [cmsLoaded, cmsProjects]);
+  }, [initialProjects, cmsLoaded, cmsProjects]);
 
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [isFading, setIsFading] = useState(false);

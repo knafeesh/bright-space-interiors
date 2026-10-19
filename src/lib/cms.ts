@@ -121,20 +121,12 @@ function fetchServerStore(): Promise<CmsStore | null> {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && Array.isArray(data.projects)) {
-          const local = loadCmsStore();
-          const localTime = local.updatedAt || 0;
-          const serverTime = data.updatedAt || 0;
-
-          // Crucial: Never let an unconfigured or cold serverless instance that fell back
-          // to default hardcoded seed data overwrite newer edits saved in the admin's browser.
-          if (localTime > serverTime && localTime > 0) {
-            console.info("[cms] Local edits are newer than server response. Retaining local store.");
-            return local;
-          }
-
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
           } catch {}
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent(CMS_UPDATE_EVENT, { detail: data }));
+          }
           return data as CmsStore;
         }
         return null;

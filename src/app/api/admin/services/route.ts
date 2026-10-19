@@ -6,6 +6,10 @@ import {
   getDetailedServices,
   saveDetailedService,
   deleteService,
+  getSpecialties,
+  saveSpecialties,
+  saveSpecialty,
+  deleteSpecialty,
   getFullSiteStore,
   saveFullSiteStore,
   NavServiceItem,
@@ -18,13 +22,13 @@ export async function GET(req: Request) {
   try {
     const navServices = await getNavServices();
     const detailedServices = await getDetailedServices();
-    const store = await getFullSiteStore();
+    const specialties = await getSpecialties();
     return NextResponse.json(
       {
         success: true,
         navServices,
         detailedServices,
-        specialties: store.specialties || [],
+        specialties,
       },
       { headers: { "Cache-Control": "no-store" } }
     );
@@ -89,15 +93,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, detailedServices: await getDetailedServices() });
     }
 
-    // Full store specialties update
-    if (type === "specialties" && Array.isArray(items)) {
-      const store = await getFullSiteStore();
-      store.specialties = items;
-      const result = await saveFullSiteStore(store);
+    // Single specialty add / update
+    if (type === "specialty" && data) {
+      const result = await saveSpecialty(data);
       if (!result.success) {
         return NextResponse.json({ success: false, error: result.error || "Save failed." }, { status: 500 });
       }
-      return NextResponse.json({ success: true, specialties: store.specialties });
+      return NextResponse.json({ success: true, specialties: await getSpecialties() });
+    }
+
+    // Full store specialties update (bulk reorder)
+    if (type === "specialties" && Array.isArray(items)) {
+      const result = await saveSpecialties(items);
+      if (!result.success) {
+        return NextResponse.json({ success: false, error: result.error || "Save failed." }, { status: 500 });
+      }
+      return NextResponse.json({ success: true, specialties: await getSpecialties() });
     }
 
     return NextResponse.json({ success: false, error: "Invalid service type or payload." }, { status: 400 });
@@ -117,8 +128,20 @@ export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get("slug");
+    const specialtyId =
+      searchParams.get("specialtyId") ||
+      (searchParams.get("type") === "specialty" ? searchParams.get("id") || searchParams.get("name") : null);
+
+    if (specialtyId) {
+      const result = await deleteSpecialty(specialtyId);
+      if (!result.success) {
+        return NextResponse.json({ success: false, error: result.error || "Delete failed." }, { status: 500 });
+      }
+      return NextResponse.json({ success: true, specialties: await getSpecialties() });
+    }
+
     if (!slug) {
-      return NextResponse.json({ success: false, error: "Service slug is required." }, { status: 400 });
+      return NextResponse.json({ success: false, error: "Service slug or specialtyId is required." }, { status: 400 });
     }
 
     const result = await deleteService(slug);

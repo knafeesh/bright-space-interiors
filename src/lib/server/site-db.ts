@@ -284,6 +284,22 @@ export async function saveFullSiteStore(store: FullSiteStore): Promise<SaveResul
         .set(payload, { merge: true });
       persisted = true;
       storage = "firestore";
+
+      // Also sync to legacy site/cms collection to guarantee all public hooks stay in sync
+      await getDb()
+        .collection("site")
+        .doc("cms")
+        .set(
+          {
+            projects: payload.projects || [],
+            services: payload.detailedServices || [],
+            specialties: payload.specialties || [],
+            media: payload.media || [],
+            updatedAt: timestamp,
+          },
+          { merge: true }
+        )
+        .catch(() => {});
     } catch (err: any) {
       console.error("[site-db] Firestore write failed:", err);
       return {
@@ -589,6 +605,51 @@ export async function deleteService(slug: string): Promise<SaveResult> {
   try {
     revalidatePath(`/services/${slug}`);
   } catch {}
+  return saveFullSiteStore(store);
+}
+
+export async function getSpecialties(): Promise<SpecialtyServiceItem[]> {
+  const store = await getFullSiteStore();
+  return (store.specialties || []).sort((a, b) => (a.order || 0) - (b.order || 0));
+}
+
+export async function saveSpecialties(specialties: SpecialtyServiceItem[]): Promise<SaveResult> {
+  const store = await getFullSiteStore();
+  store.specialties = specialties;
+  return saveFullSiteStore(store);
+}
+
+export async function saveSpecialty(specialty: Partial<SpecialtyServiceItem> & { name: string }): Promise<SaveResult> {
+  const store = await getFullSiteStore();
+  const list = [...(store.specialties || [])];
+  const idx = list.findIndex(
+    (s) => (specialty.id && s.id === specialty.id) || s.name.toLowerCase() === specialty.name.toLowerCase()
+  );
+
+  if (idx !== -1) {
+    list[idx] = { ...list[idx], ...specialty };
+  } else {
+    list.push({
+      id: specialty.id || `spec-${Date.now()}`,
+      name: specialty.name.trim(),
+      tagline: specialty.tagline?.trim() || "",
+      description: specialty.description?.trim() || "",
+      image: specialty.image?.trim() || "",
+      icon: specialty.icon?.trim() || "Sparkles",
+      order: specialty.order !== undefined ? specialty.order : list.length + 1,
+      published: specialty.published !== false,
+    });
+  }
+
+  store.specialties = list;
+  return saveFullSiteStore(store);
+}
+
+export async function deleteSpecialty(idOrName: string): Promise<SaveResult> {
+  const store = await getFullSiteStore();
+  store.specialties = (store.specialties || []).filter(
+    (s) => s.id !== idOrName && s.name.toLowerCase() !== idOrName.toLowerCase()
+  );
   return saveFullSiteStore(store);
 }
 

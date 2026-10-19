@@ -11,6 +11,7 @@ interface ImageUploadFieldProps {
   folder?: "Projects" | "Services" | "Hero" | "Team" | "Renders";
   placeholder?: string;
   required?: boolean;
+  dark?: boolean;
 }
 
 export default function ImageUploadField({
@@ -20,6 +21,7 @@ export default function ImageUploadField({
   folder = "Projects",
   placeholder = "/images/... or upload a photo",
   required = false,
+  dark = false,
 }: ImageUploadFieldProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +86,7 @@ export default function ImageUploadField({
             display: "block",
             fontSize: "12px",
             fontWeight: 600,
-            color: "var(--text-secondary, #4B5563)",
+            color: dark ? "#D1D5DB" : "var(--text-secondary, #4B5563)",
             marginBottom: "6px",
           }}
         >
@@ -100,8 +102,8 @@ export default function ImageUploadField({
             height: "46px",
             borderRadius: "6px",
             overflow: "hidden",
-            background: "#1F2937",
-            border: "1px solid #E5E7EB",
+            background: dark ? "#111319" : "#1F2937",
+            border: dark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid #E5E7EB",
             flexShrink: 0,
             display: "flex",
             alignItems: "center",
@@ -132,7 +134,9 @@ export default function ImageUploadField({
           style={{
             flex: 1,
             padding: "8px 12px",
-            border: "1px solid #E0E0E0",
+            background: dark ? "#0F1117" : "#FFFFFF",
+            color: dark ? "#F3F4F6" : "inherit",
+            border: dark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid #E0E0E0",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none",
@@ -161,8 +165,12 @@ export default function ImageUploadField({
             padding: "8px 14px",
             borderRadius: "6px",
             border: "1px solid #C5A880",
-            background: uploading ? "#F3F4F6" : "rgba(197, 168, 128, 0.12)",
-            color: uploading ? "#9CA3AF" : "#8A6D3B",
+            background: uploading
+              ? (dark ? "#262A35" : "#F3F4F6")
+              : (dark ? "rgba(197, 168, 128, 0.18)" : "rgba(197, 168, 128, 0.12)"),
+            color: uploading
+              ? "#9CA3AF"
+              : (dark ? "#DFBE99" : "#8A6D3B"),
             fontWeight: 600,
             fontSize: "12px",
             cursor: uploading ? "wait" : "pointer",

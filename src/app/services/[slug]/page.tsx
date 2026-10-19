@@ -76,5 +76,5 @@ export default async function ServiceDetailPage({
     notFound();
   }
 
-  return <ServiceDetailClient slug={slug} />;
+  return <ServiceDetailClient slug={slug} initialService={service as any} />;
 }

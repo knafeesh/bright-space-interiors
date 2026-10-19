@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import ServicesClient from "./ServicesClient";
-
+import { getSpecialties } from "@/lib/server/site-db";
 import { constructMetadata } from "@/lib/metadata";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = constructMetadata({
   path: "/services",
@@ -11,6 +14,7 @@ export const metadata: Metadata = constructMetadata({
   image: "/images/salon-rawls-mainhall.jpg",
 });
 
-export default function ServicesPage() {
-  return <ServicesClient />;
+export default async function ServicesPage() {
+  const specialties = await getSpecialties();
+  return <ServicesClient initialSpecialties={specialties as any} />;
 }

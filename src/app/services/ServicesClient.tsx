@@ -5,8 +5,9 @@ import { useCmsSpecialties } from "@/lib/cms";
 import { NAV_SERVICES, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/data";
 import ServicesCarousel from "@/components/ui/ServicesCarousel";
 
-export default function ServicesClient() {
-  const specialties = useCmsSpecialties();
+export default function ServicesClient({ initialSpecialties }: { initialSpecialties?: any[] }) {
+  const cmsSpecialties = useCmsSpecialties();
+  const specialties = cmsSpecialties && cmsSpecialties.length > 0 ? cmsSpecialties : (initialSpecialties || []);
 
   return (
     <>

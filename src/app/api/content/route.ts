@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/server/admin-auth";
-import { getFullStoreFromDb, saveFullStoreToDb } from "@/lib/server/portfolio-db";
+import { getFullSiteStore, saveFullSiteStore } from "@/lib/server/site-db";
 import { CmsStore } from "@/lib/cms-types";
 
 export const dynamic = "force-dynamic";
@@ -20,17 +20,36 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    const store = await getFullStoreFromDb();
-    return NextResponse.json(store, { headers: CORS_HEADERS });
+    const siteStore = await getFullSiteStore();
+    const cmsStore: CmsStore = {
+      projects: (siteStore.projects || []).filter((p) => p.status === "published") as any,
+      services: (siteStore.detailedServices || []).map((d) => ({
+        slug: d.slug,
+        title: d.title,
+        description: d.description,
+        image: d.image,
+        tagline: d.subtitle,
+        deliverables: d.subServices,
+        faqs: d.faqs || [],
+      })) as any,
+      specialties: (siteStore.specialties || []) as any,
+      media: (siteStore.media || []).map((m) => ({
+        id: m.id,
+        url: m.url,
+        caption: m.name || m.altText,
+        alt: m.altText,
+        date: m.dateAdded,
+        usage: [],
+      })) as any,
+      updatedAt: siteStore.updatedAt || Date.now(),
+    };
+    return NextResponse.json(cmsStore, { headers: CORS_HEADERS });
   } catch (error) {
     console.error("Error reading CMS store:", error);
-    const store = await getFullStoreFromDb().catch(() => ({
-      projects: [],
-      services: [],
-      specialties: [],
-      media: [],
-    }));
-    return NextResponse.json(store, { headers: CORS_HEADERS });
+    return NextResponse.json(
+      { projects: [], services: [], specialties: [], media: [], updatedAt: Date.now() },
+      { headers: CORS_HEADERS }
+    );
   }
 }
 
@@ -48,17 +67,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid data format" }, { status: 400, headers: CORS_HEADERS });
     }
 
-    const currentStore = await getFullStoreFromDb();
+    const currentSiteStore = await getFullSiteStore();
 
-    // Merge incoming arrays while preserving existing data if a field was omitted
-    const nextStore: CmsStore = {
-      projects: Array.isArray(body.projects) ? body.projects : currentStore.projects,
-      services: Array.isArray(body.services) ? body.services : currentStore.services,
-      specialties: Array.isArray(body.specialties) ? body.specialties : currentStore.specialties,
-      media: Array.isArray(body.media) ? body.media : currentStore.media,
-    };
+    if (Array.isArray(body.projects)) {
+      currentSiteStore.projects = body.projects;
+    }
+    if (Array.isArray(body.specialties)) {
+      currentSiteStore.specialties = body.specialties;
+    }
 
-    await saveFullStoreToDb(nextStore);
+    await saveFullSiteStore(currentSiteStore);
 
     return NextResponse.json({ success: true, timestamp: Date.now() }, { headers: CORS_HEADERS });
   } catch (error) {
