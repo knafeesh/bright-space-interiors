@@ -21,7 +21,32 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [navServices, setNavServices] = useState(NAV_SERVICES);
   const pathname = usePathname();
+
+  useEffect(() => {
+    fetch("/api/admin/services", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.success && Array.isArray(data.navServices) && data.navServices.length > 0) {
+          const published = data.navServices.filter((s: any) => s.published !== false);
+          if (published.length > 0) {
+            setNavServices(
+              published.map((s: any) => ({
+                title: s.title,
+                slug: s.slug,
+                href: s.href || s.link || `/services`,
+                description: s.description || "",
+                image: s.image || "/images/hero-luxury.jpg",
+                caption: s.caption || "",
+                whatsappMsg: s.whatsappMsg || "",
+              }))
+            );
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const isHome = pathname === "/";
 
@@ -132,7 +157,7 @@ export default function Navbar() {
                         gap: "10px 16px",
                       }}
                     >
-                      {NAV_SERVICES.map((s, idx) => (
+                      {navServices.map((s, idx) => (
                         <Link
                           key={s.slug}
                           href={s.href}
@@ -390,7 +415,7 @@ export default function Navbar() {
                       >
                         • View All Services &rarr;
                       </Link>
-                      {NAV_SERVICES.map((s, idx) => (
+                      {navServices.map((s, idx) => (
                         <Link
                           key={s.slug}
                           href={s.href}

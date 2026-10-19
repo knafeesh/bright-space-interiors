@@ -181,6 +181,29 @@ export default function HomePage() {
   const [isFading, setIsFading] = useState(false);
   const sectionRef = useFadeIn();
   const cmsProjects = useCmsProjects();
+  const [testimonials, setTestimonials] = useState<any[]>(TESTIMONIALS);
+
+  useEffect(() => {
+    fetch("/api/admin/testimonials", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.success && Array.isArray(data.testimonials) && data.testimonials.length > 0) {
+          const published = data.testimonials.filter((t: any) => t.published !== false);
+          if (published.length > 0) {
+            setTestimonials(
+              published.map((t: any) => ({
+                id: t.id,
+                name: t.name || t.author,
+                project: t.project || t.role || t.location || "",
+                rating: t.rating || 5,
+                quote: t.quote,
+              }))
+            );
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleFilterChange = (cat: string) => {
     if (cat === activeFilter) return;
@@ -468,7 +491,7 @@ export default function HomePage() {
           </div>
 
           <div className="testimonials__slider">
-            {TESTIMONIALS.map((t) => (
+            {testimonials.map((t) => (
               <div key={t.id} className="testimonial-card">
                 <div className="stars" aria-label={`${t.rating} out of 5 stars`}>
                   {"★".repeat(t.rating)}
