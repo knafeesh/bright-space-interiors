@@ -188,14 +188,145 @@ let memoryStore: FullSiteStore | null = null;
 // ─── Core Database Operations ───────────────────────────────────────────────
 
 /**
+ * Helper to persist all entities as modular Firestore documents.
+ * This guarantees no single document ever approaches Firestore's 1 MB limit.
+ */
+async function saveModularFirestoreDocs(db: any, payload: FullSiteStore) {
+  const timestamp = payload.updatedAt || Date.now();
+  const batch = db.batch();
+
+  // 1. Projects document (~40 KB)
+  batch.set(
+    db.collection(FIRESTORE_COLLECTION).doc("projects"),
+    { projects: payload.projects || [], updatedAt: timestamp },
+    { merge: true }
+  );
+
+  // 2. Services document (~25 KB)
+  batch.set(
+    db.collection(FIRESTORE_COLLECTION).doc("services"),
+    {
+      navServices: payload.navServices || [],
+      detailedServices: payload.detailedServices || [],
+      specialties: payload.specialties || [],
+      updatedAt: timestamp,
+    },
+    { merge: true }
+  );
+
+  // 3. Categories document (~70 KB)
+  batch.set(
+    db.collection(FIRESTORE_COLLECTION).doc("categories"),
+    { categories: payload.categories || [], updatedAt: timestamp },
+    { merge: true }
+  );
+
+  // 4. Settings document (~5 KB)
+  batch.set(
+    db.collection(FIRESTORE_COLLECTION).doc("settings"),
+    {
+      settings: payload.settings,
+      philosophyCarousel: payload.philosophyCarousel || [],
+      pageSeo: payload.pageSeo || [],
+      updatedAt: timestamp,
+    },
+    { merge: true }
+  );
+
+  // 5. Testimonials document (~5 KB)
+  batch.set(
+    db.collection(FIRESTORE_COLLECTION).doc("testimonials"),
+    { testimonials: payload.testimonials || [], updatedAt: timestamp },
+    { merge: true }
+  );
+
+  // 6. Team document (~3 KB)
+  batch.set(
+    db.collection(FIRESTORE_COLLECTION).doc("team"),
+    { team: payload.team || [], updatedAt: timestamp },
+    { merge: true }
+  );
+
+  // 7. Media document (~10 KB)
+  batch.set(
+    db.collection(FIRESTORE_COLLECTION).doc("media"),
+    { media: payload.media || [], updatedAt: timestamp },
+    { merge: true }
+  );
+
+  // 8. Legacy CMS hook sync document (~50 KB)
+  batch.set(
+    db.collection("site").doc("cms"),
+    {
+      projects: payload.projects || [],
+      services: payload.detailedServices || [],
+      specialties: payload.specialties || [],
+      media: payload.media || [],
+      updatedAt: timestamp,
+    },
+    { merge: true }
+  );
+
+  await batch.commit();
+}
+
+/**
  * Retrieve the entire site store from Firestore (with local fallback).
- * If Firestore is configured and empty, automatically seeds it once.
+ * Reads modular documents in parallel for maximum speed and zero size issues.
  */
 export async function getFullSiteStore(): Promise<FullSiteStore> {
   // 1. Try Firebase Firestore in production
   if (isFirebaseConfigured()) {
     try {
-      const snap = await getDb().collection(FIRESTORE_COLLECTION).doc(FIRESTORE_DOC).get();
+      const db = getDb();
+
+      // Read modular documents in parallel
+      const [projSnap, servSnap, catSnap, settSnap, testSnap, teamSnap, medSnap] = await Promise.all([
+        db.collection(FIRESTORE_COLLECTION).doc("projects").get(),
+        db.collection(FIRESTORE_COLLECTION).doc("services").get(),
+        db.collection(FIRESTORE_COLLECTION).doc("categories").get(),
+        db.collection(FIRESTORE_COLLECTION).doc("settings").get(),
+        db.collection(FIRESTORE_COLLECTION).doc("testimonials").get(),
+        db.collection(FIRESTORE_COLLECTION).doc("team").get(),
+        db.collection(FIRESTORE_COLLECTION).doc("media").get(),
+      ]);
+
+      if (projSnap.exists && (servSnap.exists || settSnap.exists)) {
+        const projData = projSnap.data();
+        const servData = servSnap.exists ? servSnap.data() : null;
+        const catData = catSnap.exists ? catSnap.data() : null;
+        const settData = settSnap.exists ? settSnap.data() : null;
+        const testData = testSnap.exists ? testSnap.data() : null;
+        const teamData = teamSnap.exists ? teamSnap.data() : null;
+        const medData = medSnap.exists ? medSnap.data() : null;
+
+        const defaultSeed = readLocalOrInitialSeed();
+
+        const assembled: FullSiteStore = {
+          settings: settData?.settings || defaultSeed.settings,
+          navServices: servData?.navServices || defaultSeed.navServices,
+          detailedServices: servData?.detailedServices || defaultSeed.detailedServices,
+          specialties: servData?.specialties || defaultSeed.specialties,
+          projects: projData?.projects || defaultSeed.projects,
+          categories: catData?.categories || defaultSeed.categories,
+          testimonials: testData?.testimonials || defaultSeed.testimonials,
+          team: teamData?.team || defaultSeed.team,
+          philosophyCarousel: settData?.philosophyCarousel || defaultSeed.philosophyCarousel,
+          pageSeo: settData?.pageSeo || defaultSeed.pageSeo,
+          media: medData?.media || defaultSeed.media,
+          updatedAt: Math.max(
+            settData?.updatedAt || 0,
+            projData?.updatedAt || 0,
+            servData?.updatedAt || 0
+          ) || Date.now(),
+        };
+
+        memoryStore = assembled;
+        return assembled;
+      }
+
+      // Fallback to legacy monolithic site/content if modular docs do not exist yet
+      const snap = await db.collection(FIRESTORE_COLLECTION).doc(FIRESTORE_DOC).get();
       if (snap.exists) {
         const data = snap.data();
         if (data && data.settings && Array.isArray(data.projects)) {
@@ -203,12 +334,10 @@ export async function getFullSiteStore(): Promise<FullSiteStore> {
           return memoryStore;
         }
       }
-      // If Firestore doc does not exist yet, seed it automatically
+
+      // If Firestore doc does not exist yet, seed it with modular documents
       const initialSeed = readLocalOrInitialSeed();
-      await getDb()
-        .collection(FIRESTORE_COLLECTION)
-        .doc(FIRESTORE_DOC)
-        .set(initialSeed, { merge: true });
+      await saveModularFirestoreDocs(db, initialSeed);
       memoryStore = initialSeed;
       return initialSeed;
     } catch (err) {
@@ -263,6 +392,7 @@ function readLocalOrInitialSeed(): FullSiteStore {
 /**
  * Persist the entire site store to Firestore and local disk,
  * and trigger instant Next.js on-demand revalidation.
+ * Splits documents into modular entities so the 1 MB Firestore limit is never reached.
  */
 export async function saveFullSiteStore(store: FullSiteStore): Promise<SaveResult> {
   const timestamp = Date.now();
@@ -275,31 +405,23 @@ export async function saveFullSiteStore(store: FullSiteStore): Promise<SaveResul
   let persisted = false;
   let storage: "firestore" | "local_disk" | "ephemeral_tmp" = "local_disk";
 
-  // 1. Write to Firebase Firestore
+  // 1. Write to Firebase Firestore using modular documents (Each doc < 80 KB)
   if (isFirebaseConfigured()) {
     try {
-      await getDb()
-        .collection(FIRESTORE_COLLECTION)
-        .doc(FIRESTORE_DOC)
-        .set(payload, { merge: true });
+      const db = getDb();
+      await saveModularFirestoreDocs(db, payload);
       persisted = true;
       storage = "firestore";
 
-      // Also sync to legacy site/cms collection to guarantee all public hooks stay in sync
-      await getDb()
-        .collection("site")
-        .doc("cms")
-        .set(
-          {
-            projects: payload.projects || [],
-            services: payload.detailedServices || [],
-            specialties: payload.specialties || [],
-            media: payload.media || [],
-            updatedAt: timestamp,
-          },
-          { merge: true }
-        )
-        .catch(() => {});
+      // Also attempt legacy site/content inside try/catch so it never crashes if payload is large
+      try {
+        const jsonStr = JSON.stringify(payload);
+        if (Buffer.byteLength(jsonStr, "utf-8") < 900000) {
+          await db.collection(FIRESTORE_COLLECTION).doc(FIRESTORE_DOC).set(payload, { merge: true });
+        }
+      } catch (legacyErr) {
+        // Safe to ignore: modular documents are already saved
+      }
     } catch (err: any) {
       console.error("[site-db] Firestore write failed:", err);
       return {

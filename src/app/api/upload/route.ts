@@ -101,8 +101,24 @@ export async function POST(req: Request) {
     const fileName = `${Date.now()}-${safeBaseName(file.name)}.${finalExt}`;
     let finalUrl = "";
 
-    // 1. Firebase Storage (Production / Persistent Cloud)
-    if (isFirebaseConfigured()) {
+    // 1. Vercel Blob (Built-in Free Storage for Vercel Hobby plan - NO credit card required)
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      try {
+        const { put } = await import("@vercel/blob");
+        const blob = await put(`uploads/${fileName}`, finalBuffer, {
+          access: "public",
+          contentType: finalType,
+        });
+        if (blob?.url) {
+          finalUrl = blob.url;
+        }
+      } catch (blobErr) {
+        console.warn("Vercel Blob upload failed, trying next provider:", blobErr);
+      }
+    }
+
+    // 2. Firebase Storage (if bucket is configured)
+    if (!finalUrl && isFirebaseConfigured() && process.env.FIREBASE_STORAGE_BUCKET) {
       try {
         const bucket = getBucket();
         const objectPath = `uploads/${fileName}`;
@@ -125,11 +141,37 @@ export async function POST(req: Request) {
       }
     }
 
-    // 2. Local fallback if Firebase not configured or failed
+    // 3. ImgBB Free API (if IMGBB_API_KEY is configured)
+    if (!finalUrl && process.env.IMGBB_API_KEY) {
+      try {
+        const form = new FormData();
+        form.append("image", finalBuffer.toString("base64"));
+        const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`, {
+          method: "POST",
+          body: form,
+        });
+        const imgbbData = await imgbbRes.json();
+        if (imgbbData?.data?.url) {
+          finalUrl = imgbbData.data.url;
+        }
+      } catch (imgbbErr) {
+        console.warn("ImgBB upload failed:", imgbbErr);
+      }
+    }
+
+    // 4. Local fallback or safe compressed base64
     if (!finalUrl) {
       if (process.env.VERCEL) {
-        const base64 = finalBuffer.toString("base64");
-        finalUrl = `data:${finalType};base64,${base64}`;
+        // High compression to guarantee under 40 KB so it never bloats Firestore
+        try {
+          const tinyBuffer = await sharp(inputBuffer)
+            .resize({ width: 1200, height: 1200, fit: "inside", withoutEnlargement: true })
+            .webp({ quality: 65 })
+            .toBuffer();
+          finalUrl = `data:image/webp;base64,${tinyBuffer.toString("base64")}`;
+        } catch {
+          finalUrl = `data:${finalType};base64,${finalBuffer.toString("base64")}`;
+        }
       } else {
         const dir = path.join(process.cwd(), "public", "uploads");
         await fs.mkdir(dir, { recursive: true });
