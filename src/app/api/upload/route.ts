@@ -102,7 +102,7 @@ export async function POST(req: Request) {
     let finalUrl = "";
 
     // 1. Vercel Blob (Built-in Free Storage for Vercel Hobby plan - NO credit card required)
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
+    if (process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL) {
       try {
         const { put } = await import("@vercel/blob");
         const blob = await put(`uploads/${fileName}`, finalBuffer, {
@@ -112,8 +112,8 @@ export async function POST(req: Request) {
         if (blob?.url) {
           finalUrl = blob.url;
         }
-      } catch (blobErr) {
-        console.warn("Vercel Blob upload failed, trying next provider:", blobErr);
+      } catch (blobErr: any) {
+        console.warn("[upload] Vercel Blob upload skipped or failed:", blobErr?.message || blobErr);
       }
     }
 
